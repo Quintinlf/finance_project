@@ -34,27 +34,13 @@ Lightweight Python tools for portfolio inspection, return forecasting, technical
 
 ## 📂 Repository Structure
 
-- `Finance_project/` — main module code  
+- `algo_bot/` — main module code  
   - `trading_functions.py` – core toolkit  
   - `api_functions.py` – Alpaca API placeholders  
-- `notebooks/` — example usage and pipeline notebooks  
-- `data/` — sample or reference datasets  
+- `exercises/` — math and financial practice pre-implementation 
 - `fintech.md` — personal notes  
 
 ---
-
-## 🚀 Setup & About Me
-
-Python 3.9+ recommended.
-
-```bash
-git clone https://github.com/Quintinlf/finance_project.git
-pip install yfinance pandas numpy matplotlib scipy plotly
-# Optional for notebooks:
-pip install ipython
-# Optional for Alpaca API:
-pip install alpaca-trade-api python-dotenv
-
 # 🧑‍💼 Author & Notes
 
 ## About the Author
@@ -77,3 +63,15 @@ I’m **Quintin**, a quantitative finance and Python enthusiast focused on build
 - **Dependencies:** Pandas, NumPy, Matplotlib, Seaborn, Plotly, Scikit-learn, yfinance, ipython (optional), alpaca-trade-api (optional)  
 
 
+
+## 🚀 Setup & About Me
+
+Python 3.9+ recommended.
+
+```bash
+git clone https://github.com/Quintinlf/finance_project.git
+pip install yfinance pandas numpy matplotlib scipy plotly
+# Optional for notebooks:
+pip install ipython
+# Optional for Alpaca API:
+pip install alpaca-trade-api python-dotenv
