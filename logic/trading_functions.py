@@ -69,12 +69,16 @@ def create_individual_portfolio_charts():
 
 def rsi_calculator(df, period=14):
     """Add RSI column to a DataFrame with 'Close' and 'Open' columns."""
-    gain = (df['Close'] - df['Open']).clip(lower=0)
-    loss = (df['Open'] - df['Close']).clip(lower=0)
+    # Extract as Series to avoid multi-index issues
+    close_prices = df['Close'].squeeze()
+    open_prices = df['Open'].squeeze()
+    
+    gain = (close_prices - open_prices).clip(lower=0)
+    loss = (open_prices - close_prices).clip(lower=0)
     ema_gain = gain.ewm(span=period, min_periods=period).mean()
     ema_loss = loss.ewm(span=period, min_periods=period).mean()
     rs = ema_gain / ema_loss
-    df['rsi_14'] = 100 - (100 / (1 + rs))
+    df['rsi_14'] = (100 - (100 / (1 + rs))).values
     return df
 
 # Position class for trades opened/closed during the backtest
@@ -564,16 +568,27 @@ def calculate_bollinger_bands(df, window=20, num_std=2):
         df with added columns: BB_Upper, BB_Middle, BB_Lower, BB_Z_Score, BB_Width
     """
     df = df.copy()
-    df['BB_Middle'] = df['Close'].rolling(window=window).mean()
-    df['BB_Std'] = df['Close'].rolling(window=window).std()
-    df['BB_Upper'] = df['BB_Middle'] + (num_std * df['BB_Std'])
-    df['BB_Lower'] = df['BB_Middle'] - (num_std * df['BB_Std'])
+    
+    # Extract close prices as Series to avoid multi-index issues
+    close_prices = df['Close'].squeeze()  # Convert to Series if needed
+    
+    # Calculate bands using Series operations
+    bb_middle = close_prices.rolling(window=window).mean()
+    bb_std = close_prices.rolling(window=window).std()
+    bb_upper = bb_middle + (num_std * bb_std)
+    bb_lower = bb_middle - (num_std * bb_std)
+    
+    # Assign as Series to avoid DataFrame column issues
+    df['BB_Middle'] = bb_middle.values
+    df['BB_Std'] = bb_std.values
+    df['BB_Upper'] = bb_upper.values
+    df['BB_Lower'] = bb_lower.values
     
     # Z-score: how many standard deviations is current price from mean?
-    df['BB_Z_Score'] = (df['Close'] - df['BB_Middle']) / (df['BB_Std'] + 1e-8)
+    df['BB_Z_Score'] = ((close_prices - bb_middle) / (bb_std + 1e-8)).values
     
     # Band width (volatility measure)
-    df['BB_Width'] = (df['BB_Upper'] - df['BB_Lower']) / (df['BB_Middle'] + 1e-8)
+    df['BB_Width'] = ((bb_upper - bb_lower) / (bb_middle + 1e-8)).values
     
     return df
 
@@ -587,10 +602,14 @@ def unified_bayesian_gp_forecast(ticker, period="200d", interval="1d", num_lags=
     NEW: Incorporates Bollinger Bands z-scores as features for better signal quality.
     """
     # Download and prepare data
-    df = yf.download(ticker, period=period, interval=interval)
+    df = yf.download(ticker, period=period, interval=interval, progress=False)
     if df.empty or len(df) < max(20, num_lags + 1):
         print(f"❌ Not enough data for {ticker}")
         return None
+    
+    # Fix multi-column issue from yfinance
+    if isinstance(df.columns, pd.MultiIndex):
+        df.columns = [col[0] if isinstance(col, tuple) else col for col in df.columns]
     
     # Feature engineering
     df['Return'] = df['Close'].pct_change()
@@ -598,10 +617,7 @@ def unified_bayesian_gp_forecast(ticker, period="200d", interval="1d", num_lags=
     df = rsi_calculator(df)
     df['RSI'] = df['rsi_14']
     
-    # Add Bollinger Bands and z-scores
-    df = calculate_bollinger_bands(df, window=20, num_std=2)
-    
-    # Add Bollinger Bands and z-scores
+    # Add Bollinger Bands and z-scores (only once!)
     df = calculate_bollinger_bands(df, window=20, num_std=2)
     
     # Create lagged features for both models
