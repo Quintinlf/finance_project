@@ -341,6 +341,59 @@ def place_market_order(
         return None
 
 
+def place_bracket_order(
+    client: TradingClient,
+    *,
+    symbol: str,
+    qty: int,
+    side: str,
+    take_profit_price: float,
+    stop_loss_price: float,
+    tif: TimeInForce = TimeInForce.DAY
+):
+    """
+    Submit a bracket order: market order + take profit limit + stop loss.
+    
+    Args:
+        client: Alpaca TradingClient
+        symbol: Stock symbol
+        qty: Number of shares
+        side: 'buy' or 'sell'
+        take_profit_price: Price to take profit
+        stop_loss_price: Price to stop loss
+        tif: Time in force
+    
+    Returns:
+        dict with keys: 'main_order', 'take_profit_order', 'stop_loss_order'
+        or None on error
+    """
+    from alpaca.trading.requests import StopLossRequest, TakeProfitRequest
+    
+    side_enum = OrderSide.BUY if side.lower() == "buy" else OrderSide.SELL
+    
+    # Create the main market order with bracket
+    req = MarketOrderRequest(
+        symbol=symbol,
+        qty=qty,
+        side=side_enum,
+        time_in_force=tif,
+        order_class='bracket',
+        take_profit=TakeProfitRequest(limit_price=take_profit_price),
+        stop_loss=StopLossRequest(stop_price=stop_loss_price)
+    )
+    
+    try:
+        order = client.submit_order(req)
+        return {
+            'main_order': order,
+            'take_profit_price': take_profit_price,
+            'stop_loss_price': stop_loss_price
+        }
+    except APIError as e:
+        print(f"Error placing bracket order: {e}")
+        return None
+
+
 def format_order_table(order) -> str:
     if not order:
         return "<no order>"
