@@ -25,7 +25,8 @@ def adaptive_threshold_calculator(
     trade_history: List[Dict],
     initial_min_conf: float = 0.65,
     alpha: float = 0.1,
-    target_win_rate: float = 0.55
+    target_win_rate: float = 0.55,
+    include_open_positions: bool = True
 ) -> float:
     """
     Calculate adaptive MIN_CONF threshold using Bayesian updating.
@@ -35,29 +36,56 @@ def adaptive_threshold_calculator(
     - Profit factor (total wins / total losses)
     - Recent performance trends
     
+    NEW: Can now learn from OPEN positions (unrealized P&L) in addition to closed trades!
+    
     Args:
         trade_history: List of dicts with 'confidence' and 'profit' keys
+                      Can include both closed trades and open positions (status='open')
         initial_min_conf: Starting threshold (default 0.65)
         alpha: Learning rate (0.0 to 1.0, default 0.1)
         target_win_rate: Desired win rate (default 0.55)
+        include_open_positions: If True, uses unrealized P&L from open positions
     
     Returns:
         New recommended MIN_CONF threshold (bounded between 0.55 and 0.80)
     """
-    if not trade_history or len(trade_history) < 10:
-        print(f"⚠️ Not enough trades ({len(trade_history)}/10 min) for adaptation. Using initial threshold.")
+    if not trade_history:
+        print(f"⚠️ No trade data available. Using initial threshold.")
         return initial_min_conf
     
     df = pd.DataFrame(trade_history)
     
+    # Separate closed and open positions
+    if 'status' in df.columns:
+        closed_trades = df[df['status'] != 'open']
+        open_positions = df[df['status'] == 'open']
+    else:
+        closed_trades = df
+        open_positions = pd.DataFrame()
+    
+    # Need at least some data points
+    total_data_points = len(closed_trades) + (len(open_positions) if include_open_positions else 0)
+    
+    if total_data_points < 5:
+        print(f"⚠️ Not enough data ({total_data_points}/5 min) for adaptation. Using initial threshold.")
+        return initial_min_conf
+    
+    # Use appropriate dataset
+    if include_open_positions and len(open_positions) > 0:
+        analysis_df = df  # Use both closed and open
+        print(f"📊 Analyzing {len(closed_trades)} closed trades + {len(open_positions)} open positions")
+    else:
+        analysis_df = closed_trades
+        print(f"📊 Analyzing {len(closed_trades)} closed trades only")
+    
     # Calculate performance metrics
-    total_trades = len(df)
-    wins = (df['profit'] > 0).sum()
-    losses = (df['profit'] < 0).sum()
+    total_trades = len(analysis_df)
+    wins = (analysis_df['profit'] > 0).sum()
+    losses = (analysis_df['profit'] < 0).sum()
     win_rate = wins / total_trades if total_trades > 0 else 0
     
-    total_profit = df[df['profit'] > 0]['profit'].sum()
-    total_loss = abs(df[df['profit'] < 0]['profit'].sum())
+    total_profit = analysis_df[analysis_df['profit'] > 0]['profit'].sum()
+    total_loss = abs(analysis_df[analysis_df['profit'] < 0]['profit'].sum())
     profit_factor = total_profit / total_loss if total_loss > 0 else 0
     
     # Bayesian adjustment logic
@@ -84,7 +112,7 @@ def adaptive_threshold_calculator(
     
     # Rule 3: Recent performance (last 20% of trades)
     recent_cutoff = int(total_trades * 0.8)
-    recent_trades = df.iloc[recent_cutoff:]
+    recent_trades = analysis_df.iloc[recent_cutoff:]
     recent_win_rate = (recent_trades['profit'] > 0).sum() / len(recent_trades) if len(recent_trades) > 0 else 0
     
     if recent_win_rate < 0.45:
@@ -353,3 +381,350 @@ def max_drawdown(capital_curve: np.ndarray) -> Tuple[float, int, int]:
     peak_idx = np.argmax(capital_curve[:trough_idx+1]) if trough_idx > 0 else 0
     
     return float(max_dd), int(peak_idx), int(trough_idx)
+
+
+# ===========================================================
+# MAE/MFE TRACKING (Maximum Adverse/Favorable Excursion)
+# ===========================================================
+
+def calculate_maximum_adverse_excursion(
+    entry_price: float,
+    intraday_prices: List[float],
+    side: str = 'long'
+) -> Tuple[float, float]:
+    """
+    Calculate Maximum Adverse Excursion (MAE) for a trade.
+    
+    MAE measures the worst price movement against a position during its lifetime.
+    This is crucial for stop-loss optimization and risk management.
+    
+    Args:
+        entry_price: Entry price of the trade
+        intraday_prices: List of prices during the trade's lifetime
+        side: 'long' or 'short' position
+        
+    Returns:
+        Tuple of (mae_dollars, mae_percent)
+        
+    Example:
+        >>> # Long position: entered at $100, worst price was $97
+        >>> mae_dollars, mae_pct = calculate_maximum_adverse_excursion(100, [99, 97, 101], 'long')
+        >>> print(f"MAE: ${mae_dollars:.2f} ({mae_pct:.1f}%)")
+        MAE: $3.00 (-3.0%)
+    """
+    if not intraday_prices or len(intraday_prices) == 0:
+        return 0.0, 0.0
+    
+    prices = np.array(intraday_prices)
+    
+    if side.lower() == 'long':
+        # For long: MAE is the maximum loss (entry - lowest price)
+        worst_price = np.min(prices)
+        mae_dollars = entry_price - worst_price
+        mae_percent = ((entry_price - worst_price) / entry_price) * 100
+    else:  # short
+        # For short: MAE is the maximum loss (highest price - entry)
+        worst_price = np.max(prices)
+        mae_dollars = worst_price - entry_price
+        mae_percent = ((worst_price - entry_price) / entry_price) * 100
+    
+    return float(mae_dollars), float(mae_percent)
+
+
+def calculate_maximum_favorable_excursion(
+    entry_price: float,
+    intraday_prices: List[float],
+    side: str = 'long'
+) -> Tuple[float, float]:
+    """
+    Calculate Maximum Favorable Excursion (MFE) for a trade.
+    
+    MFE measures the best price movement in favor of a position during its lifetime.
+    Useful for take-profit optimization and understanding profit potential.
+    
+    Args:
+        entry_price: Entry price of the trade
+        intraday_prices: List of prices during the trade's lifetime
+        side: 'long' or 'short' position
+        
+    Returns:
+        Tuple of (mfe_dollars, mfe_percent)
+        
+    Example:
+        >>> # Long position: entered at $100, best price was $105
+        >>> mfe_dollars, mfe_pct = calculate_maximum_favorable_excursion(100, [101, 105, 103], 'long')
+        >>> print(f"MFE: ${mfe_dollars:.2f} ({mfe_pct:.1f}%)")
+        MFE: $5.00 (5.0%)
+    """
+    if not intraday_prices or len(intraday_prices) == 0:
+        return 0.0, 0.0
+    
+    prices = np.array(intraday_prices)
+    
+    if side.lower() == 'long':
+        # For long: MFE is the maximum profit (highest price - entry)
+        best_price = np.max(prices)
+        mfe_dollars = best_price - entry_price
+        mfe_percent = ((best_price - entry_price) / entry_price) * 100
+    else:  # short
+        # For short: MFE is the maximum profit (entry - lowest price)
+        best_price = np.min(prices)
+        mfe_dollars = entry_price - best_price
+        mfe_percent = ((entry_price - best_price) / entry_price) * 100
+    
+    return float(mfe_dollars), float(mfe_percent)
+
+
+def analyze_mae_mfe_distribution(trade_history: List[Dict]) -> Dict[str, float]:
+    """
+    Analyze MAE/MFE distribution across historical trades.
+    
+    This analysis helps optimize stop-loss and take-profit levels by showing:
+    - Average MAE for winning vs losing trades
+    - Average MFE for winning vs losing trades
+    - Optimal stop-loss distance (average MAE for winners + buffer)
+    - Optimal take-profit distance (average MFE for winners - buffer)
+    
+    Args:
+        trade_history: List of dicts with keys:
+            - 'entry_price': float
+            - 'intraday_prices': List[float]
+            - 'exit_price': float
+            - 'side': 'long' or 'short'
+            - 'profit': float (optional, calculated from prices if missing)
+            
+    Returns:
+        dict: Analysis results with recommended stop-loss and take-profit levels
+        
+    Example:
+        >>> analysis = analyze_mae_mfe_distribution(trade_history)
+        >>> print(f"Recommended SL: {analysis['recommended_sl_pct']:.2f}%")
+        >>> print(f"Recommended TP: {analysis['recommended_tp_pct']:.2f}%")
+    """
+    if not trade_history or len(trade_history) < 10:
+        return {
+            'error': 'Need at least 10 trades for MAE/MFE analysis',
+            'n_trades': len(trade_history) if trade_history else 0
+        }
+    
+    winners = []
+    losers = []
+    
+    for trade in trade_history:
+        entry = trade.get('entry_price')
+        prices = trade.get('intraday_prices', [])
+        exit_price = trade.get('exit_price')
+        side = trade.get('side', 'long')
+        
+        if not entry or not prices:
+            continue
+        
+        # Calculate profit if not provided
+        if 'profit' in trade:
+            profit = trade['profit']
+        elif exit_price:
+            if side.lower() == 'long':
+                profit = exit_price - entry
+            else:
+                profit = entry - exit_price
+        else:
+            continue
+        
+        # Calculate MAE and MFE
+        mae_dollars, mae_pct = calculate_maximum_adverse_excursion(entry, prices, side)
+        mfe_dollars, mfe_pct = calculate_maximum_favorable_excursion(entry, prices, side)
+        
+        trade_data = {
+            'mae_pct': mae_pct,
+            'mfe_pct': mfe_pct,
+            'profit': profit
+        }
+        
+        if profit > 0:
+            winners.append(trade_data)
+        else:
+            losers.append(trade_data)
+    
+    if not winners and not losers:
+        return {'error': 'No valid trade data with MAE/MFE'}
+    
+    # Calculate statistics
+    winner_mae_avg = np.mean([t['mae_pct'] for t in winners]) if winners else 0
+    winner_mfe_avg = np.mean([t['mfe_pct'] for t in winners]) if winners else 0
+    loser_mae_avg = np.mean([t['mae_pct'] for t in losers]) if losers else 0
+    loser_mfe_avg = np.mean([t['mfe_pct'] for t in losers]) if losers else 0
+    
+    all_mae = [t['mae_pct'] for t in winners + losers]
+    all_mfe = [t['mfe_pct'] for t in winners + losers]
+    
+    # Recommendations
+    # Stop-loss: Set slightly beyond average MAE for winners (to avoid premature stops)
+    recommended_sl_pct = winner_mae_avg * 1.2 if winner_mae_avg > 0 else 2.0
+    
+    # Take-profit: Set at average MFE for winners (capture most of the move)
+    recommended_tp_pct = winner_mfe_avg * 0.8 if winner_mfe_avg > 0 else 4.0
+    
+    return {
+        'n_trades': len(trade_history),
+        'n_winners': len(winners),
+        'n_losers': len(losers),
+        'win_rate': len(winners) / (len(winners) + len(losers)) if (winners or losers) else 0,
+        'winner_mae_avg': winner_mae_avg,
+        'winner_mfe_avg': winner_mfe_avg,
+        'loser_mae_avg': loser_mae_avg,
+        'loser_mfe_avg': loser_mfe_avg,
+        'overall_mae_avg': np.mean(all_mae),
+        'overall_mfe_avg': np.mean(all_mfe),
+        'mae_std': np.std(all_mae),
+        'mfe_std': np.std(all_mfe),
+        'recommended_sl_pct': recommended_sl_pct,
+        'recommended_tp_pct': recommended_tp_pct
+    }
+
+
+def madl_loss(actual_returns: np.ndarray, 
+              predicted_returns: np.ndarray,
+              penalty_weight: float = 2.0) -> float:
+    """
+    Calculate Mean Absolute Directional Loss (MADL).
+    
+    MADL is a specialized loss function for trading that penalizes:
+    1. Incorrect direction predictions (heavily)
+    2. Magnitude errors (moderately)
+    
+    This aligns model optimization with actual trading goals better than MAE/MSE.
+    
+    Formula:
+        MADL = mean(|actual - predicted| * (1 + penalty * wrong_direction))
+    
+    Args:
+        actual_returns: Actual return values
+        predicted_returns: Predicted return values
+        penalty_weight: Multiplier for wrong direction (default 2.0)
+        
+    Returns:
+        float: MADL loss value
+        
+    Reference:
+        "Mean Absolute Directional Loss as a New Loss Function for 
+         Optimization of Machine Learning Models" (arXiv, 2024)
+         
+    Example:
+        >>> actual = np.array([0.02, -0.01, 0.03])
+        >>> predicted = np.array([0.025, 0.005, 0.025])  # Wrong direction on 2nd
+        >>> loss = madl_loss(actual, predicted)
+        >>> print(f"MADL: {loss:.4f}")
+    """
+    actual = np.array(actual_returns)
+    predicted = np.array(predicted_returns)
+    
+    # Base error (magnitude)
+    magnitude_error = np.abs(actual - predicted)
+    
+    # Direction penalty (1.0 if correct, 1.0 + penalty_weight if wrong)
+    actual_sign = np.sign(actual)
+    predicted_sign = np.sign(predicted)
+    direction_penalty = np.where(
+        actual_sign == predicted_sign,
+        1.0,
+        1.0 + penalty_weight
+    )
+    
+    # Combined loss
+    madl = magnitude_error * direction_penalty
+    
+    return float(np.mean(madl))
+
+
+def optimize_stop_loss_from_mae(
+    symbol: str,
+    trade_history: List[Dict],
+    min_sl_pct: float = 1.0,
+    max_sl_pct: float = 5.0
+) -> float:
+    """
+    Optimize stop-loss percentage based on historical MAE analysis.
+    
+    Uses MAE distribution to find optimal stop-loss that:
+    - Avoids stopping out winning trades prematurely
+    - Limits losses on losing trades
+    - Adapts to symbol-specific volatility
+    
+    Args:
+        symbol: Stock ticker symbol
+        trade_history: Historical trades for this symbol
+        min_sl_pct: Minimum stop-loss % (default 1.0%)
+        max_sl_pct: Maximum stop-loss % (default 5.0%)
+        
+    Returns:
+        float: Optimized stop-loss percentage
+        
+    Example:
+        >>> optimal_sl = optimize_stop_loss_from_mae('AAPL', trade_history)
+        >>> print(f"Optimal SL for AAPL: {optimal_sl:.2f}%")
+    """
+    # Filter trades for this symbol
+    symbol_trades = [t for t in trade_history if t.get('symbol') == symbol]
+    
+    if len(symbol_trades) < 5:
+        # Not enough data, use moderate default
+        return 2.0
+    
+    # Get MAE/MFE analysis
+    analysis = analyze_mae_mfe_distribution(symbol_trades)
+    
+    if 'error' in analysis:
+        return 2.0
+    
+    # Use recommended SL from analysis, clamped to min/max
+    recommended_sl = analysis['recommended_sl_pct']
+    optimal_sl = max(min_sl_pct, min(max_sl_pct, recommended_sl))
+    
+    return float(optimal_sl)
+
+
+def print_mae_mfe_report(analysis: Dict):
+    """
+    Print formatted MAE/MFE analysis report.
+    
+    Args:
+        analysis: Output from analyze_mae_mfe_distribution()
+    """
+    if 'error' in analysis:
+        print(f"⚠️  {analysis['error']}")
+        return
+    
+    print("=" * 80)
+    print("  📊 MAE/MFE ANALYSIS REPORT")
+    print("=" * 80)
+    print(f"  Total Trades:           {analysis['n_trades']}")
+    print(f"  Winners:                {analysis['n_winners']}")
+    print(f"  Losers:                 {analysis['n_losers']}")
+    print(f"  Win Rate:               {analysis['win_rate']:.1%}")
+    print()
+    print("  WINNERS:")
+    print(f"    Avg MAE (drawdown):   {analysis['winner_mae_avg']:.2f}%")
+    print(f"    Avg MFE (peak profit): {analysis['winner_mfe_avg']:.2f}%")
+    print()
+    print("  LOSERS:")
+    print(f"    Avg MAE (drawdown):   {analysis['loser_mae_avg']:.2f}%")
+    print(f"    Avg MFE (peak profit): {analysis['loser_mfe_avg']:.2f}%")
+    print()
+    print("  OVERALL:")
+    print(f"    Avg MAE:              {analysis['overall_mae_avg']:.2f}% ± {analysis['mae_std']:.2f}%")
+    print(f"    Avg MFE:              {analysis['overall_mfe_avg']:.2f}% ± {analysis['mfe_std']:.2f}%")
+    print()
+    print("  📋 RECOMMENDATIONS:")
+    print(f"    Optimal Stop-Loss:    {analysis['recommended_sl_pct']:.2f}%")
+    print(f"    Optimal Take-Profit:  {analysis['recommended_tp_pct']:.2f}%")
+    print()
+    print("  💡 INSIGHTS:")
+    if analysis['winner_mae_avg'] < analysis['loser_mae_avg']:
+        print(f"    ✅ Winners have lower drawdown than losers (good signal quality)")
+    else:
+        print(f"    ⚠️  Winners experience similar drawdown to losers (signal needs work)")
+    
+    if analysis['winner_mfe_avg'] > analysis['recommended_tp_pct'] * 1.5:
+        print(f"    💰 Consider wider take-profit to capture more upside")
+    
+    print("=" * 80)

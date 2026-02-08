@@ -874,24 +874,58 @@ def unified_bayesian_gp_forecast(ticker, period="200d", interval="1d", num_lags=
     print(f"🎯 Final Signal:      {final_signal} (Confidence: {confidence:.1%})")
     print(f"💰 Recommendation:    {final_signal}")
     
+    # ==============================
+    # 📈 NEXT-DAY CLOSING PRICE PREDICTION
+    # ==============================
+    # Convert return predictions to closing price predictions
+    current_close = df['Close'].iloc[-1]
+    
+    # Bayesian next-day close price
+    bayesian_next_close = current_close * (1 + bayesian_forecast)
+    bayesian_close_ci_lower = current_close * (1 + bayesian_ci_lower)
+    bayesian_close_ci_upper = current_close * (1 + bayesian_ci_upper)
+    
+    # GP next-day close price
+    gp_next_close = current_close * (1 + gp_forecast)
+    gp_close_ci_lower = current_close * (1 + gp_ci_lower)
+    gp_close_ci_upper = current_close * (1 + gp_ci_upper)
+    
+    # Ensemble next-day close price
+    ensemble_next_close = current_close * (1 + ensemble_forecast)
+    ensemble_close_ci_lower = current_close * (1 + ensemble_ci_lower)
+    ensemble_close_ci_upper = current_close * (1 + ensemble_ci_upper)
+    
+    print(f"\n💰 Next-Day Closing Price Predictions:")
+    print(f"   Current Close:    ${current_close:.2f}")
+    print(f"   Bayesian:         ${bayesian_next_close:.2f} (${bayesian_close_ci_lower:.2f} - ${bayesian_close_ci_upper:.2f})")
+    print(f"   GP:               ${gp_next_close:.2f} (${gp_close_ci_lower:.2f} - ${gp_close_ci_upper:.2f})")
+    print(f"   Ensemble:         ${ensemble_next_close:.2f} (${ensemble_close_ci_lower:.2f} - ${ensemble_close_ci_upper:.2f})")
+    
     return {
         'ticker': ticker,
         'date': df.index[-1].date(),
+        'current_close': current_close,
         'bayesian': {
             'forecast': bayesian_forecast,
             'std': bayesian_std,
-            'ci': (bayesian_ci_lower, bayesian_ci_upper)
+            'ci': (bayesian_ci_lower, bayesian_ci_upper),
+            'next_day_close': bayesian_next_close,
+            'next_day_close_ci': (bayesian_close_ci_lower, bayesian_close_ci_upper)
         },
         'gp': {
             'forecast': gp_forecast,
             'std': gp_std,
-            'ci': (gp_ci_lower, gp_ci_upper)
+            'ci': (gp_ci_lower, gp_ci_upper),
+            'next_day_close': gp_next_close,
+            'next_day_close_ci': (gp_close_ci_lower, gp_close_ci_upper)
         },
         'ensemble': {
             'forecast': ensemble_forecast,
             'std': ensemble_std,
             'ci': (ensemble_ci_lower, ensemble_ci_upper),
-            'z_score': ensemble_forecast / (ensemble_std + 1e-8)  # Z-score of forecast
+            'z_score': ensemble_forecast / (ensemble_std + 1e-8),  # Z-score of forecast
+            'next_day_close': ensemble_next_close,
+            'next_day_close_ci': (ensemble_close_ci_lower, ensemble_close_ci_upper)
         },
         'rsi': {
             'value': current_rsi,

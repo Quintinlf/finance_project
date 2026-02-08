@@ -1,0 +1,2 @@
+symbol,date,timestamp,current_close,actual_close,bayesian_return_pred,gp_return_pred,ensemble_return_pred,bayesian_price_pred,gp_price_pred,ensemble_price_pred,bayesian_ci_lower,bayesian_ci_upper,gp_ci_lower,gp_ci_upper,ensemble_ci_lower,ensemble_ci_upper,final_signal,confidence,rsi_value,bb_z_score,actual_updated
+AAPL,2026-01-21,2026-01-21 22:58:22.397534,150.0,151.5,0.015,0.012,0.013,152.25,151.8,151.95,0.01,0.02,0.008,0.016,0.009,0.017,BUY,0.75,58.5,-0.5,True
