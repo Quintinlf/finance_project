@@ -1,1 +1,5 @@
 .env
+trade_logs/*.db
+trade_logs/*.csv
+__pycache__/
+*.pyc

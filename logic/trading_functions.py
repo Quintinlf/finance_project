@@ -901,6 +901,12 @@ def unified_bayesian_gp_forecast(ticker, period="200d", interval="1d", num_lags=
     print(f"   GP:               ${gp_next_close:.2f} (${gp_close_ci_lower:.2f} - ${gp_close_ci_upper:.2f})")
     print(f"   Ensemble:         ${ensemble_next_close:.2f} (${ensemble_close_ci_lower:.2f} - ${ensemble_close_ci_upper:.2f})")
     
+    # Calculate probability of profitable return (return > 0) using normal CDF
+    # Formula: P(X > 0) = Φ(μ/σ) where X ~ N(μ, σ²)
+    prob_profit_up = float(stats.norm.cdf(
+        ensemble_forecast / (ensemble_std + 1e-8)
+    ))
+    
     return {
         'ticker': ticker,
         'date': df.index[-1].date(),
@@ -922,6 +928,7 @@ def unified_bayesian_gp_forecast(ticker, period="200d", interval="1d", num_lags=
         'ensemble': {
             'forecast': ensemble_forecast,
             'std': ensemble_std,
+            'prob_profit': prob_profit_up,  # Probability of profitable return using normal CDF
             'ci': (ensemble_ci_lower, ensemble_ci_upper),
             'z_score': ensemble_forecast / (ensemble_std + 1e-8),  # Z-score of forecast
             'next_day_close': ensemble_next_close,

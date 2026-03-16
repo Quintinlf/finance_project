@@ -52,7 +52,7 @@ def example_1_basic_cycle():
         position_states=position_states,
         config=config,
         account_cash=account['cash'],
-        trading_client=trading_client
+        alpaca_client=trading_client
     )
     
     # 4. Log decisions
@@ -115,7 +115,7 @@ def example_2_simulation_mode():
             position_states=position_states,
             config=config,
             account_cash=current_cash,
-            trading_client=None,
+            alpaca_client=None,
             sim_portfolio=sim_portfolio  # Pass for updates
         )
         
@@ -403,7 +403,7 @@ def example_6_short_selling():
         position_states=position_states,
         config=config,
         account_cash=account['cash'],
-        trading_client=trading_client
+        alpaca_client=trading_client
     )
     
     # Show decisions

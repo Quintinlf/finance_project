@@ -93,7 +93,15 @@ def _generate_single_signal(symbol: str, config: ExecutionConfig) -> Signal:
     # Extract forecast components
     base_signal = forecast_result['final_signal']  # BUY, SELL, or HOLD
     base_confidence = forecast_result['final_confidence']
-    ensemble_forecast = forecast_result['ensemble']['forecast']
+    # Use corrected probability of profit if available, otherwise fall back to formula
+    if 'prob_profit' in forecast_result['ensemble']:
+        ensemble_forecast = forecast_result['ensemble']['prob_profit']
+    else:
+        # Fallback: calculate from return distribution using normal CDF
+        from scipy import stats
+        raw_forecast = forecast_result['ensemble']['forecast']
+        ensemble_std = forecast_result['ensemble'].get('std', 0.01)
+        ensemble_forecast = float(stats.norm.cdf(raw_forecast / (ensemble_std + 1e-8)))
     ensemble_z_score = forecast_result['ensemble'].get('z_score', 0.0)
     rsi_value = forecast_result['rsi']['value']
     

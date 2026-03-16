@@ -299,6 +299,53 @@ def list_all_orders(client: TradingClient):
     return client.get_orders()
 
 
+def fetch_recent_closed_orders(client: TradingClient, limit: int = 10) -> List[dict]:
+    """
+    Return a normalized list of recently closed/filled orders for account-level snapshots.
+
+    This is intended for notebook reporting and SQLite snapshot sync.
+    """
+    try:
+        req = GetOrdersRequest(status=QueryOrderStatus.CLOSED)
+        orders = cast(List[Any], client.get_orders(filter=req))
+    except Exception:
+        return []
+
+    rows: List[dict] = []
+    for o in orders:
+        order_id = str(getattr(o, "id", "") or "")
+        symbol = str(getattr(o, "symbol", "") or "")
+
+        side_raw = getattr(o, "side", None)
+        side = side_raw.value if hasattr(side_raw, "value") else str(side_raw or "")
+
+        status_raw = getattr(o, "status", None)
+        status = status_raw.value if hasattr(status_raw, "value") else str(status_raw or "")
+
+        filled_qty = float(getattr(o, "filled_qty", 0) or 0)
+        filled_avg_price = float(getattr(o, "filled_avg_price", 0) or 0)
+
+        filled_at = getattr(o, "filled_at", None)
+        filled_at_iso = filled_at.isoformat() if filled_at is not None else None
+
+        rows.append(
+            {
+                "order_id": order_id,
+                "symbol": symbol,
+                "side": side,
+                "status": status,
+                "filled_qty": filled_qty,
+                "filled_avg_price": filled_avg_price,
+                "filled_at": filled_at_iso,
+            }
+        )
+
+    rows.sort(key=lambda x: x.get("filled_at") or "", reverse=True)
+    if limit > 0:
+        rows = rows[:limit]
+    return rows
+
+
 def format_orders_table(orders) -> str:
     if not orders:
         return "No orders found."

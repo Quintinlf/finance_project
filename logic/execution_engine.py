@@ -11,15 +11,28 @@ Key components:
 4. run_trading_cycle: orchestrates the full decision → execution flow
 """
 
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict, Optional, Tuple, Union
 from datetime import datetime
+from pathlib import Path
+import uuid
 
 from data_structures import (
     Signal, PositionState, ExecutionConfig, OrderPlan, DecisionLogEntry
 )
 from portfolio_state import update_sim_portfolio_after_trade
 from risk_management import calculate_position_size
+from alpaca.trading.enums import TimeInForce
+from alpaca.trading.client import TradingClient
 from alpaca_exercises import place_market_order, place_bracket_order
+
+from sqlite_store import (
+    DEFAULT_DB_PATH,
+    init_db,
+    create_trade_attempt,
+    set_trade_broker_order_id,
+    mark_trade_open,
+    mark_trade_failed,
+)
 
 
 # ========================================================================
@@ -315,23 +328,26 @@ def execute_order_plan(
             # Choose between bracket and market order
             if order_plan.has_bracket():
                 # Submit bracket order (market entry + TP/SL)
-                order = place_bracket_order(
+                # place_bracket_order returns a dict: {'main_order': <Order>, ...}
+                order_result = place_bracket_order(
                     client=alpaca_client,
                     symbol=order_plan.symbol,
                     qty=order_plan.quantity,
                     side=order_plan.side,
                     take_profit_price=order_plan.tp_price,
                     stop_loss_price=order_plan.sl_price,
-                    time_in_force=order_plan.time_in_force
+                    tif=TimeInForce.DAY
                 )
+                order = order_result['main_order'] if order_result else None
             else:
                 # Submit simple market order
+                # place_market_order returns an Order object directly
                 order = place_market_order(
                     client=alpaca_client,
                     symbol=order_plan.symbol,
                     qty=order_plan.quantity,
                     side=order_plan.side,
-                    time_in_force=order_plan.time_in_force
+                    tif=TimeInForce.DAY
                 )
             
             if order:
@@ -342,6 +358,8 @@ def execute_order_plan(
                     order_type = "BRACKET" if order_plan.has_bracket() else "MARKET"
                     print(f"✅ {config.execution_mode.upper()}: {order_type} {order_plan.side.upper()} " +
                           f"{order_plan.quantity} {order_plan.symbol}")
+                    if order_plan.has_bracket():
+                        print(f"   TP: ${order_plan.tp_price:.2f} | SL: ${order_plan.sl_price:.2f}")
                     print(f"   Order ID: {order.id}")
             else:
                 result['error_message'] = 'Order submission returned None'
@@ -367,9 +385,11 @@ def run_trading_cycle(
     position_states: Dict[str, PositionState],
     config: ExecutionConfig,
     account_cash: float,
-    alpaca_client=None,
+    alpaca_client: Optional[TradingClient] = None,
     sim_portfolio: Optional[Dict[str, PositionState]] = None,
-    verbose: bool = True
+    verbose: bool = True,
+    db_path: Optional[Union[str, Path]] = None,
+    account_id: Optional[str] = None
 ) -> List[DecisionLogEntry]:
     """
     Run a complete trading cycle: signals → decisions → execution.
@@ -396,6 +416,15 @@ def run_trading_cycle(
         5. Return all entries for logging
     """
     log_entries = []
+
+    # Optional: SQLite persistence (trade attempts).
+    resolved_db_path: Optional[Union[str, Path]] = None
+    if db_path is not None:
+        resolved_db_path = db_path
+        init_db(resolved_db_path)
+    elif config.execution_mode in ['paper', 'live', 'simulation']:
+        # Keep opt-in by default; notebook can explicitly pass db_path.
+        resolved_db_path = None
     
     for signal in signals:
         symbol = signal.symbol
@@ -436,6 +465,23 @@ def run_trading_cycle(
             
             if current_price == 0.0:
                 log_entry.error_message = 'No current price available in signal'
+                # Persist as a FAILED attempt (engine-side skip).
+                if resolved_db_path is not None:
+                    trade_id = str(uuid.uuid4())
+                    create_trade_attempt(
+                        trade_id=trade_id,
+                        account_id=account_id,
+                        symbol=symbol,
+                        side=action,
+                        qty=0.0,
+                        entry_price=None,
+                        tp_price=None,
+                        sl_price=None,
+                        status='FAILED',
+                        confidence=float(signal.confidence),
+                        error=log_entry.error_message,
+                        db_path=resolved_db_path,
+                    )
                 log_entries.append(log_entry)
                 continue
             
@@ -464,6 +510,26 @@ def run_trading_cycle(
                     if order_plan.sl_price:
                         print(f"   SL: ${order_plan.sl_price:.2f}")
                 
+                # Persist trade attempt before execution (hard rule: attempted_at set at INSERT time).
+                trade_id: Optional[str] = None
+                if resolved_db_path is not None:
+                    trade_id = str(uuid.uuid4())
+                    create_trade_attempt(
+                        trade_id=trade_id,
+                        account_id=account_id,
+                        symbol=symbol,
+                        side=order_plan.side,
+                        qty=float(order_plan.quantity),
+                        entry_price=None,
+                        exit_price=None,
+                        tp_price=order_plan.tp_price,
+                        sl_price=order_plan.sl_price,
+                        status='OPEN' if not config.dry_run else 'FAILED',
+                        confidence=float(signal.confidence),
+                        error='DRY_RUN' if config.dry_run else None,
+                        db_path=resolved_db_path,
+                    )
+
                 # Execute order plan
                 execution_result = execute_order_plan(
                     order_plan=order_plan,
@@ -478,6 +544,29 @@ def run_trading_cycle(
                 log_entry.broker_order_id = execution_result['broker_order_id']
                 log_entry.execution_timestamp = datetime.now() if execution_result['executed'] else None
                 log_entry.error_message = execution_result['error_message']
+
+                # Persist outcome.
+                if resolved_db_path is not None and trade_id is not None:
+                    if execution_result.get('broker_order_id'):
+                        set_trade_broker_order_id(
+                            trade_id=trade_id,
+                            broker_order_id=str(execution_result['broker_order_id']),
+                            db_path=resolved_db_path,
+                        )
+
+                    if execution_result.get('executed'):
+                        # We don't currently reconcile fill prices here; record the observed price and timestamp.
+                        mark_trade_open(
+                            trade_id=trade_id,
+                            entry_price=float(current_price),
+                            db_path=resolved_db_path,
+                        )
+                    else:
+                        mark_trade_failed(
+                            trade_id=trade_id,
+                            error=str(execution_result.get('error_message') or 'Order not executed'),
+                            db_path=resolved_db_path,
+                        )
                 
                 # Update sim portfolio if simulation mode
                 if execution_result.get('updated_sim_portfolio'):
@@ -487,6 +576,23 @@ def run_trading_cycle(
                 log_entry.error_message = f"Planning/execution error: {str(e)}"
                 if verbose:
                     print(f"❌ Error on {symbol}: {e}")
+
+                if resolved_db_path is not None:
+                    trade_id = str(uuid.uuid4())
+                    create_trade_attempt(
+                        trade_id=trade_id,
+                        account_id=account_id,
+                        symbol=symbol,
+                        side=action,
+                        qty=0.0,
+                        entry_price=None,
+                        tp_price=None,
+                        sl_price=None,
+                        status='FAILED',
+                        confidence=float(signal.confidence),
+                        error=log_entry.error_message,
+                        db_path=resolved_db_path,
+                    )
         
         else:
             # action was 'hold' or 'rejected' - no execution

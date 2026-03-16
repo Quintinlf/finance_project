@@ -102,6 +102,23 @@ class ExecutionConfig:
 
 
 @dataclass
+class TradingSystem:
+    """
+    Bundles system-level dependencies to reduce parameter passing.
+
+    Instead of threading alpaca_client through every function call,
+    pass a TradingSystem instance. Supports future multi-broker architectures
+    where alpaca_client could be swapped for any broker implementation.
+
+    Fields:
+        config: execution configuration (mode, risk params, thresholds)
+        alpaca_client: live/paper broker client, or None for simulation
+    """
+    config: ExecutionConfig
+    alpaca_client: Optional[Any] = None
+
+
+@dataclass
 class OrderPlan:
     """
     A concrete plan for an order to submit to the broker or simulation.

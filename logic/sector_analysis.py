@@ -28,8 +28,8 @@ import yfinance as yf
 import pandas as pd
 import numpy as np
 from typing import Dict, List, Tuple, Optional
-import sys
 from pathlib import Path
+import sys
 
 
 # Import forecasting functions
