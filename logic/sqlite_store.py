@@ -70,13 +70,13 @@ def init_db(db_path: Union[str, Path] = DEFAULT_DB_PATH) -> None:
             """.strip()
         )
 
-                # Backward-compatible migration for DBs created before status column existed.
-                account_cols = {
-                        row["name"]
-                        for row in conn.execute("PRAGMA table_info(accounts)").fetchall()
-                }
-                if "status" not in account_cols:
-                        conn.execute("ALTER TABLE accounts ADD COLUMN status TEXT")
+        # Backward-compatible migration for DBs created before status column existed.
+        account_cols = {
+            row["name"]
+            for row in conn.execute("PRAGMA table_info(accounts)").fetchall()
+        }
+        if "status" not in account_cols:
+            conn.execute("ALTER TABLE accounts ADD COLUMN status TEXT")
 
         conn.execute(
             """
@@ -141,32 +141,32 @@ def init_db(db_path: Union[str, Path] = DEFAULT_DB_PATH) -> None:
             """.strip()
         )
 
-                conn.execute(
-                        """
-                        CREATE TABLE IF NOT EXISTS decisions (
-                            id INTEGER PRIMARY KEY AUTOINCREMENT,
-                            account_id TEXT,
-                            timestamp DATETIME,
-                            symbol TEXT,
-                            signal_type TEXT,
-                            confidence REAL,
-                            prob_profit REAL,
-                            position_quantity_before REAL,
-                            position_side_before TEXT,
-                            execution_mode TEXT,
-                            action TEXT,
-                            reason TEXT,
-                            planned_quantity REAL,
-                            planned_entry_price REAL,
-                            planned_tp_price REAL,
-                            planned_sl_price REAL,
-                            executed INTEGER,
-                            broker_order_id TEXT,
-                            execution_timestamp DATETIME,
-                            error_message TEXT
-                        )
-                        """.strip()
-                )
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS decisions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                account_id TEXT,
+                timestamp DATETIME,
+                symbol TEXT,
+                signal_type TEXT,
+                confidence REAL,
+                prob_profit REAL,
+                position_quantity_before REAL,
+                position_side_before TEXT,
+                execution_mode TEXT,
+                action TEXT,
+                reason TEXT,
+                planned_quantity REAL,
+                planned_entry_price REAL,
+                planned_tp_price REAL,
+                planned_sl_price REAL,
+                executed INTEGER,
+                broker_order_id TEXT,
+                execution_timestamp DATETIME,
+                error_message TEXT
+            )
+            """.strip()
+        )
 
         # Indexes (non-breaking additions)
         conn.execute("CREATE INDEX IF NOT EXISTS idx_trades_account_status ON trades(account_id, status)")
@@ -203,15 +203,15 @@ def insert_account_snapshot(
         cur = conn.execute(
             """
             INSERT INTO accounts(
-                            account_id, api_fingerprint, status, timestamp,
+              account_id, api_fingerprint, status, timestamp,
               cash, buying_power, portfolio_value,
               equity, last_equity, margin_used
-                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """.strip(),
             (
                 account_id,
                 api_fingerprint,
-                                status,
+                status,
                 ts,
                 cash,
                 buying_power,
