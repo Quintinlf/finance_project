@@ -20,10 +20,11 @@ from data_structures import (
     Signal, PositionState, ExecutionConfig, OrderPlan, DecisionLogEntry
 )
 from portfolio_state import update_sim_portfolio_after_trade
-from risk_management import calculate_position_size
+from risk_management import calculate_position_size, calculate_minimax_multiplier
 from alpaca.trading.enums import TimeInForce
 from alpaca.trading.client import TradingClient
 from alpaca_exercises import place_market_order, place_bracket_order
+from intuitive_criterion import survives_intuitive_criterion
 
 from sqlite_store import (
     DEFAULT_DB_PATH,
@@ -131,8 +132,52 @@ def decide_action(
     else:
         action = 'rejected'
         reason = f"Unknown signal type '{signal_type}'"
+
+    # Intuitive Criterion (IC): reject strategically irrational deviations.
+    if action in {'buy', 'sell'}:
+        ic_pass, ic_reason, ic_details = survives_intuitive_criterion(signal)
+        signal.meta['ic_filter_result'] = ic_details
+        if isinstance(ic_details, dict) and 'posterior_beliefs' in ic_details:
+            signal.type_beliefs = ic_details['posterior_beliefs']
+        if not ic_pass:
+            action = 'rejected'
+            reason = f"IC veto: {ic_reason}"
     
     return action, reason
+
+
+def apply_safety_veto(
+    *,
+    action: str,
+    signal: Signal,
+    position_state: PositionState,
+    config: ExecutionConfig,
+) -> Tuple[str, Optional[str]]:
+    """Hard veto layer applied after action selection and before order planning."""
+    if not config.enforce_safety_veto:
+        return action, None
+
+    current_drawdown_pct = signal.meta.get('current_drawdown_pct')
+    if (
+        action == 'buy'
+        and config.max_allowed_drawdown_pct is not None
+        and current_drawdown_pct is not None
+        and float(current_drawdown_pct) > float(config.max_allowed_drawdown_pct)
+    ):
+        return (
+            'hold',
+            (
+                f"Safety veto: BUY blocked (drawdown {float(current_drawdown_pct):.2f}% "
+                f"> max {float(config.max_allowed_drawdown_pct):.2f}%)"
+            ),
+        )
+
+    # Prevent invalid negative/zero price actions from reaching execution.
+    current_price = signal.meta.get('current_price')
+    if action in {'buy', 'sell'} and (current_price is None or float(current_price) <= 0.0):
+        return 'hold', 'Safety veto: actionable signal blocked due to invalid current_price'
+
+    return action, None
 
 
 # ========================================================================
@@ -175,10 +220,10 @@ def build_order_plan(
     else:
         raise ValueError(f"Cannot build order plan for signal type '{signal.signal_type}'")
     
-    # Calculate position size
+    # Calculate position size with minimax confidence scaling
     if side == 'buy':
-        # Calculate shares to buy based on risk
-        quantity = calculate_position_size(
+        # Calculate base shares to buy based on risk
+        base_qty = calculate_position_size(
             account_balance=account_cash,
             risk_per_trade_pct=config.base_risk_pct,
             stop_loss_pct=config.sl_pct * 100,  # Function expects percentage as 0-100
@@ -187,8 +232,15 @@ def build_order_plan(
         
         # Cap at max position size
         max_shares = int((account_cash * config.max_position_pct_of_equity / 100) / current_price)
-        quantity = min(quantity, max_shares)
+        base_qty = min(base_qty, max_shares)
+        
+        # Apply minimax confidence multiplier (hybrid mode)
+        mm = calculate_minimax_multiplier(signal)
+        quantity = int(base_qty * mm)
         quantity = max(1, quantity)  # At least 1 share
+        
+        # Store minimax multiplier in signal metadata for audit trail
+        signal.meta['minimax_applied_multiplier'] = mm
         
         # Calculate TP/SL for long position
         tp_price = round(current_price * (1 + config.tp_pct), 2)
@@ -206,15 +258,23 @@ def build_order_plan(
             
         else:
             # Opening short position (if shorting enabled)
-            quantity = calculate_position_size(
+            # Calculate base shares to sell based on risk
+            base_qty = calculate_position_size(
                 account_balance=account_cash,
                 risk_per_trade_pct=config.base_risk_pct,
                 stop_loss_pct=config.sl_pct * 100,
                 price=current_price
             )
             max_shares = int((account_cash * config.max_position_pct_of_equity / 100) / current_price)
-            quantity = min(quantity, max_shares)
+            base_qty = min(base_qty, max_shares)
+            
+            # Apply minimax confidence multiplier (hybrid mode)
+            mm = calculate_minimax_multiplier(signal)
+            quantity = int(base_qty * mm)
             quantity = max(1, quantity)
+            
+            # Store minimax multiplier in signal metadata for audit trail
+            signal.meta['minimax_applied_multiplier'] = mm
             
             # For shorts, TP is below entry, SL is above
             tp_price = round(current_price * (1 - config.tp_pct), 2)
@@ -443,6 +503,17 @@ def run_trading_cycle(
         
         # STEP 1: Decide action
         action, reason = decide_action(signal, position_state, config)
+
+        # SAFETY VETO: final guardrail before planning/execution.
+        vetoed_action, veto_reason = apply_safety_veto(
+            action=action,
+            signal=signal,
+            position_state=position_state,
+            config=config,
+        )
+        if veto_reason:
+            action = vetoed_action
+            reason = veto_reason
         
         # Initialize log entry
         log_entry = DecisionLogEntry(

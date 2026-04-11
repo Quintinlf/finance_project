@@ -13,8 +13,9 @@ position management, and trade execution.
 """
 
 from dataclasses import dataclass, field
-from typing import Optional, Dict, Any, Literal
+from typing import Optional, Dict, Any, List, Literal, Mapping, cast
 from datetime import datetime
+import json
 
 
 @dataclass
@@ -27,12 +28,14 @@ class Signal:
         signal_type: 'buy', 'sell', or 'hold'
         confidence: model confidence (0.0 to 1.0)
         prob_profit: probability of profit from ensemble forecast
+        type_beliefs: posterior beliefs over market types (sums to 1 when present)
         meta: additional signal metadata (RSI, Bollinger z-score, etc.)
     """
     symbol: str
     signal_type: Literal['buy', 'sell', 'hold']
     confidence: float
     prob_profit: float
+    type_beliefs: Dict[str, float] = field(default_factory=dict)
     meta: Dict[str, Any] = field(default_factory=dict)
     
     def __post_init__(self):
@@ -41,7 +44,18 @@ class Signal:
             raise ValueError(f"Confidence must be between 0 and 1, got {self.confidence}")
         if not 0.0 <= self.prob_profit <= 1.0:
             raise ValueError(f"Prob profit must be between 0 and 1, got {self.prob_profit}")
-        self.signal_type = self.signal_type.lower()
+        normalized_signal_type = str(self.signal_type).lower()
+        if normalized_signal_type not in {'buy', 'sell', 'hold'}:
+            raise ValueError(f"Signal type must be buy/sell/hold, got {self.signal_type}")
+        self.signal_type = cast(Literal['buy', 'sell', 'hold'], normalized_signal_type)
+
+        if self.type_beliefs:
+            clipped = {k: max(0.0, float(v)) for k, v in self.type_beliefs.items()}
+            total = sum(clipped.values())
+            if total > 0.0:
+                self.type_beliefs = {k: v / total for k, v in clipped.items()}
+            else:
+                self.type_beliefs = {}
 
 
 @dataclass
@@ -99,6 +113,9 @@ class ExecutionConfig:
     max_position_pct_of_equity: float = 20.0
     min_confidence: float = 0.50
     min_prob_up: float = 0.50
+    enforce_safety_veto: bool = True
+    max_allowed_drawdown_pct: Optional[float] = None
+    asset_scope: Literal['us_equities', 'multi_asset'] = 'us_equities'
 
 
 @dataclass
@@ -204,4 +221,80 @@ class DecisionLogEntry:
             'broker_order_id': self.broker_order_id,
             'execution_timestamp': self.execution_timestamp.isoformat() if self.execution_timestamp else None,
             'error_message': self.error_message
+        }
+
+
+@dataclass
+class RLObservation:
+    """RL-friendly observation container for hybrid technical + Bayesian features."""
+    symbol: str
+    timestamp: datetime
+    features: Dict[str, float]
+    minutes_to_close: Optional[float] = None
+
+    def normalize_observation(
+        self,
+        feature_stats: Mapping[str, Mapping[str, float]],
+        clip_abs: Optional[float] = 6.0,
+    ) -> Dict[str, float]:
+        """Z-score normalize observation values from provided train-set statistics."""
+        normalized: Dict[str, float] = {}
+        for name, raw_value in self.features.items():
+            stats = feature_stats.get(name, {})
+            mean = float(stats.get('mean', 0.0))
+            std = float(stats.get('std', 1.0))
+            if std <= 0.0:
+                std = 1.0
+            value = (float(raw_value) - mean) / std
+            if clip_abs is not None:
+                value = max(-clip_abs, min(clip_abs, value))
+            normalized[name] = value
+        if self.minutes_to_close is not None:
+            normalized['minutes_to_close'] = float(self.minutes_to_close)
+        return normalized
+
+    def to_json(self) -> str:
+        payload = {
+            'symbol': self.symbol,
+            'timestamp': self.timestamp.isoformat(),
+            'features': self.features,
+            'minutes_to_close': self.minutes_to_close,
+        }
+        return json.dumps(payload, sort_keys=True)
+
+
+@dataclass
+class RLExperience:
+    """One offline RL transition tuple (S, A, R, S', done)."""
+    episode_id: str
+    symbol: str
+    action_code: int
+    reward_immediate: float
+    done: bool
+    state: Dict[str, Any]
+    next_state: Optional[Dict[str, Any]] = None
+    reward_risk_adjusted: Optional[float] = None
+    instrument_type: str = 'equity'
+    timestamp: Optional[datetime] = None
+    account_id: Optional[str] = None
+    trade_id: Optional[str] = None
+    decision_id: Optional[int] = None
+    time_to_close: Optional[float] = None
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            'episode_id': self.episode_id,
+            'symbol': self.symbol,
+            'action_code': self.action_code,
+            'reward_immediate': self.reward_immediate,
+            'reward_risk_adjusted': self.reward_risk_adjusted,
+            'done': self.done,
+            'state': self.state,
+            'next_state': self.next_state,
+            'instrument_type': self.instrument_type,
+            'timestamp': self.timestamp.isoformat() if self.timestamp else None,
+            'account_id': self.account_id,
+            'trade_id': self.trade_id,
+            'decision_id': self.decision_id,
+            'time_to_close': self.time_to_close,
         }

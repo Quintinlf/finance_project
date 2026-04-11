@@ -246,15 +246,60 @@ def bayesian_rsi_signal(rsi_value):
     signal = max(probs, key=probs.get)
     return signal, probs
 
-def gbm(S0, mu, sigma, T = 1., N = 10, M= 1000): 
-    
-    dt = T/ float(N) 
-    S= np.array([S0]*(N+1)*M, dtype='float32').reshape(N+1, M)  
-       
-    for i in range(N):      
-        dS = S[i,]*(mu*dt +  sigma*np.sqrt(dt)*np.random.randn(M))
-        S[i+1,]=S[i,] + dS 
-    
+def gbm(
+    S0,
+    mu,
+    sigma,
+    T=1.0,
+    N=10,
+    M=1000,
+    distribution='normal',
+    t_df=5,
+    random_state=None,
+):
+    """Simulate Geometric Brownian Motion paths with optional fat-tail shocks.
+
+    Args:
+        S0: Initial asset price.
+        mu: Drift.
+        sigma: Volatility.
+        T: Horizon in years.
+        N: Number of time steps.
+        M: Number of simulated paths.
+        distribution: 'normal' or 'student_t'.
+        t_df: Degrees of freedom for Student-t innovations.
+        random_state: Optional seed for reproducibility.
+
+    Returns:
+        Array of shape (N+1, M) with simulated price paths.
+    """
+    if N <= 0:
+        raise ValueError("N must be a positive integer")
+    if M <= 0:
+        raise ValueError("M must be a positive integer")
+
+    dt = T / float(N)
+    rng = np.random.default_rng(random_state)
+
+    if distribution == 'normal':
+        shocks = rng.standard_normal((N, M))
+    elif distribution in {'student_t', 't'}:
+        if t_df <= 2:
+            raise ValueError("t_df must be > 2 so shocks have finite variance")
+        # Rescale Student-t so innovations have unit variance.
+        shocks = rng.standard_t(df=t_df, size=(N, M)) * np.sqrt((t_df - 2.0) / t_df)
+    else:
+        raise ValueError("distribution must be one of: 'normal', 'student_t'")
+
+    S = np.empty((N + 1, M), dtype=float)
+    S[0, :] = float(S0)
+
+    drift = (mu - 0.5 * sigma**2) * dt
+    diffusion_scale = sigma * np.sqrt(dt)
+    for i in range(N):
+        increments = drift + diffusion_scale * shocks[i, :]
+        S[i + 1, :] = S[i, :] * np.exp(increments)
+
     return S
 
 def bsformula(cp, s, k, rf, t, v, div):

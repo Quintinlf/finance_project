@@ -11,6 +11,7 @@ Timestamp convention: store UTC ISO-8601 strings.
 from __future__ import annotations
 
 import hashlib
+import json
 import sqlite3
 from contextlib import contextmanager
 from datetime import datetime, timezone
@@ -168,6 +169,30 @@ def init_db(db_path: Union[str, Path] = DEFAULT_DB_PATH) -> None:
             """.strip()
         )
 
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS experiences (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                episode_id TEXT,
+                account_id TEXT,
+                timestamp DATETIME,
+                symbol TEXT,
+                instrument_type TEXT,
+                state_json TEXT,
+                action_code INTEGER,
+                reward_immediate REAL,
+                reward_risk_adjusted REAL,
+                next_state_json TEXT,
+                done INTEGER,
+                trade_id TEXT,
+                decision_id INTEGER,
+                time_to_close REAL,
+                created_at DATETIME,
+                FOREIGN KEY(decision_id) REFERENCES decisions(id)
+            )
+            """.strip()
+        )
+
         # Indexes (non-breaking additions)
         conn.execute("CREATE INDEX IF NOT EXISTS idx_trades_account_status ON trades(account_id, status)")
         conn.execute("CREATE INDEX IF NOT EXISTS idx_trades_symbol_opened ON trades(symbol, opened_at)")
@@ -181,6 +206,18 @@ def init_db(db_path: Union[str, Path] = DEFAULT_DB_PATH) -> None:
         )
         conn.execute(
             "CREATE INDEX IF NOT EXISTS idx_decisions_action_time ON decisions(action, timestamp)"
+        )
+        conn.execute(
+            "CREATE INDEX IF NOT EXISTS idx_decisions_symbol_time ON decisions(symbol, timestamp)"
+        )
+        conn.execute(
+            "CREATE INDEX IF NOT EXISTS idx_experiences_episode ON experiences(episode_id)"
+        )
+        conn.execute(
+            "CREATE INDEX IF NOT EXISTS idx_experiences_symbol_time ON experiences(symbol, timestamp)"
+        )
+        conn.execute(
+            "CREATE INDEX IF NOT EXISTS idx_experiences_done_time ON experiences(done, timestamp)"
         )
 
 
@@ -548,6 +585,141 @@ def insert_decisions(
             """.strip(),
             rows,
         )
+
+
+def _to_json_text(value: Optional[Union[str, Mapping[str, Any]]]) -> Optional[str]:
+    if value is None:
+        return None
+    if isinstance(value, str):
+        return value
+    return json.dumps(dict(value), sort_keys=True)
+
+
+def _parse_json_text(value: Optional[str]) -> Optional[Dict[str, Any]]:
+    if not value:
+        return None
+    try:
+        parsed = json.loads(value)
+    except json.JSONDecodeError:
+        return None
+    return parsed if isinstance(parsed, dict) else None
+
+
+def insert_experience(
+    *,
+    episode_id: str,
+    symbol: str,
+    action_code: int,
+    reward_immediate: float,
+    done: bool,
+    state: Optional[Union[str, Mapping[str, Any]]] = None,
+    next_state: Optional[Union[str, Mapping[str, Any]]] = None,
+    reward_risk_adjusted: Optional[float] = None,
+    account_id: Optional[str] = None,
+    instrument_type: str = "equity",
+    timestamp: Optional[str] = None,
+    trade_id: Optional[str] = None,
+    decision_id: Optional[int] = None,
+    time_to_close: Optional[float] = None,
+    created_at: Optional[str] = None,
+    db_path: Union[str, Path] = DEFAULT_DB_PATH,
+) -> int:
+    """Insert one RL experience tuple (S, A, R, S', done)."""
+    ts = timestamp or utc_now_iso()
+    created_ts = created_at or utc_now_iso()
+
+    with connect(db_path) as conn:
+        cur = conn.execute(
+            """
+            INSERT INTO experiences(
+              episode_id, account_id, timestamp, symbol,
+              instrument_type, state_json, action_code,
+              reward_immediate, reward_risk_adjusted,
+              next_state_json, done, trade_id, decision_id,
+              time_to_close, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """.strip(),
+            (
+                episode_id,
+                account_id,
+                ts,
+                symbol,
+                instrument_type,
+                _to_json_text(state),
+                int(action_code),
+                float(reward_immediate),
+                reward_risk_adjusted,
+                _to_json_text(next_state),
+                1 if done else 0,
+                trade_id,
+                decision_id,
+                time_to_close,
+                created_ts,
+            ),
+        )
+        return int(cur.lastrowid)
+
+
+def get_experiences_for_training(
+    *,
+    symbol: Optional[str] = None,
+    episode_id: Optional[str] = None,
+    start_timestamp: Optional[str] = None,
+    end_timestamp: Optional[str] = None,
+    only_done: Optional[bool] = None,
+    limit: int = 1000,
+    db_path: Union[str, Path] = DEFAULT_DB_PATH,
+) -> List[Dict[str, Any]]:
+    """Fetch RL experiences with optional filters for offline training."""
+    where_parts: List[str] = []
+    params: List[Any] = []
+
+    if symbol is not None:
+        where_parts.append("symbol = ?")
+        params.append(symbol)
+    if episode_id is not None:
+        where_parts.append("episode_id = ?")
+        params.append(episode_id)
+    if start_timestamp is not None:
+        where_parts.append("timestamp >= ?")
+        params.append(start_timestamp)
+    if end_timestamp is not None:
+        where_parts.append("timestamp <= ?")
+        params.append(end_timestamp)
+    if only_done is not None:
+        where_parts.append("done = ?")
+        params.append(1 if only_done else 0)
+
+    where_clause = ""
+    if where_parts:
+        where_clause = "WHERE " + " AND ".join(where_parts)
+
+    params.append(limit)
+
+    with connect(db_path) as conn:
+        rows = conn.execute(
+            f"""
+            SELECT id, episode_id, account_id, timestamp, symbol,
+                   instrument_type, state_json, action_code,
+                   reward_immediate, reward_risk_adjusted,
+                   next_state_json, done, trade_id, decision_id,
+                   time_to_close, created_at
+            FROM experiences
+            {where_clause}
+            ORDER BY timestamp ASC, id ASC
+            LIMIT ?
+            """.strip(),
+            tuple(params),
+        ).fetchall()
+
+    output: List[Dict[str, Any]] = []
+    for row in rows:
+        item = _row_to_dict(row)
+        item["state"] = _parse_json_text(item.get("state_json"))
+        item["next_state"] = _parse_json_text(item.get("next_state_json"))
+        item["done"] = bool(item.get("done"))
+        output.append(item)
+    return output
 
 
 def get_execution_summary_sqlite(

@@ -8,11 +8,18 @@ Key function: generate_signals(universe, config) -> List[Signal]
 """
 
 import yfinance as yf
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional, Literal, cast
 from datetime import datetime
 
 from data_structures import Signal, ExecutionConfig
 from trading_functions import unified_bayesian_gp_forecast, calculate_bollinger_bands
+from game_utils import (
+    compute_market_regime,
+    infer_type_beliefs,
+    build_expected_return_path,
+    calculate_equilibrium_payoffs,
+    build_deviation_from_market_data,
+)
 
 
 def generate_signals(
@@ -56,7 +63,7 @@ def generate_signals(
     return signals
 
 
-def _generate_single_signal(symbol: str, config: ExecutionConfig) -> Signal:
+def _generate_single_signal(symbol: str, config: ExecutionConfig) -> Optional[Signal]:
     """
     Generate signal for a single symbol.
     
@@ -122,7 +129,35 @@ def _generate_single_signal(symbol: str, config: ExecutionConfig) -> Signal:
         combined_confidence = base_confidence * 0.85
     
     # Normalize signal type to lowercase for consistency
-    signal_type = base_signal.lower()
+    normalized_signal_type = str(base_signal).lower()
+    if normalized_signal_type not in {'buy', 'sell', 'hold'}:
+        normalized_signal_type = 'hold'
+    signal_type = cast(Literal['buy', 'sell', 'hold'], normalized_signal_type)
+
+    # Game-theory context: regime -> beliefs -> payoffs.
+    regime = compute_market_regime(price_history)
+    one_step_return = float(forecast_result['ensemble'].get('forecast', 0.0))
+    expected_return_path = build_expected_return_path(one_step_return, regime, horizon=5)
+    equilibrium_payoffs = calculate_equilibrium_payoffs(expected_return_path, regime)
+    deviation_payoff = build_deviation_from_market_data(
+        signal_type=signal_type,
+        current_price=float(current_price),
+        bb_width=float(bb_width),
+        price_history=price_history,
+    )
+    type_beliefs = infer_type_beliefs(
+        signal_type=signal_type,
+        rsi_value=float(rsi_value),
+        bb_z_score=float(bb_z_score),
+        regime=regime,
+    )
+
+    deviation_payoff_by_type = {
+        't_trend': float(one_step_return - 0.25 * deviation_payoff.hunting_cost),
+        't_manipulator': float(deviation_payoff.net_payoff_manipulator),
+        't_exhausted': float((-0.50 * one_step_return) + (0.20 * deviation_payoff.net_payoff_manipulator)),
+        't_range': float((0.35 * abs(one_step_return)) - (0.15 * deviation_payoff.hunting_cost)),
+    }
     
     # Build Signal object
     signal = Signal(
@@ -130,15 +165,22 @@ def _generate_single_signal(symbol: str, config: ExecutionConfig) -> Signal:
         signal_type=signal_type,
         confidence=combined_confidence,
         prob_profit=ensemble_forecast,
+        type_beliefs=type_beliefs,
         meta={
             'base_confidence': base_confidence,
             'bb_signal': bb_signal,
             'bb_z_score': bb_z_score,
             'bb_width': bb_width,
             'ensemble_z_score': ensemble_z_score,
+            'ensemble_forecast_return': one_step_return,
             'rsi_value': rsi_value,
             'signals_agree': signals_agree,
             'current_price': current_price,
+            'market_regime': regime.as_dict(),
+            'expected_return_path': expected_return_path,
+            'equilibrium_payoffs': equilibrium_payoffs.as_dict(),
+            'deviation_payoff': deviation_payoff.as_dict(),
+            'deviation_payoff_by_type': deviation_payoff_by_type,
             'full_forecast': forecast_result  # Keep for advanced use
         }
     )

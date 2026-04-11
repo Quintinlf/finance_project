@@ -12,9 +12,13 @@ This module helps optimize trading parameters dynamically based on performance.
 
 import numpy as np
 import pandas as pd
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Tuple, Optional, TYPE_CHECKING
 import warnings
+import math
 warnings.filterwarnings('ignore')
+
+if TYPE_CHECKING:
+    from data_structures import Signal
 
 
 # ===========================================================
@@ -302,6 +306,99 @@ def calculate_position_size(
     
     shares = int(risk_amount / loss_per_share)
     return max(0, shares)
+
+
+def calculate_minimax_multiplier(signal: 'Signal', verbose: bool = False) -> float:
+    """
+    Calculate minimax confidence multiplier for hybrid position sizing.
+    
+    Implements the minimax principle: size the trade as if the worst plausible market
+    regime arrives next. This is NOT a risk calculator—it is a confidence modulator.
+    
+    Formula:
+        1. Extract equilibrium payoff (eq_i) for each market type i
+        2. Extract deviation payoff (dev_i) for each market type i  
+        3. Compute worst-case payoff: P_i = eq_i + dev_i
+        4. Minimax payoff: W = min(P_i) across all types
+        5. Volatility proxy: σ = |ensemble_forecast_std| + 1e-6
+        6. Raw Kelly fraction: f_raw = W / σ
+        7. Bounded multiplier: f_mm = clip(f_raw, 0, 1)
+    
+    Args:
+        signal: Signal object with meta dict containing equilibrium/deviation payoffs
+        verbose: If True, print diagnostic info (for debugging)
+    
+    Returns:
+        Minimax multiplier (float, 0.0 to 1.0)
+        - 0.0: Adversarial setup (no edge, don't trade)
+        - 0.3-0.8: Typical confidence levels
+        - 1.0: Strong alignment across regimes  
+    
+    Note:
+        All payoff and volatility values are assumed to be already computed and stored
+        in signal.meta during signal generation (Phase 2).
+    """
+    # Try to extract equilibrium payoffs
+    eq_payoffs = signal.meta.get('equilibrium_payoffs')
+    if eq_payoffs is None:
+        if verbose:
+            print("  [minimax] No equilibrium payoffs in signal.meta; returning 0.5 (neutral)")
+        return 0.5
+    
+    # Convert TypeEquilibrium dataclass to dict if needed
+    if hasattr(eq_payoffs, 'as_dict'):
+        eq_dict = eq_payoffs.as_dict()
+    elif isinstance(eq_payoffs, dict):
+        eq_dict = eq_payoffs
+    else:
+        if verbose:
+            print(f"  [minimax] Unexpected equilibrium_payoffs type: {type(eq_payoffs)}")
+        return 0.5
+    
+    # Extract deviation payoffs for each market type
+    dev_dict = signal.meta.get('deviation_payoff_by_type', {})
+    
+    # Define market types (from game_utils.MARKET_TYPES)
+    market_types = ['t_trend', 't_manipulator', 't_exhausted', 't_range']
+    dev_keys = ['trend', 'manipulator', 'exhausted', 'range']  # Shortened keys in dict
+    
+    # Build payoff vector: P_i = eq_i + dev_i for each type
+    payoff_vector = []
+    for mt, dk in zip(market_types, dev_keys):
+        eq_i = eq_dict.get(mt, 0.0)
+        dev_i = dev_dict.get(dk, 0.0)
+        p_i = eq_i + dev_i  # Corrected formula (no regime probability weighting)
+        payoff_vector.append(p_i)
+    
+    # Compute minimax payoff: worst-case across all market types
+    w_worst_case = min(payoff_vector)
+    
+    # Extract volatility proxy from signal
+    ensemble_std = signal.meta.get('ensemble_forecast_std', 0.0)
+    if ensemble_std is None:
+        ensemble_std = 0.0
+    
+    sigma_trade = abs(float(ensemble_std)) + 1e-6  # Add epsilon to avoid divide-by-zero
+    
+    # Compute raw Kelly fraction
+    f_raw = w_worst_case / sigma_trade
+    
+    # Clip to [0, 1] for hybrid multiplier mode
+    f_mm = float(np.clip(f_raw, 0, 1))
+    
+    # Store diagnostics in signal.meta
+    signal.meta['minimax_payoff_vector'] = payoff_vector
+    signal.meta['minimax_worst_case_payoff'] = float(w_worst_case)
+    signal.meta['minimax_multiplier'] = f_mm
+    
+    if verbose:
+        print(f"  [minimax] Payoff vector: {[round(p, 4) for p in payoff_vector]}")
+        print(f"  [minimax] Worst-case W: {round(w_worst_case, 4)}")
+        print(f"  [minimax] Trade vol σ: {round(sigma_trade, 4)}")
+        print(f"  [minimax] Raw Kelly f: {round(f_raw, 4)}")
+        print(f"  [minimax] Clipped multiplier: {round(f_mm, 4)}")
+    
+    return f_mm
 
 
 def portfolio_risk_metrics(positions: List[Dict], account_value: float) -> Dict:
