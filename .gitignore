@@ -1,5 +1,14 @@
 .env
 trade_logs/*.db
 trade_logs/*.csv
+trade_logs/*.jsonl
 __pycache__/
 *.pyc
+
+# Local-only personal portfolio data
+non_algo_data/*.csv
+non_algo_data/*.ipynb
+non_algo_data/*.json
+
+# Notebook local artifacts
+.ipynb_checkpoints/

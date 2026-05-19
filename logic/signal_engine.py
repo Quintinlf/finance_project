@@ -8,8 +8,8 @@ Key function: generate_signals(universe, config) -> List[Signal]
 """
 
 import yfinance as yf
+import math
 from typing import List, Dict, Any, Optional, Literal, cast
-from datetime import datetime
 
 from data_structures import Signal, ExecutionConfig
 from trading_functions import unified_bayesian_gp_forecast, calculate_bollinger_bands
@@ -20,6 +20,24 @@ from game_utils import (
     calculate_equilibrium_payoffs,
     build_deviation_from_market_data,
 )
+
+
+def _normalize_prob_map(values: Dict[str, float]) -> Dict[str, float]:
+    clipped = {k: max(0.0, float(v)) for k, v in values.items()}
+    total = sum(clipped.values())
+    if total <= 0.0:
+        if not clipped:
+            return {}
+        uniform = 1.0 / float(len(clipped))
+        return {k: uniform for k in clipped}
+    return {k: v / total for k, v in clipped.items()}
+
+
+def _shannon_entropy(values: Dict[str, float]) -> float:
+    normalized = _normalize_prob_map(values)
+    if not normalized:
+        return 0.0
+    return float(-sum(p * math.log(max(p, 1e-12)) for p in normalized.values()))
 
 
 def generate_signals(
@@ -158,6 +176,12 @@ def _generate_single_signal(symbol: str, config: ExecutionConfig) -> Optional[Si
         't_exhausted': float((-0.50 * one_step_return) + (0.20 * deviation_payoff.net_payoff_manipulator)),
         't_range': float((0.35 * abs(one_step_return)) - (0.15 * deviation_payoff.hunting_cost)),
     }
+
+    regime_probs = regime.as_dict()
+    belief_entropy = _shannon_entropy(type_beliefs)
+    regime_entropy = _shannon_entropy(regime_probs)
+    max_belief_prob = max(type_beliefs.values()) if type_beliefs else 0.0
+    instability_tag = 'unstable' if (belief_entropy > 1.0 or max_belief_prob < 0.45) else 'stable'
     
     # Build Signal object
     signal = Signal(
@@ -176,11 +200,20 @@ def _generate_single_signal(symbol: str, config: ExecutionConfig) -> Optional[Si
             'rsi_value': rsi_value,
             'signals_agree': signals_agree,
             'current_price': current_price,
-            'market_regime': regime.as_dict(),
+            'market_regime': regime_probs,
             'expected_return_path': expected_return_path,
             'equilibrium_payoffs': equilibrium_payoffs.as_dict(),
             'deviation_payoff': deviation_payoff.as_dict(),
             'deviation_payoff_by_type': deviation_payoff_by_type,
+            'belief_entropy': belief_entropy,
+            'uncertainty_entropy': belief_entropy,
+            'regime_entropy': regime_entropy,
+            'max_belief_probability': float(max_belief_prob),
+            'uncertainty_regime_tag': instability_tag,
+            'uncertainty_source': 'signal_engine',
+            'uncertainty_gate_mode_snapshot': config.uncertainty_gate_mode,
+            'kl_divergence': None,
+            'js_divergence': None,
             'full_forecast': forecast_result  # Keep for advanced use
         }
     )

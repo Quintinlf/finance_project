@@ -37,6 +37,14 @@ This project is split into two major parts:
 
 If you only want to understand the trading bot, start with the files in `logic/` and `trading.ipynb`.
 
+## Personal Portfolio Boundary (Local-Only)
+
+This repository remains focused on the **algorithmic trading engine** (forecasting, stochastic modeling, game theory, execution, and analytics).
+
+If you use local personal portfolio exports (for example, Fidelity account files) for withdrawal planning, keep that workflow **private and local-only**. Sensitive account exports should not be committed to git.
+
+Use a separate private notebook workflow for personal withdrawal planning, and keep production algo-engine development in the tracked codebase.
+
 ## What The Trading Bot Does
 
 At a high level, each cycle does this:

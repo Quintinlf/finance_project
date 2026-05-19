@@ -193,6 +193,40 @@ def init_db(db_path: Union[str, Path] = DEFAULT_DB_PATH) -> None:
             """.strip()
         )
 
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS uncertainty_metrics (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                account_id TEXT,
+                timestamp DATETIME,
+                symbol TEXT,
+                belief_entropy REAL,
+                kl_divergence REAL,
+                veto_flag INTEGER,
+                veto_reason TEXT,
+                regime_probs_snapshot TEXT
+            )
+            """.strip()
+        )
+
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS tail_risk_metrics (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                account_id TEXT,
+                timestamp DATETIME,
+                symbol TEXT,
+                alpha REAL,
+                beta REAL,
+                stable_scale REAL,
+                stable_loc REAL,
+                cvar_estimate REAL,
+                tail_percentiles TEXT,
+                simulated_crash_freq TEXT
+            )
+            """.strip()
+        )
+
         # Indexes (non-breaking additions)
         conn.execute("CREATE INDEX IF NOT EXISTS idx_trades_account_status ON trades(account_id, status)")
         conn.execute("CREATE INDEX IF NOT EXISTS idx_trades_symbol_opened ON trades(symbol, opened_at)")
@@ -218,6 +252,12 @@ def init_db(db_path: Union[str, Path] = DEFAULT_DB_PATH) -> None:
         )
         conn.execute(
             "CREATE INDEX IF NOT EXISTS idx_experiences_done_time ON experiences(done, timestamp)"
+        )
+        conn.execute(
+            "CREATE INDEX IF NOT EXISTS idx_uncertainty_symbol_time ON uncertainty_metrics(symbol, timestamp)"
+        )
+        conn.execute(
+            "CREATE INDEX IF NOT EXISTS idx_tailrisk_symbol_time ON tail_risk_metrics(symbol, timestamp)"
         )
 
 
@@ -760,6 +800,126 @@ def get_execution_summary_sqlite(
         "total_holds": total_holds,
         "execution_rate": execution_rate,
     }
+
+
+def insert_uncertainty_metric(
+    *,
+    symbol: str,
+    belief_entropy: Optional[float] = None,
+    kl_divergence: Optional[float] = None,
+    veto_flag: Optional[bool] = None,
+    veto_reason: Optional[str] = None,
+    regime_probs_snapshot: Optional[Union[str, Mapping[str, Any]]] = None,
+    account_id: Optional[str] = None,
+    timestamp: Optional[str] = None,
+    db_path: Union[str, Path] = DEFAULT_DB_PATH,
+) -> int:
+    ts = timestamp or utc_now_iso()
+    with connect(db_path) as conn:
+        cur = conn.execute(
+            """
+            INSERT INTO uncertainty_metrics(
+                account_id, timestamp, symbol,
+                belief_entropy, kl_divergence,
+                veto_flag, veto_reason, regime_probs_snapshot
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """.strip(),
+            (
+                account_id,
+                ts,
+                symbol,
+                belief_entropy,
+                kl_divergence,
+                1 if veto_flag else 0 if veto_flag is not None else None,
+                veto_reason,
+                _to_json_text(regime_probs_snapshot),
+            ),
+        )
+        return int(cur.lastrowid)
+
+
+def insert_tail_risk_metric(
+    *,
+    symbol: str,
+    alpha: Optional[float] = None,
+    beta: Optional[float] = None,
+    stable_scale: Optional[float] = None,
+    stable_loc: Optional[float] = None,
+    cvar_estimate: Optional[float] = None,
+    tail_percentiles: Optional[Union[str, Mapping[str, Any]]] = None,
+    simulated_crash_freq: Optional[Union[str, Mapping[str, Any]]] = None,
+    account_id: Optional[str] = None,
+    timestamp: Optional[str] = None,
+    db_path: Union[str, Path] = DEFAULT_DB_PATH,
+) -> int:
+    ts = timestamp or utc_now_iso()
+    with connect(db_path) as conn:
+        cur = conn.execute(
+            """
+            INSERT INTO tail_risk_metrics(
+                account_id, timestamp, symbol,
+                alpha, beta, stable_scale, stable_loc,
+                cvar_estimate, tail_percentiles, simulated_crash_freq
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """.strip(),
+            (
+                account_id,
+                ts,
+                symbol,
+                alpha,
+                beta,
+                stable_scale,
+                stable_loc,
+                cvar_estimate,
+                _to_json_text(tail_percentiles),
+                _to_json_text(simulated_crash_freq),
+            ),
+        )
+        return int(cur.lastrowid)
+
+
+def get_tail_risk_metrics(
+    *,
+    symbol: Optional[str] = None,
+    start_timestamp: Optional[str] = None,
+    end_timestamp: Optional[str] = None,
+    limit: int = 500,
+    db_path: Union[str, Path] = DEFAULT_DB_PATH,
+) -> List[Dict[str, Any]]:
+    where_parts: List[str] = []
+    params: List[Any] = []
+    if symbol is not None:
+        where_parts.append("symbol = ?")
+        params.append(symbol)
+    if start_timestamp is not None:
+        where_parts.append("timestamp >= ?")
+        params.append(start_timestamp)
+    if end_timestamp is not None:
+        where_parts.append("timestamp <= ?")
+        params.append(end_timestamp)
+
+    where_clause = f"WHERE {' AND '.join(where_parts)}" if where_parts else ""
+    params.append(limit)
+
+    with connect(db_path) as conn:
+        rows = conn.execute(
+            f"""
+            SELECT *
+            FROM tail_risk_metrics
+            {where_clause}
+            ORDER BY timestamp DESC, id DESC
+            LIMIT ?
+            """.strip(),
+            tuple(params),
+        ).fetchall()
+
+    out: List[Dict[str, Any]] = []
+    for row in rows:
+        item = _row_to_dict(row)
+        item["tail_percentiles"] = _parse_json_text(item.get("tail_percentiles"))
+        item["simulated_crash_freq"] = _parse_json_text(item.get("simulated_crash_freq"))
+        out.append(item)
+    return out
 
 
 def get_recent_decisions_sqlite(

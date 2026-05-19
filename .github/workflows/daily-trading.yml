@@ -1,0 +1,84 @@
+name: Daily Trading Run
+
+on:
+  schedule:
+    - cron: "0 14 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-trading
+  cancel-in-progress: false
+
+jobs:
+  run-daily-trading:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      PYTHONUNBUFFERED: "1"
+      CI: "true"
+      GITHUB_ACTIONS: "true"
+      API_KEY: ${{ secrets['ALPACA_API_KEY'] }}
+      SECRET_KEY: ${{ secrets['ALPACA_SECRET_KEY'] }}
+      APCA_API_KEY_ID: ${{ secrets['ALPACA_API_KEY'] }}
+      APCA_API_SECRET_KEY: ${{ secrets['ALPACA_SECRET_KEY'] }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Ensure output folders exist
+        run: |
+          mkdir -p trade_logs
+          mkdir -p artifacts
+
+      - name: Execute daily trading entrypoint
+        env:
+          EXECUTION_MODE: "paper"
+          DRY_RUN: "false"
+          MIN_CONF: "0.50"
+          MIN_PROB_UP: "0.50"
+          TP_PCT: "0.04"
+          SL_PCT: "0.02"
+          BASE_RISK_PCT: "2.0"
+        run: |
+          python run_daily_bot.py
+
+      - name: Upload run artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-trading-artifacts
+          path: |
+            trade_logs/
+            learned_params.json
+          if-no-files-found: warn
+
+      - name: Commit and push updated trade logs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -f trade_logs/*.csv trade_logs/*.db trade_logs/*.jsonl learned_params.json 2>/dev/null || true
+
+          if git diff --cached --quiet; then
+            echo "No log changes to commit."
+            exit 0
+          fi
+
+          git commit -m "Daily automated trading run ($(date -u +'%Y-%m-%d %H:%M UTC'))"
+          git push

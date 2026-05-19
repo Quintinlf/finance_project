@@ -255,6 +255,8 @@ def gbm(
     M=1000,
     distribution='normal',
     t_df=5,
+    stable_params=None,
+    max_abs_shock=20.0,
     random_state=None,
 ):
     """Simulate Geometric Brownian Motion paths with optional fat-tail shocks.
@@ -266,8 +268,10 @@ def gbm(
         T: Horizon in years.
         N: Number of time steps.
         M: Number of simulated paths.
-        distribution: 'normal' or 'student_t'.
+        distribution: 'normal', 'student_t', or 'alpha_stable'.
         t_df: Degrees of freedom for Student-t innovations.
+        stable_params: Optional dict with alpha/beta/loc/scale for alpha-stable shocks.
+        max_abs_shock: Clip bound for heavy-tail innovations to avoid overflow.
         random_state: Optional seed for reproducibility.
 
     Returns:
@@ -288,14 +292,26 @@ def gbm(
             raise ValueError("t_df must be > 2 so shocks have finite variance")
         # Rescale Student-t so innovations have unit variance.
         shocks = rng.standard_t(df=t_df, size=(N, M)) * np.sqrt((t_df - 2.0) / t_df)
+    elif distribution == 'alpha_stable':
+        params = stable_params or {}
+        alpha = float(np.clip(params.get('alpha', 1.7), 1.10, 2.0))
+        beta = float(np.clip(params.get('beta', 0.0), -1.0, 1.0))
+        loc = float(params.get('loc', 0.0))
+        scale = float(max(params.get('scale', 1.0), 1e-8))
+        shocks = stats.levy_stable.rvs(alpha, beta, loc=loc, scale=scale, size=(N, M), random_state=rng)
+        shocks = np.clip(shocks, -float(max_abs_shock), float(max_abs_shock))
     else:
-        raise ValueError("distribution must be one of: 'normal', 'student_t'")
+        raise ValueError("distribution must be one of: 'normal', 'student_t', 'alpha_stable'")
 
     S = np.empty((N + 1, M), dtype=float)
     S[0, :] = float(S0)
 
     drift = (mu - 0.5 * sigma**2) * dt
-    diffusion_scale = sigma * np.sqrt(dt)
+    if distribution == 'alpha_stable':
+        alpha = float(np.clip((stable_params or {}).get('alpha', 1.7), 1.10, 2.0))
+        diffusion_scale = sigma * (dt ** (1.0 / alpha))
+    else:
+        diffusion_scale = sigma * np.sqrt(dt)
     for i in range(N):
         increments = drift + diffusion_scale * shocks[i, :]
         S[i + 1, :] = S[i, :] * np.exp(increments)

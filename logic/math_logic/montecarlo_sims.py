@@ -1,24 +1,211 @@
 # montecarlo_simulations.py
 
 import numpy as np
-from typing import Dict, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 import matplotlib.pyplot as plt
+
+try:
+    from scipy.stats import levy_stable
+except Exception:  # pragma: no cover - fallback guarded in runtime checks
+    levy_stable = None
 
 
 # ===========================================================
 # Monte Carlo + MCMC utilities (library-only, no printing)
 # ===========================================================
 
-def simulate_gbm_paths(S0: float, mu: float, sigma: float, T: float, dt: float, N_sim: int, seed: Optional[int] = None) -> np.ndarray:
+def estimate_alpha_stable_params(
+    observed_returns: np.ndarray,
+    *,
+    min_samples: int = 80,
+) -> Dict[str, Any]:
+    """Estimate alpha-stable parameters from observed returns.
+
+    Returns a dict with keys: alpha, beta, loc, scale, success, fallback_mode,
+    sample_size, and error (if any).
     """
-    Simulate GBM-like price paths using log-returns ~ Normal(mu*dt, sigma*sqrt(dt)).
+    data = np.asarray(observed_returns, dtype=float)
+    data = data[np.isfinite(data)]
+
+    fallback = {
+        "alpha": 2.0,
+        "beta": 0.0,
+        "loc": float(np.mean(data)) if data.size else 0.0,
+        # alpha=2 corresponds to Normal(mu, variance=2*scale^2)
+        "scale": float(max(np.std(data) / np.sqrt(2.0), 1e-8)) if data.size else 1e-4,
+        "success": False,
+        "fallback_mode": "gaussian",
+        "sample_size": int(data.size),
+        "error": None,
+    }
+
+    if data.size < min_samples:
+        fallback["error"] = f"insufficient samples ({data.size} < {min_samples})"
+        return fallback
+
+    if levy_stable is None:
+        fallback["error"] = "scipy.stats.levy_stable unavailable"
+        return fallback
+
+    try:
+        alpha, beta, loc, scale = levy_stable.fit(data)
+        alpha = float(np.clip(alpha, 1.10, 2.0))
+        beta = float(np.clip(beta, -1.0, 1.0))
+        loc = float(loc)
+        scale = float(max(scale, 1e-8))
+        return {
+            "alpha": alpha,
+            "beta": beta,
+            "loc": loc,
+            "scale": scale,
+            "success": True,
+            "fallback_mode": None,
+            "sample_size": int(data.size),
+            "error": None,
+        }
+    except Exception as exc:
+        fallback["error"] = str(exc)
+        return fallback
+
+
+def estimate_rolling_alpha_stable_params(
+    observed_returns: np.ndarray,
+    *,
+    window: int = 252,
+    step: int = 21,
+    min_samples: int = 80,
+) -> List[Dict[str, Any]]:
+    """Estimate alpha-stable parameters over rolling windows."""
+    data = np.asarray(observed_returns, dtype=float)
+    data = data[np.isfinite(data)]
+    if data.size < min_samples:
+        return []
+
+    window = max(int(window), min_samples)
+    step = max(1, int(step))
+    results: List[Dict[str, Any]] = []
+    for end_idx in range(window, data.size + 1, step):
+        start_idx = end_idx - window
+        segment = data[start_idx:end_idx]
+        params = estimate_alpha_stable_params(segment, min_samples=min_samples)
+        params["start_idx"] = int(start_idx)
+        params["end_idx"] = int(end_idx)
+        results.append(params)
+    return results
+
+
+def _sample_shocks(
+    *,
+    rng: np.random.Generator,
+    distribution: str,
+    shape: Tuple[int, int],
+    stable_params: Optional[Dict[str, float]] = None,
+    max_abs_shock: float = 20.0,
+) -> np.ndarray:
+    """Sample normalized shocks for path simulation."""
+    dist = str(distribution).lower()
+    if dist == "normal":
+        return rng.standard_normal(shape)
+
+    if dist != "alpha_stable":
+        raise ValueError("distribution must be 'normal' or 'alpha_stable'")
+
+    if levy_stable is None:
+        return rng.standard_normal(shape)
+
+    params = stable_params or {}
+    alpha = float(np.clip(params.get("alpha", 1.7), 1.10, 2.0))
+    beta = float(np.clip(params.get("beta", 0.0), -1.0, 1.0))
+    loc = float(params.get("loc", 0.0))
+    scale = float(max(params.get("scale", 1.0), 1e-8))
+
+    raw = levy_stable.rvs(alpha, beta, loc=loc, scale=scale, size=shape, random_state=rng)
+    # Keep simulation numerically stable for exponentiation while preserving heavy tails.
+    raw = np.clip(raw, -max_abs_shock, max_abs_shock)
+    return raw
+
+
+def simulate_gbm_paths(
+    S0: float,
+    mu: float,
+    sigma: float,
+    T: float,
+    dt: float,
+    N_sim: int,
+    seed: Optional[int] = None,
+    *,
+    distribution: str = "normal",
+    stable_params: Optional[Dict[str, float]] = None,
+    max_abs_shock: float = 20.0,
+) -> np.ndarray:
+    """
+    Simulate GBM-like price paths using either normal or alpha-stable shocks.
     Returns array of shape (N_sim, N_steps).
     """
     rng = np.random.default_rng(seed)
     N_steps = int(T / dt)
-    daily_returns = rng.normal(loc=(mu * dt), scale=(sigma * np.sqrt(dt)), size=(N_sim, N_steps))
+
+    shocks = _sample_shocks(
+        rng=rng,
+        distribution=distribution,
+        shape=(N_sim, N_steps),
+        stable_params=stable_params,
+        max_abs_shock=max_abs_shock,
+    )
+
+    if str(distribution).lower() == "alpha_stable":
+        alpha = float(np.clip((stable_params or {}).get("alpha", 1.7), 1.10, 2.0))
+        scale_term = sigma * (dt ** (1.0 / alpha))
+    else:
+        scale_term = sigma * np.sqrt(dt)
+
+    daily_returns = (mu * dt) + (scale_term * shocks)
     price_paths = S0 * np.exp(np.cumsum(daily_returns, axis=1))
     return price_paths
+
+
+def tail_event_frequency(
+    standardized_returns: np.ndarray,
+    *,
+    sigma_levels: Tuple[int, int, int] = (3, 5, 10),
+) -> Dict[str, float]:
+    """Count and rate of standardized return exceedances for each sigma level."""
+    data = np.asarray(standardized_returns, dtype=float)
+    data = np.abs(data[np.isfinite(data)])
+    total = int(data.size)
+    metrics: Dict[str, float] = {"n_total": float(total)}
+    if total == 0:
+        for lvl in sigma_levels:
+            metrics[f"count_{lvl}sigma"] = 0.0
+            metrics[f"rate_{lvl}sigma"] = 0.0
+        return metrics
+
+    for lvl in sigma_levels:
+        count = int(np.sum(data >= float(lvl)))
+        metrics[f"count_{lvl}sigma"] = float(count)
+        metrics[f"rate_{lvl}sigma"] = float(count / total)
+    return metrics
+
+
+def tail_event_frequency_from_paths(
+    price_paths: np.ndarray,
+    *,
+    sigma_levels: Tuple[int, int, int] = (3, 5, 10),
+) -> Dict[str, float]:
+    """Compute tail exceedance diagnostics from simulated price paths."""
+    paths = np.asarray(price_paths, dtype=float)
+    if paths.ndim != 2 or paths.shape[1] < 2:
+        return tail_event_frequency(np.array([]), sigma_levels=sigma_levels)
+
+    log_returns = np.diff(np.log(np.maximum(paths, 1e-12)), axis=1).reshape(-1)
+    sigma = float(np.std(log_returns))
+    if sigma <= 0.0:
+        return tail_event_frequency(np.array([]), sigma_levels=sigma_levels)
+
+    standardized = log_returns / sigma
+    metrics = tail_event_frequency(standardized, sigma_levels=sigma_levels)
+    metrics["sigma_reference"] = sigma
+    return metrics
 
 
 def risk_metrics(final_prices: np.ndarray, alpha: float = 0.95) -> Dict[str, float]:
@@ -134,26 +321,89 @@ def compare_fixed_vs_posterior(
     }
 
 
+def compare_normal_vs_alpha_stable(
+    *,
+    S0: float,
+    mu: float,
+    sigma: float,
+    T: float,
+    dt: float,
+    N_sim: int,
+    stable_params: Optional[Dict[str, float]] = None,
+    seed: Optional[int] = None,
+    alpha: float = 0.95,
+) -> Dict[str, Dict[str, float]]:
+    """Run paired simulations and return risk + tail diagnostics by distribution."""
+    normal_paths = simulate_gbm_paths(
+        S0,
+        mu,
+        sigma,
+        T,
+        dt,
+        N_sim,
+        seed=seed,
+        distribution="normal",
+    )
+    stable_paths = simulate_gbm_paths(
+        S0,
+        mu,
+        sigma,
+        T,
+        dt,
+        N_sim,
+        seed=seed,
+        distribution="alpha_stable",
+        stable_params=stable_params,
+    )
+
+    normal_finals = normal_paths[:, -1]
+    stable_finals = stable_paths[:, -1]
+    return {
+        "normal": {
+            **risk_metrics(normal_finals, alpha=alpha),
+            **tail_event_frequency_from_paths(normal_paths),
+        },
+        "alpha_stable": {
+            **risk_metrics(stable_finals, alpha=alpha),
+            **tail_event_frequency_from_paths(stable_paths),
+        },
+    }
+
+
 # ===============================
 # RISK ANALYSIS MODULE
 # ===============================
 
 class RiskModel:
-    def __init__(self, mu: float = 0.07, sigma: float = 0.2, T: float = 1, dt: float = 1/252):
+    def __init__(
+        self,
+        mu: float = 0.07,
+        sigma: float = 0.2,
+        T: float = 1,
+        dt: float = 1 / 252,
+        distribution: str = "normal",
+        stable_params: Optional[Dict[str, float]] = None,
+    ):
         self.mu = mu
         self.sigma = sigma
         self.T = T
         self.dt = dt
+        self.distribution = distribution
+        self.stable_params = stable_params or None
         self.rng = np.random.default_rng(42)
 
     def simulate_gbm_paths(self, S0: float, N_sim: int = 10000):
-        N_steps = int(self.T / self.dt)
-        daily_returns = self.rng.normal(
-            loc=(self.mu * self.dt),
-            scale=(self.sigma * np.sqrt(self.dt)),
-            size=(N_sim, N_steps)
+        return simulate_gbm_paths(
+            S0,
+            self.mu,
+            self.sigma,
+            self.T,
+            self.dt,
+            N_sim,
+            seed=int(self.rng.integers(0, 1_000_000)),
+            distribution=self.distribution,
+            stable_params=self.stable_params,
         )
-        return S0 * np.exp(np.cumsum(daily_returns, axis=1))
 
     def risk_metrics(self, final_prices: np.ndarray, alpha: float = 0.95) -> Dict[str, float]:
         expected_final = float(np.mean(final_prices))
@@ -193,7 +443,17 @@ class RiskModel:
         sel_params = mcmc_samples[sel_idx]
         predictive_finals = []
         for mu_post, sigma_post in sel_params:
-            paths = self.simulate_gbm_paths(S0)
+            paths = simulate_gbm_paths(
+                S0,
+                float(mu_post),
+                float(sigma_post),
+                self.T,
+                self.dt,
+                10000,
+                seed=int(self.rng.integers(0, 1_000_000)),
+                distribution=self.distribution,
+                stable_params=self.stable_params,
+            )
             predictive_finals.append(paths[:, -1])
         predictive_finals = np.concatenate(predictive_finals)
         return self.risk_metrics(predictive_finals)
@@ -211,7 +471,9 @@ def monte_carlo_strategy_simulation(
     avg_loss_pct=2.0,
     days=30,
     num_simulations=1000,
-    seed=None
+    seed=None,
+    distribution: str = "normal",
+    stable_params: Optional[Dict[str, float]] = None,
 ):
     """
     Simulate trading strategy P&L over multiple paths.
@@ -235,6 +497,7 @@ def monte_carlo_strategy_simulation(
     final_capitals = np.zeros(num_simulations)
     all_paths = []
     max_drawdowns = []
+    realized_trade_pct_changes: List[float] = []
     
     for sim in range(num_simulations):
         capital = initial_capital
@@ -258,6 +521,21 @@ def monte_carlo_strategy_simulation(
                     # Loss: sample from normal distribution around avg_loss_pct
                     pct_change = -rng.normal(avg_loss_pct, avg_loss_pct * 0.3)
                     pct_change = min(0, pct_change)  # Can't be positive
+
+                if str(distribution).lower() == "alpha_stable":
+                    shock = float(
+                        _sample_shocks(
+                            rng=rng,
+                            distribution="alpha_stable",
+                            shape=(1, 1),
+                            stable_params=stable_params,
+                            max_abs_shock=12.0,
+                        )[0, 0]
+                    )
+                    # Inflate magnitude under heavy-tail shocks while preserving trade sign.
+                    pct_change *= (1.0 + (0.20 * abs(shock)))
+
+                realized_trade_pct_changes.append(float(pct_change))
                 
                 # Apply to capital
                 capital *= (1 + pct_change / 100)
@@ -294,8 +572,29 @@ def monte_carlo_strategy_simulation(
         'prob_profit': np.mean(final_capitals > initial_capital),
         'prob_loss_50pct': np.mean(final_capitals < initial_capital * 0.5),
         'mean_max_drawdown': np.mean(max_drawdowns),
-        'worst_drawdown': np.max(max_drawdowns)
+        'worst_drawdown': np.max(max_drawdowns),
+        'distribution': distribution,
     }
+
+    # Tail-event diagnostics: frequency of 3/5/10 sigma-equivalent trade shocks.
+    trade_changes = np.asarray(realized_trade_pct_changes, dtype=float)
+    trade_sigma = float(np.std(trade_changes)) if trade_changes.size else 0.0
+    if trade_sigma > 0.0:
+        standardized = trade_changes / trade_sigma
+        tail_metrics = tail_event_frequency(standardized, sigma_levels=(3, 5, 10))
+        results['simulated_crash_freq_3sigma'] = tail_metrics.get('rate_3sigma', 0.0)
+        results['simulated_crash_freq_5sigma'] = tail_metrics.get('rate_5sigma', 0.0)
+        results['simulated_crash_freq_10sigma'] = tail_metrics.get('rate_10sigma', 0.0)
+        results['simulated_crash_count_3sigma'] = tail_metrics.get('count_3sigma', 0.0)
+        results['simulated_crash_count_5sigma'] = tail_metrics.get('count_5sigma', 0.0)
+        results['simulated_crash_count_10sigma'] = tail_metrics.get('count_10sigma', 0.0)
+    else:
+        results['simulated_crash_freq_3sigma'] = 0.0
+        results['simulated_crash_freq_5sigma'] = 0.0
+        results['simulated_crash_freq_10sigma'] = 0.0
+        results['simulated_crash_count_3sigma'] = 0.0
+        results['simulated_crash_count_5sigma'] = 0.0
+        results['simulated_crash_count_10sigma'] = 0.0
     
     return results
 
@@ -397,4 +696,7 @@ def print_monte_carlo_summary(results, initial_capital=100):
     print(f"\n⚠️  Risk Metrics:")
     print(f"   Mean Max Drawdown:  {results['mean_max_drawdown']*100:.2f}%")
     print(f"   Worst Drawdown:     {results['worst_drawdown']*100:.2f}%")
+    print(f"   Crash Freq 3σ:      {results.get('simulated_crash_freq_3sigma', 0.0):.3%}")
+    print(f"   Crash Freq 5σ:      {results.get('simulated_crash_freq_5sigma', 0.0):.3%}")
+    print(f"   Crash Freq 10σ:     {results.get('simulated_crash_freq_10sigma', 0.0):.3%}")
     print("=" * 70)

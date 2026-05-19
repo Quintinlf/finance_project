@@ -12,7 +12,7 @@ These structures provide a clean interface between signal generation,
 position management, and trade execution.
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 from typing import Optional, Dict, Any, List, Literal, Mapping, cast
 from datetime import datetime
 import json
@@ -117,6 +117,28 @@ class ExecutionConfig:
     max_allowed_drawdown_pct: Optional[float] = None
     asset_scope: Literal['us_equities', 'multi_asset'] = 'us_equities'
 
+    # Benchmark freeze controls (Phase 0)
+    benchmark_bundle_name: Optional[str] = None
+    benchmark_seed: Optional[int] = None
+    benchmark_config_snapshot_path: Optional[str] = None
+
+    # Stochastic dynamics controls (Milestone 1)
+    shock_distribution: Literal['normal', 'alpha_stable'] = 'normal'
+    enable_fat_tail_mode: bool = False
+    stable_alpha: Optional[float] = None
+    stable_beta: Optional[float] = None
+    stable_scale: Optional[float] = None
+    stable_loc: Optional[float] = None
+
+    # Uncertainty gate rollout controls (Milestone 2 scaffolding)
+    uncertainty_gate_mode: Literal['off', 'shadow', 'enforce'] = 'off'
+    max_belief_entropy: Optional[float] = None
+    max_kl_divergence: Optional[float] = None
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Serialize config so benchmark snapshots are easy to freeze to disk."""
+        return asdict(self)
+
 
 @dataclass
 class TradingSystem:
@@ -199,6 +221,16 @@ class DecisionLogEntry:
     broker_order_id: Optional[str] = None
     execution_timestamp: Optional[datetime] = None
     error_message: Optional[str] = None
+
+    # Optional diagnostics (backward-compatible)
+    belief_entropy: Optional[float] = None
+    kl_divergence: Optional[float] = None
+    uncertainty_veto_flag: Optional[bool] = None
+    uncertainty_veto_reason: Optional[str] = None
+    tail_cvar_estimate: Optional[float] = None
+    simulated_crash_freq_3sigma: Optional[float] = None
+    simulated_crash_freq_5sigma: Optional[float] = None
+    simulated_crash_freq_10sigma: Optional[float] = None
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for CSV/JSON serialization."""
@@ -220,7 +252,15 @@ class DecisionLogEntry:
             'executed': self.executed,
             'broker_order_id': self.broker_order_id,
             'execution_timestamp': self.execution_timestamp.isoformat() if self.execution_timestamp else None,
-            'error_message': self.error_message
+            'error_message': self.error_message,
+            'belief_entropy': self.belief_entropy,
+            'kl_divergence': self.kl_divergence,
+            'uncertainty_veto_flag': self.uncertainty_veto_flag,
+            'uncertainty_veto_reason': self.uncertainty_veto_reason,
+            'tail_cvar_estimate': self.tail_cvar_estimate,
+            'simulated_crash_freq_3sigma': self.simulated_crash_freq_3sigma,
+            'simulated_crash_freq_5sigma': self.simulated_crash_freq_5sigma,
+            'simulated_crash_freq_10sigma': self.simulated_crash_freq_10sigma,
         }
 
 

@@ -15,6 +15,12 @@ from typing import List, Dict, Optional, Tuple, Union
 from datetime import datetime
 from pathlib import Path
 import uuid
+from zoneinfo import ZoneInfo
+from datetime import timezone
+import csv
+
+from risk_config import load_risk_config, PortfolioRiskConfig
+from sqlite_store import DEFAULT_DB_PATH, get_latest_account_snapshot, connect
 
 from data_structures import (
     Signal, PositionState, ExecutionConfig, OrderPlan, DecisionLogEntry
@@ -33,6 +39,8 @@ from sqlite_store import (
     set_trade_broker_order_id,
     mark_trade_open,
     mark_trade_failed,
+    insert_uncertainty_metric,
+    insert_tail_risk_metric,
 )
 
 
@@ -178,6 +186,56 @@ def apply_safety_veto(
         return 'hold', 'Safety veto: actionable signal blocked due to invalid current_price'
 
     return action, None
+
+
+def apply_uncertainty_gate(
+    *,
+    action: str,
+    signal: Signal,
+    config: ExecutionConfig,
+) -> Tuple[str, Optional[str], bool, bool, Optional[str]]:
+    """Apply uncertainty gate in off/shadow/enforce modes.
+
+    Returns:
+        (next_action, next_reason, would_veto, enforced_veto, veto_reason)
+    """
+    if action not in {'buy', 'sell'}:
+        return action, None, False, False, None
+
+    mode = str(config.uncertainty_gate_mode or 'off').lower()
+    if mode == 'off':
+        return action, None, False, False, None
+
+    entropy_val = signal.meta.get('belief_entropy')
+    kl_val = signal.meta.get('kl_divergence')
+
+    reasons: List[str] = []
+    if (
+        config.max_belief_entropy is not None
+        and entropy_val is not None
+        and float(entropy_val) > float(config.max_belief_entropy)
+    ):
+        reasons.append(
+            f"entropy {float(entropy_val):.4f} > {float(config.max_belief_entropy):.4f}"
+        )
+
+    if (
+        config.max_kl_divergence is not None
+        and kl_val is not None
+        and float(kl_val) > float(config.max_kl_divergence)
+    ):
+        reasons.append(
+            f"kl {float(kl_val):.4f} > {float(config.max_kl_divergence):.4f}"
+        )
+
+    if not reasons:
+        return action, None, False, False, None
+
+    veto_reason = "Uncertainty gate: " + "; ".join(reasons)
+    if mode == 'shadow':
+        return action, None, True, False, veto_reason
+
+    return 'rejected', veto_reason, True, True, veto_reason
 
 
 # ========================================================================
@@ -476,7 +534,142 @@ def run_trading_cycle(
         5. Return all entries for logging
     """
     log_entries = []
+    
+    # Load risk configuration (single source for enforcement)
+    risk_cfg: PortfolioRiskConfig = load_risk_config()
 
+    # Compute pre-trade snapshot values (trades today, exposure, daily return)
+    # Prefer the passed db_path, else use default DB location.
+    snapshot_db_path = resolved_db_path if resolved_db_path is not None else DEFAULT_DB_PATH
+
+    def _get_trades_executed_today(db_path: Union[str, Path]) -> int:
+        # Count decisions.executed=1 where execution_timestamp in US/Eastern is today
+        count = 0
+        try:
+            with connect(db_path) as conn:
+                rows = conn.execute(
+                    "SELECT execution_timestamp FROM decisions WHERE executed = 1"
+                ).fetchall()
+
+            eastern = ZoneInfo("US/Eastern")
+            now_eastern = datetime.now(tz=eastern).date()
+
+            for r in rows:
+                ts = r[0]
+                if not ts:
+                    continue
+                try:
+                    dt = datetime.fromisoformat(ts)
+                    # assume stored as UTC if no tzinfo
+                    if dt.tzinfo is None:
+                        dt = dt.replace(tzinfo=timezone.utc)
+                    dt_eastern = dt.astimezone(eastern).date()
+                    if dt_eastern == now_eastern:
+                        count += 1
+                except Exception:
+                    continue
+        except Exception:
+            # If DB not available, return 0 to be conservative
+            return 0
+        return count
+
+    def _compute_daily_return(db_path: Union[str, Path]) -> float:
+        # Use latest account snapshot: compare equity to last_equity
+        try:
+            snap = get_latest_account_snapshot(db_path=db_path)
+            if not snap:
+                # Missing snapshot — conservative: return a sentinel to trigger block
+                return -1.0
+            equity = snap.get('equity') or snap.get('portfolio_value') or None
+            last_equity = snap.get('last_equity')
+            if equity is None or last_equity is None:
+                return -1.0
+            try:
+                return float(equity) / float(last_equity) - 1.0
+            except Exception:
+                return -1.0
+        except Exception:
+            return -1.0
+
+    def _compute_current_exposure(db_path: Union[str, Path], account_cash: float) -> float:
+        # Prefer account snapshot values
+        try:
+            snap = get_latest_account_snapshot(db_path=db_path)
+            if snap:
+                portfolio_value = snap.get('portfolio_value')
+                cash = snap.get('cash')
+                if portfolio_value is None or cash is None:
+                    return 1.0
+                try:
+                    cash = float(cash)
+                    pv = float(portfolio_value)
+                    if cash <= 0:
+                        return 1.0
+                    return pv / cash
+                except Exception:
+                    return 1.0
+        except Exception:
+            return 1.0
+        # Fallback: use provided account_cash and assume portfolio_value = account_cash
+        return 0.0
+
+    trades_today = _get_trades_executed_today(snapshot_db_path)
+    daily_return = _compute_daily_return(snapshot_db_path)
+    exposure = _compute_current_exposure(snapshot_db_path, account_cash)
+
+    # Pre-trade snapshot logging
+    snapshot_path = Path("trade_logs") / "run_snapshots.csv"
+    snapshot_path.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        write_header = not snapshot_path.exists()
+        with snapshot_path.open("a", newline="") as fh:
+            writer = csv.writer(fh)
+            if write_header:
+                writer.writerow([
+                    "utc_timestamp",
+                    "portfolio_value",
+                    "exposure",
+                    "trades_today",
+                    "daily_return",
+                    "max_portfolio_exposure",
+                    "max_position_size",
+                    "max_trades_per_day",
+                    "daily_loss_limit",
+                    "paper_trading_mode",
+                ])
+            latest_portfolio_value = None
+            try:
+                latest = get_latest_account_snapshot(db_path=snapshot_db_path)
+                latest_portfolio_value = latest.get('portfolio_value') if latest else None
+            except Exception:
+                latest_portfolio_value = None
+            writer.writerow([
+                datetime.now(timezone.utc).isoformat(),
+                latest_portfolio_value,
+                f"{exposure:.4f}",
+                trades_today,
+                f"{daily_return:.6f}",
+                risk_cfg.max_portfolio_exposure,
+                risk_cfg.max_position_size,
+                risk_cfg.max_trades_per_day,
+                risk_cfg.daily_loss_limit,
+                risk_cfg.paper_trading_mode,
+            ])
+    except Exception:
+        # best-effort logging
+        pass
+
+    # Print a concise pre-trade snapshot
+    if verbose:
+        print("\n📋 Pre-trade snapshot:")
+        print(f"   Exposure: {exposure:.4f}")
+        print(f"   Trades today (executed): {trades_today}")
+        print(f"   Daily return: {daily_return:.4f}")
+        print(f"   Risk config: exposure={risk_cfg.max_portfolio_exposure}, max_pos={risk_cfg.max_position_size}, max_trades/day={risk_cfg.max_trades_per_day}, daily_loss_limit={risk_cfg.daily_loss_limit}, paper_mode={risk_cfg.paper_trading_mode}")
+
+    # If paper trading mode is enabled, print a clear warning
+    if risk_cfg.paper_trading_mode and verbose:
+        print("🟡 PAPER TRADING MODE: True — executing in paper mode with guardrails enabled.")
     # Optional: SQLite persistence (trade attempts).
     resolved_db_path: Optional[Union[str, Path]] = None
     if db_path is not None:
@@ -504,6 +697,20 @@ def run_trading_cycle(
         # STEP 1: Decide action
         action, reason = decide_action(signal, position_state, config)
 
+        # UNCERTAINTY GATE: optional off/shadow/enforce veto layer.
+        gate_action, gate_reason, would_veto, enforced_veto, veto_reason = apply_uncertainty_gate(
+            action=action,
+            signal=signal,
+            config=config,
+        )
+        if gate_reason is not None:
+            action = gate_action
+            reason = gate_reason
+
+        signal.meta['uncertainty_would_veto'] = bool(would_veto)
+        signal.meta['uncertainty_enforced_veto'] = bool(enforced_veto)
+        signal.meta['uncertainty_veto_reason'] = veto_reason
+
         # SAFETY VETO: final guardrail before planning/execution.
         vetoed_action, veto_reason = apply_safety_veto(
             action=action,
@@ -528,6 +735,65 @@ def run_trading_cycle(
             action=action,
             reason=reason
         )
+
+        # Attach uncertainty/tail diagnostics to decision log entry.
+        log_entry.belief_entropy = (
+            float(signal.meta.get('belief_entropy')) if signal.meta.get('belief_entropy') is not None else None
+        )
+        log_entry.kl_divergence = (
+            float(signal.meta.get('kl_divergence')) if signal.meta.get('kl_divergence') is not None else None
+        )
+        log_entry.uncertainty_veto_flag = bool(would_veto)
+        log_entry.uncertainty_veto_reason = veto_reason
+        log_entry.tail_cvar_estimate = (
+            float(signal.meta.get('tail_cvar_estimate')) if signal.meta.get('tail_cvar_estimate') is not None else None
+        )
+        log_entry.simulated_crash_freq_3sigma = (
+            float(signal.meta.get('simulated_crash_freq_3sigma'))
+            if signal.meta.get('simulated_crash_freq_3sigma') is not None
+            else None
+        )
+        log_entry.simulated_crash_freq_5sigma = (
+            float(signal.meta.get('simulated_crash_freq_5sigma'))
+            if signal.meta.get('simulated_crash_freq_5sigma') is not None
+            else None
+        )
+        log_entry.simulated_crash_freq_10sigma = (
+            float(signal.meta.get('simulated_crash_freq_10sigma'))
+            if signal.meta.get('simulated_crash_freq_10sigma') is not None
+            else None
+        )
+
+        if resolved_db_path is not None:
+            insert_uncertainty_metric(
+                account_id=account_id,
+                symbol=symbol,
+                belief_entropy=log_entry.belief_entropy,
+                kl_divergence=log_entry.kl_divergence,
+                veto_flag=bool(would_veto),
+                veto_reason=veto_reason,
+                regime_probs_snapshot=signal.meta.get('market_regime'),
+                db_path=resolved_db_path,
+            )
+
+            insert_tail_risk_metric(
+                account_id=account_id,
+                symbol=symbol,
+                alpha=(float(signal.meta.get('stable_alpha')) if signal.meta.get('stable_alpha') is not None else None),
+                beta=(float(signal.meta.get('stable_beta')) if signal.meta.get('stable_beta') is not None else None),
+                stable_scale=(
+                    float(signal.meta.get('stable_scale')) if signal.meta.get('stable_scale') is not None else None
+                ),
+                stable_loc=(float(signal.meta.get('stable_loc')) if signal.meta.get('stable_loc') is not None else None),
+                cvar_estimate=log_entry.tail_cvar_estimate,
+                tail_percentiles=signal.meta.get('tail_percentiles'),
+                simulated_crash_freq={
+                    'rate_3sigma': log_entry.simulated_crash_freq_3sigma,
+                    'rate_5sigma': log_entry.simulated_crash_freq_5sigma,
+                    'rate_10sigma': log_entry.simulated_crash_freq_10sigma,
+                },
+                db_path=resolved_db_path,
+            )
         
         # STEP 2 & 3: If actionable, plan and execute
         if action in ['buy', 'sell']:
@@ -542,11 +808,113 @@ def run_trading_cycle(
                     create_trade_attempt(
                         trade_id=trade_id,
                         account_id=account_id,
+                # --- ENFORCE RISK LIMITS BEFORE EXECUTION ---
+                def enforce_risk_limits(
+                    order_plan: OrderPlan,
+                    action: str,
+                    position_state: PositionState,
+                    risk_cfg: PortfolioRiskConfig,
+                    account_cash: float,
+                    trades_today: int,
+                    daily_return: float,
+                    exposure: float,
+                    db_path: Union[str, Path]
+                ) -> Tuple[bool, Optional[OrderPlan], Optional[str]]:
+                    """Return (allowed, possibly_modified_plan, reason_if_blocked)."""
+                    # Duplicate prevention: if already long and attempting to open long
+                    if action == 'buy' and position_state.side == 'long' and position_state.quantity and position_state.quantity > 0:
+                        return False, None, 'Blocked: duplicate order - existing open position'
+
+                    # Daily loss kill switch
+                    if daily_return <= -float(risk_cfg.daily_loss_limit):
+                        return False, None, 'Daily loss limit reached — trading halted.'
+
+                    # Max trades per day
+                    if trades_today >= int(risk_cfg.max_trades_per_day) and action in {'buy', 'sell'}:
+                        return False, None, 'Blocked: max trades per day reached'
+
+                    # Exposure cap for new BUYs
+                    if action == 'buy':
+                        if exposure >= float(risk_cfg.max_portfolio_exposure):
+                            return False, None, 'Blocked: portfolio exposure limit reached'
+
+                        # Max position size (notional)
+                        try:
+                            latest = get_latest_account_snapshot(db_path=db_path)
+                            account_equity = float(latest.get('equity') or latest.get('portfolio_value') or account_cash)
+                        except Exception:
+                            account_equity = float(account_cash)
+
+                        max_dollar_position = account_equity * float(risk_cfg.max_position_size)
+                        proposed_notional = float(order_plan.quantity) * float(current_price)
+                        if proposed_notional > max_dollar_position:
+                            # Cap quantity
+                            capped_qty = int(max_dollar_position / float(current_price))
+                            if capped_qty < 1:
+                                return False, None, 'Blocked: max position size caps order below minimum notional ($1)'
+                            # create a shallow copy of order_plan with adjusted quantity
+                            new_plan = OrderPlan(
+                                symbol=order_plan.symbol,
+                                side=order_plan.side,
+                                quantity=capped_qty,
+                                entry_type=order_plan.entry_type,
+                                limit_price=order_plan.limit_price,
+                                tp_price=order_plan.tp_price,
+                                sl_price=order_plan.sl_price,
+                                time_in_force=order_plan.time_in_force,
+                                reason=(order_plan.reason + ' | Capped by max_position_size')
+                            )
+                            return True, new_plan, None
+
+                    return True, order_plan, None
+
                         symbol=symbol,
                         side=action,
                         qty=0.0,
                         entry_price=None,
                         tp_price=None,
+
+                allowed, maybe_plan, block_reason = enforce_risk_limits(
+                    order_plan=order_plan,
+                    action=action,
+                    position_state=position_state,
+                    risk_cfg=risk_cfg,
+                    account_cash=account_cash,
+                    trades_today=trades_today,
+                    daily_return=daily_return,
+                    exposure=exposure,
+                    db_path=snapshot_db_path,
+                )
+
+                if not allowed:
+                    # Log blocked decision and persist
+                    log_entry.action = 'blocked'
+                    log_entry.reason = block_reason
+                    log_entry.executed = False
+                    if resolved_db_path is not None:
+                        trade_id = str(uuid.uuid4())
+                        create_trade_attempt(
+                            trade_id=trade_id,
+                            account_id=account_id,
+                            symbol=symbol,
+                            side=action,
+                            qty=0.0,
+                            entry_price=None,
+                            tp_price=None,
+                            sl_price=None,
+                            status='BLOCKED',
+                            confidence=float(signal.confidence),
+                            error=block_reason,
+                            db_path=resolved_db_path,
+                        )
+                    if verbose:
+                        print(f"⛔ {symbol}: {block_reason}")
+                    log_entries.append(log_entry)
+                    continue
+
+                # If plan was modified by enforcement, use it
+                if maybe_plan is not None and maybe_plan is not order_plan:
+                    order_plan = maybe_plan
                         sl_price=None,
                         status='FAILED',
                         confidence=float(signal.confidence),
