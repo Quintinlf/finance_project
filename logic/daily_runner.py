@@ -8,7 +8,11 @@ from typing import Dict, List, Optional
 
 from zoneinfo import ZoneInfo
 
-from alpaca_exercises import connect_trading_client, get_account_summary, load_alpaca_creds
+from logic.alpaca_exercises import (
+    connect_trading_client,
+    get_account_summary,
+    load_alpaca_creds,
+)
 from data_structures import ExecutionConfig
 from execution_engine import run_trading_cycle
 from options_engine import (
