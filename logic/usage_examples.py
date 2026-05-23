@@ -11,12 +11,12 @@ These examples go beyond the notebook integration to show customization options.
 
 def example_1_basic_cycle():
     """Run a complete trading cycle with default settings."""
-    from signal_engine import generate_signals
-    from portfolio_state import get_position_states
-    from execution_engine import run_trading_cycle
-    from trade_log import log_decisions_batch
-    from data_structures import ExecutionConfig
-    from alpaca_exercises import connect_trading_client, get_account_summary
+    from logic.signal_engine import generate_signals
+    from logic.portfolio_state import get_position_states
+    from logic.execution_engine import run_trading_cycle
+    from logic.trade_log import log_decisions_batch
+    from logic.data_structures import ExecutionConfig
+    from logic.alpaca_exercises import connect_trading_client, get_account_summary
     
     # Configuration
     config = ExecutionConfig(
@@ -68,10 +68,10 @@ def example_1_basic_cycle():
 
 def example_2_simulation_mode():
     """Run multiple days of simulated trading with portfolio tracking."""
-    from signal_engine import generate_signals
-    from portfolio_state import get_position_states
-    from execution_engine import run_trading_cycle
-    from data_structures import ExecutionConfig
+    from logic.signal_engine import generate_signals
+    from logic.portfolio_state import get_position_states
+    from logic.execution_engine import run_trading_cycle
+    from logic.data_structures import ExecutionConfig
     
     config = ExecutionConfig(
         execution_mode='simulation',  # Simulation mode
@@ -153,8 +153,8 @@ def example_2_simulation_mode():
 
 def example_3_custom_filtering():
     """Generate signals and apply custom filtering logic."""
-    from signal_engine import generate_signals, filter_signals_by_thresholds
-    from data_structures import ExecutionConfig
+    from logic.signal_engine import generate_signals, filter_signals_by_thresholds
+    from logic.data_structures import ExecutionConfig
     
     config = ExecutionConfig(
         execution_mode='paper',
@@ -210,11 +210,11 @@ def example_4_manual_decisions():
     Manually control each step of the trading cycle.
     Useful for debugging or custom workflows.
     """
-    from signal_engine import generate_signals
-    from portfolio_state import get_position_states
-    from execution_engine import decide_action, build_order_plan, execute_order_plan
-    from data_structures import ExecutionConfig
-    from alpaca_exercises import connect_trading_client, get_account_summary
+    from logic.signal_engine import generate_signals
+    from logic.portfolio_state import get_position_states
+    from logic.execution_engine import decide_action, build_order_plan, execute_order_plan
+    from logic.data_structures import ExecutionConfig
+    from logic.alpaca_exercises import connect_trading_client, get_account_summary
     
     config = ExecutionConfig(
         execution_mode='paper',
@@ -302,7 +302,7 @@ def example_4_manual_decisions():
 
 def example_5_analyze_logs():
     """Analyze historical decision logs for insights."""
-    from trade_log import load_decision_log, get_execution_summary
+    from logic.trade_log import load_decision_log, get_execution_summary
     import pandas as pd
     
     # Load all decisions
@@ -365,11 +365,11 @@ def example_6_short_selling():
     Enable short selling to open short positions on SELL signals.
     USE WITH CAUTION - only for advanced strategies!
     """
-    from signal_engine import generate_signals
-    from portfolio_state import get_position_states
-    from execution_engine import run_trading_cycle
-    from data_structures import ExecutionConfig
-    from alpaca_exercises import connect_trading_client, get_account_summary
+    from logic.signal_engine import generate_signals
+    from logic.portfolio_state import get_position_states
+    from logic.execution_engine import run_trading_cycle
+    from logic.data_structures import ExecutionConfig
+    from logic.alpaca_exercises import connect_trading_client, get_account_summary
     
     config = ExecutionConfig(
         execution_mode='paper',
@@ -429,8 +429,8 @@ def example_7_hybrid_with_legacy():
     Use new signal engine but integrate with existing analyze_symbol_core
     for backward compatibility during transition.
     """
-    from signal_engine import generate_signals
-    from data_structures import ExecutionConfig
+    from logic.signal_engine import generate_signals
+    from logic.data_structures import ExecutionConfig
     # from trading_functions import analyze_symbol_core  # Your existing function
     
     config = ExecutionConfig(

@@ -11,9 +11,9 @@ import yfinance as yf
 import math
 from typing import List, Dict, Any, Optional, Literal, cast
 
-from data_structures import Signal, ExecutionConfig
-from trading_functions import unified_bayesian_gp_forecast, calculate_bollinger_bands
-from game_utils import (
+from logic.data_structures import Signal, ExecutionConfig
+from logic.trading_functions import unified_bayesian_gp_forecast, calculate_bollinger_bands
+from logic.game_utils import (
     compute_market_regime,
     infer_type_beliefs,
     build_expected_return_path,

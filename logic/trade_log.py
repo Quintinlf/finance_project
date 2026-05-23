@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import List, Dict, Any
 from datetime import datetime
 
-from data_structures import DecisionLogEntry
+from logic.data_structures import DecisionLogEntry
 
 
 # Default log file location

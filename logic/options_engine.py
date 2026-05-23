@@ -27,7 +27,7 @@ def get_option_chain(symbol: str) -> List[Dict[str, Any]]:
         from alpaca.data.enums import OptionsFeed  # type: ignore
 
         try:
-            from alpaca_exercises import load_alpaca_creds
+            from logic.alpaca_exercises import load_alpaca_creds
 
             creds = load_alpaca_creds()
             client = OptionHistoricalDataClient(creds.api_key, creds.secret_key)

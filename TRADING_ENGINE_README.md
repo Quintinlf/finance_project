@@ -8,6 +8,17 @@ A complete modular algorithmic trading engine that follows production-grade soft
 
 ## Architecture Overview
 
+## Import Convention (CI-Safe)
+
+All internal module imports must use explicit package paths:
+
+```python
+from logic.data_structures import ExecutionConfig
+from logic.execution_engine import run_trading_cycle
+```
+
+Avoid bare imports like `from data_structures import ...` because they can fail in clean CI environments when running from repository root.
+
 The system is built with clean separation of concerns across 5 core modules:
 
 ### 1. **data_structures.py** - Type-Safe Data Classes

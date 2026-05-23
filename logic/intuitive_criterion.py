@@ -10,8 +10,8 @@ from __future__ import annotations
 import math
 from typing import Any, Dict, Tuple
 
-from data_structures import Signal
-from game_utils import MARKET_TYPES
+from logic.data_structures import Signal
+from logic.game_utils import MARKET_TYPES
 
 
 def _normalize(weights: Dict[str, float]) -> Dict[str, float]:

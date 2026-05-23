@@ -28,14 +28,6 @@ import yfinance as yf
 import pandas as pd
 import numpy as np
 from typing import Dict, List, Tuple, Optional
-from pathlib import Path
-import sys
-
-
-# Import forecasting functions
-project_root = Path(__file__).resolve().parents[1]
-if str(project_root) not in sys.path:
-    sys.path.append(str(project_root))
 
 
 # Sector ETF definitions
@@ -70,7 +62,7 @@ def analyze_all_sectors(
     Returns:
         DataFrame with sector rankings, sorted by score
     """
-    from trading_functions import unified_bayesian_gp_forecast
+    from logic.trading_functions import unified_bayesian_gp_forecast
     
     results = []
     
@@ -217,7 +209,7 @@ def auto_trade_sectors(
     Returns:
         Dict with trade results
     """
-    from alpaca_exercises import connect_trading_client, market_order
+    from logic.alpaca_exercises import connect_trading_client, market_order
     
     print("🤖 Automated Sector Trading")
     print("="*70)

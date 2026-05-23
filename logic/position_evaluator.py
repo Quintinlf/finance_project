@@ -35,8 +35,8 @@ def evaluate_open_positions(
     Returns:
         List of evaluation dicts, one per open position
     """
-    from alpaca_exercises import get_positions
-    from trade_log import load_decision_log
+    from logic.alpaca_exercises import get_positions
+    from logic.trade_log import load_decision_log
     
     # Get current open positions from Alpaca
     positions = get_positions(trading_client)
@@ -235,7 +235,7 @@ def explain_account_balance(trading_client: TradingClient):
     - Portfolio Value = Cash + Position market values
     - Buying Power considers margin/equity
     """
-    from alpaca_exercises import get_account_summary, get_positions
+    from logic.alpaca_exercises import get_account_summary, get_positions
     
     account = get_account_summary(trading_client)
     positions = get_positions(trading_client)

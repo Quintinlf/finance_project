@@ -13,17 +13,20 @@ from logic.alpaca_exercises import (
     get_account_summary,
     load_alpaca_creds,
 )
-from data_structures import ExecutionConfig
-from execution_engine import run_trading_cycle
-from options_engine import (
+from logic.data_structures import ExecutionConfig
+from logic.execution_engine import run_trading_cycle
+from logic.options_engine import (
     filter_expirations_by_dte,
     get_option_chain,
     select_call_contract,
     select_put_contract,
 )
-from portfolio_state import get_position_states
-from signal_engine import filter_signals_by_thresholds, generate_signals
-from sqlite_store import init_db, insert_decisions
+from logic.portfolio_state import get_position_states
+from logic.signal_engine import (
+    filter_signals_by_thresholds,
+    generate_signals,
+)
+from logic.sqlite_store import init_db, insert_decisions
 
 
 DEFAULT_DB_PATH = Path("trade_logs") / "trading.db"

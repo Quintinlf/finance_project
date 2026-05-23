@@ -18,7 +18,7 @@ import math
 warnings.filterwarnings('ignore')
 
 if TYPE_CHECKING:
-    from data_structures import Signal
+    from logic.data_structures import Signal
 
 
 # ===========================================================

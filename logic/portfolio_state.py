@@ -8,8 +8,8 @@ Key function: get_position_states(execution_mode, ...) -> Dict[str, PositionStat
 """
 
 from typing import Dict, Optional
-from data_structures import PositionState, ExecutionConfig
-from alpaca_exercises import get_positions
+from logic.data_structures import PositionState, ExecutionConfig
+from logic.alpaca_exercises import get_positions
 
 
 def get_position_states(
