@@ -498,6 +498,89 @@ def execute_order_plan(
 # STEP 4: ORCHESTRATION (End-to-End Trading Cycle)
 # ========================================================================
 
+
+# ========================================================================
+# STEP 2.5: RISK LAYER (HARD GUARDRAILS)
+# ========================================================================
+
+def enforce_risk_limits(
+    order_plan: OrderPlan,
+    action: str,
+    position_state: PositionState,
+    risk_cfg: PortfolioRiskConfig,
+    account_cash: float,
+    trades_today: int,
+    daily_return: float,
+    exposure: float,
+    db_path: Union[str, Path],
+    current_price: float,
+) -> Tuple[bool, Optional[OrderPlan], Optional[str]]:
+    """Return (allowed, possibly_modified_plan, reason_if_blocked).
+
+    This enforces hard guardrails like daily loss limits, max trades per day,
+    portfolio exposure caps, and max position size. It may return a modified
+    OrderPlan with a reduced quantity when capping is applied.
+    """
+    # Duplicate prevention: if already long and attempting to open long
+    if action == 'buy' and position_state.side == 'long' and getattr(position_state, 'quantity', 0):
+        return False, None, 'Blocked: duplicate order - existing open position'
+
+    # Daily loss kill switch
+    try:
+        if daily_return <= -float(risk_cfg.daily_loss_limit):
+            return False, None, 'Daily loss limit reached — trading halted.'
+    except Exception:
+        pass
+
+    # Max trades per day
+    try:
+        if trades_today >= int(risk_cfg.max_trades_per_day) and action in {'buy', 'sell'}:
+            return False, None, 'Blocked: max trades per day reached'
+    except Exception:
+        pass
+
+    # Exposure cap for new BUYs
+    if action == 'buy':
+        try:
+            if exposure >= float(risk_cfg.max_portfolio_exposure):
+                return False, None, 'Blocked: portfolio exposure limit reached'
+        except Exception:
+            pass
+
+        # Max position size (notional)
+        try:
+            latest = get_latest_account_snapshot(db_path=db_path)
+            account_equity = float(latest.get('equity') or latest.get('portfolio_value') or account_cash)
+        except Exception:
+            account_equity = float(account_cash)
+
+        try:
+            max_dollar_position = account_equity * float(risk_cfg.max_position_size)
+            proposed_notional = float(order_plan.quantity) * float(current_price)
+            if proposed_notional > max_dollar_position:
+                # Cap quantity
+                capped_qty = int(max_dollar_position / float(current_price))
+                if capped_qty < 1:
+                    return False, None, 'Blocked: max position size caps order below minimum notional ($1)'
+                # create a shallow copy of order_plan with adjusted quantity
+                new_plan = OrderPlan(
+                    symbol=order_plan.symbol,
+                    side=order_plan.side,
+                    quantity=capped_qty,
+                    entry_type=order_plan.entry_type,
+                    limit_price=order_plan.limit_price,
+                    tp_price=order_plan.tp_price,
+                    sl_price=order_plan.sl_price,
+                    time_in_force=order_plan.time_in_force,
+                    reason=(order_plan.reason + ' | Capped by max_position_size')
+                )
+                return True, new_plan, None
+        except Exception:
+            pass
+
+    return True, order_plan, None
+
+
 def run_trading_cycle(
     signals: List[Signal],
     position_states: Dict[str, PositionState],
@@ -948,6 +1031,87 @@ def run_trading_cycle(
                         print(f"   TP: ${order_plan.tp_price:.2f}")
                     if order_plan.sl_price:
                         print(f"   SL: ${order_plan.sl_price:.2f}")
+
+                # RISK CHECK: enforce hard guardrails before attempting to persist/execute
+                try:
+                    trades_today = 0
+                    daily_return = 0.0
+                    exposure = 0.0
+                    try:
+                        # best-effort helpers if available
+                        if resolved_db_path is not None:
+                            trades_today = int(count_trades_today(db_path=resolved_db_path))
+                    except Exception:
+                        trades_today = 0
+                    try:
+                        latest_snapshot = get_latest_account_snapshot(db_path=resolved_db_path) if resolved_db_path is not None else {}
+                        daily_return = float(latest_snapshot.get('daily_return', 0.0) or 0.0)
+                        exposure = float(latest_snapshot.get('exposure', 0.0) or 0.0)
+                    except Exception:
+                        daily_return = 0.0
+                        exposure = 0.0
+
+                    allowed, maybe_plan, block_reason = enforce_risk_limits(
+                        order_plan=order_plan,
+                        action=action,
+                        position_state=position_state,
+                        risk_cfg=risk_cfg,
+                        account_cash=account_cash,
+                        trades_today=trades_today,
+                        daily_return=daily_return,
+                        exposure=exposure,
+                        db_path=resolved_db_path,
+                        current_price=current_price,
+                    )
+                    if not allowed:
+                        log_entry.action = 'rejected'
+                        log_entry.reason = block_reason
+                        log_entry.error_message = block_reason
+                        if resolved_db_path is not None:
+                            trade_id = str(uuid.uuid4())
+                            create_trade_attempt(
+                                trade_id=trade_id,
+                                account_id=account_id,
+                                symbol=symbol,
+                                side=action,
+                                qty=0.0,
+                                entry_price=None,
+                                tp_price=None,
+                                sl_price=None,
+                                status='FAILED',
+                                confidence=float(signal.confidence),
+                                error=block_reason,
+                                db_path=resolved_db_path,
+                            )
+                        log_entries.append(log_entry)
+                        continue
+
+                    # If risk layer returned a modified plan, adopt it
+                    if maybe_plan is not None and maybe_plan is not order_plan:
+                        order_plan = maybe_plan
+                except Exception:
+                    # On any unexpected error in risk checks, proceed conservatively and block
+                    log_entry.action = 'rejected'
+                    log_entry.reason = 'Risk check subsystem error'
+                    log_entry.error_message = 'Risk check subsystem error'
+                    if resolved_db_path is not None:
+                        trade_id = str(uuid.uuid4())
+                        create_trade_attempt(
+                            trade_id=trade_id,
+                            account_id=account_id,
+                            symbol=symbol,
+                            side=action,
+                            qty=0.0,
+                            entry_price=None,
+                            tp_price=None,
+                            sl_price=None,
+                            status='FAILED',
+                            confidence=float(signal.confidence),
+                            error=log_entry.error_message,
+                            db_path=resolved_db_path,
+                        )
+                    log_entries.append(log_entry)
+                    continue
                 
                 # Persist trade attempt before execution (hard rule: attempted_at set at INSERT time).
                 trade_id: Optional[str] = None
