@@ -882,131 +882,33 @@ def run_trading_cycle(
         if action in ['buy', 'sell']:
             # Get current price from signal meta
             current_price = signal.meta.get('current_price', 0.0)
-            
-            if current_price == 0.0:
+
+            # Early-exit when price is missing or invalid. Persist a FAILED attempt if DB enabled.
+            if current_price is None or float(current_price) <= 0.0:
                 log_entry.error_message = 'No current price available in signal'
-                # Persist as a FAILED attempt (engine-side skip).
+                log_entry.action = 'rejected'
+                log_entry.executed = False
+
                 if resolved_db_path is not None:
                     trade_id = str(uuid.uuid4())
                     create_trade_attempt(
                         trade_id=trade_id,
                         account_id=account_id,
-                # --- ENFORCE RISK LIMITS BEFORE EXECUTION ---
-                def enforce_risk_limits(
-                    order_plan: OrderPlan,
-                    action: str,
-                    position_state: PositionState,
-                    risk_cfg: PortfolioRiskConfig,
-                    account_cash: float,
-                    trades_today: int,
-                    daily_return: float,
-                    exposure: float,
-                    db_path: Union[str, Path]
-                ) -> Tuple[bool, Optional[OrderPlan], Optional[str]]:
-                    """Return (allowed, possibly_modified_plan, reason_if_blocked)."""
-                    # Duplicate prevention: if already long and attempting to open long
-                    if action == 'buy' and position_state.side == 'long' and position_state.quantity and position_state.quantity > 0:
-                        return False, None, 'Blocked: duplicate order - existing open position'
-
-                    # Daily loss kill switch
-                    if daily_return <= -float(risk_cfg.daily_loss_limit):
-                        return False, None, 'Daily loss limit reached — trading halted.'
-
-                    # Max trades per day
-                    if trades_today >= int(risk_cfg.max_trades_per_day) and action in {'buy', 'sell'}:
-                        return False, None, 'Blocked: max trades per day reached'
-
-                    # Exposure cap for new BUYs
-                    if action == 'buy':
-                        if exposure >= float(risk_cfg.max_portfolio_exposure):
-                            return False, None, 'Blocked: portfolio exposure limit reached'
-
-                        # Max position size (notional)
-                        try:
-                            latest = get_latest_account_snapshot(db_path=db_path)
-                            account_equity = float(latest.get('equity') or latest.get('portfolio_value') or account_cash)
-                        except Exception:
-                            account_equity = float(account_cash)
-
-                        max_dollar_position = account_equity * float(risk_cfg.max_position_size)
-                        proposed_notional = float(order_plan.quantity) * float(current_price)
-                        if proposed_notional > max_dollar_position:
-                            # Cap quantity
-                            capped_qty = int(max_dollar_position / float(current_price))
-                            if capped_qty < 1:
-                                return False, None, 'Blocked: max position size caps order below minimum notional ($1)'
-                            # create a shallow copy of order_plan with adjusted quantity
-                            new_plan = OrderPlan(
-                                symbol=order_plan.symbol,
-                                side=order_plan.side,
-                                quantity=capped_qty,
-                                entry_type=order_plan.entry_type,
-                                limit_price=order_plan.limit_price,
-                                tp_price=order_plan.tp_price,
-                                sl_price=order_plan.sl_price,
-                                time_in_force=order_plan.time_in_force,
-                                reason=(order_plan.reason + ' | Capped by max_position_size')
-                            )
-                            return True, new_plan, None
-
-                    return True, order_plan, None
-
                         symbol=symbol,
                         side=action,
                         qty=0.0,
                         entry_price=None,
                         tp_price=None,
-
-                allowed, maybe_plan, block_reason = enforce_risk_limits(
-                    order_plan=order_plan,
-                    action=action,
-                    position_state=position_state,
-                    risk_cfg=risk_cfg,
-                    account_cash=account_cash,
-                    trades_today=trades_today,
-                    daily_return=daily_return,
-                    exposure=exposure,
-                    db_path=snapshot_db_path,
-                )
-
-                if not allowed:
-                    # Log blocked decision and persist
-                    log_entry.action = 'blocked'
-                    log_entry.reason = block_reason
-                    log_entry.executed = False
-                    if resolved_db_path is not None:
-                        trade_id = str(uuid.uuid4())
-                        create_trade_attempt(
-                            trade_id=trade_id,
-                            account_id=account_id,
-                            symbol=symbol,
-                            side=action,
-                            qty=0.0,
-                            entry_price=None,
-                            tp_price=None,
-                            sl_price=None,
-                            status='BLOCKED',
-                            confidence=float(signal.confidence),
-                            error=block_reason,
-                            db_path=resolved_db_path,
-                        )
-                    if verbose:
-                        print(f"⛔ {symbol}: {block_reason}")
-                    log_entries.append(log_entry)
-                    continue
-
-                # If plan was modified by enforcement, use it
-                if maybe_plan is not None and maybe_plan is not order_plan:
-                    order_plan = maybe_plan
                         sl_price=None,
                         status='FAILED',
                         confidence=float(signal.confidence),
                         error=log_entry.error_message,
                         db_path=resolved_db_path,
                     )
+
                 log_entries.append(log_entry)
                 continue
-            
+
             try:
                 # Build order plan
                 order_plan = build_order_plan(
