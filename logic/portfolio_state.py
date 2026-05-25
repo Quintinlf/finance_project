@@ -8,14 +8,15 @@ Key function: get_position_states(execution_mode, ...) -> Dict[str, PositionStat
 """
 
 from typing import Dict, Optional
+
+from logic.broker_client import BrokerClient
 from logic.data_structures import PositionState, ExecutionConfig
-from logic.alpaca_exercises import get_positions
 
 
 def get_position_states(
     universe: list,
     config: ExecutionConfig,
-    alpaca_client=None,
+    broker_client: BrokerClient,
     sim_portfolio: Optional[Dict[str, PositionState]] = None
 ) -> Dict[str, PositionState]:
     """
@@ -24,7 +25,7 @@ def get_position_states(
     Args:
         universe: list of symbols to check
         config: execution configuration
-        alpaca_client: Alpaca trading client (required for paper/live)
+        broker_client: broker client for paper/live trading
         sim_portfolio: simulation portfolio dict (required for simulation mode)
     
     Returns:
@@ -33,7 +34,7 @@ def get_position_states(
     
     Process:
         - If simulation mode: read from sim_portfolio
-        - If paper/live: query Alpaca positions
+        - If paper/live: query broker positions
         - Ensure every symbol in universe has an entry
     """
     position_states = {}
@@ -57,37 +58,19 @@ def get_position_states(
                 )
     
     else:
-        # Query Alpaca for paper/live positions
-        if alpaca_client is None:
-            raise ValueError("Alpaca client required for paper/live trading")
-        
-        alpaca_positions = get_positions(alpaca_client)
-        
-        # Build position map from Alpaca data
-        alpaca_position_map = {}
-        for pos in alpaca_positions:
-            qty = float(pos.qty)
-            alpaca_position_map[pos.symbol] = PositionState(
-                symbol=pos.symbol,
-                quantity=qty,
-                avg_entry_price=float(pos.avg_entry_price),
-                side='long' if qty > 0 else 'short' if qty < 0 else 'flat',
-                source='alpaca',
-                unrealized_pl=float(pos.unrealized_pl)
-            )
-        
+        broker_positions = broker_client.get_position_states(universe)
+
         # Ensure all universe symbols have entries
         for symbol in universe:
-            if symbol in alpaca_position_map:
-                position_states[symbol] = alpaca_position_map[symbol]
+            if symbol in broker_positions:
+                position_states[symbol] = broker_positions[symbol]
             else:
-                # No position at broker
                 position_states[symbol] = PositionState(
                     symbol=symbol,
                     quantity=0,
                     avg_entry_price=0.0,
                     side='flat',
-                    source='alpaca'
+                    source='paper'
                 )
     
     return position_states

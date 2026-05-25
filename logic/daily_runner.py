@@ -8,11 +8,7 @@ from typing import Dict, List, Optional
 
 from zoneinfo import ZoneInfo
 
-from logic.alpaca_exercises import (
-    connect_trading_client,
-    get_account_summary,
-    load_alpaca_creds,
-)
+from logic.broker_client import create_broker_client
 from logic.data_structures import ExecutionConfig
 from logic.execution_engine import run_trading_cycle
 from logic.options_engine import (
@@ -58,24 +54,7 @@ def _save_last_run_date(run_date: str) -> None:
 
 def _is_market_day(trading_client) -> bool:
     eastern_now = _get_eastern_now()
-    if eastern_now.weekday() >= 5:
-        return False
-
-    if trading_client is None:
-        return True
-
-    try:
-        from alpaca.trading.requests import GetCalendarRequest  # type: ignore
-
-        req = GetCalendarRequest(
-            start=eastern_now.date().isoformat(),
-            end=eastern_now.date().isoformat(),
-        )
-        calendar = trading_client.get_calendar(req)
-        return len(calendar) > 0
-    except Exception as exc:
-        logging.warning("Market calendar check failed (%s). Falling back to weekday check.", exc)
-        return True
+    return trading_client.is_market_open(eastern_now.date())
 
 
 def _summarize_decisions(decision_log) -> Dict[str, int]:
@@ -115,14 +94,9 @@ def run_daily_trading_cycle(
     eastern_now = _get_eastern_now()
     logging.info("DATE/TIME: %s", eastern_now.isoformat())
 
-    trading_client = None
-    try:
-        creds = load_alpaca_creds()
-        trading_client = connect_trading_client(creds, paper=(execution_mode != "live"))
-    except Exception as exc:
-        logging.warning("Alpaca credentials unavailable (%s). Running without broker client.", exc)
+    broker_client = create_broker_client(execution_mode=execution_mode)
 
-    if not _is_market_day(trading_client):
+    if not _is_market_day(broker_client):
         logging.info("Not a US market day. Skipping run.")
         return
 
@@ -164,16 +138,9 @@ def run_daily_trading_cycle(
     else:
         logging.info("OPTIONS CANDIDATES FOR TODAY: none")
 
-    account_cash = 0.0
-    account_id = None
-    if trading_client is not None:
-        summary = get_account_summary(trading_client)
-        account_cash = float(summary.get("cash", 0.0) or 0.0)
-        try:
-            acct = trading_client.get_account()
-            account_id = str(getattr(acct, "id", "") or "paper-default")
-        except Exception:
-            account_id = "paper-default"
+    summary = broker_client.get_account_summary()
+    account_cash = float(summary.get("cash", 0.0) or 0.0)
+    account_id = str(summary.get("account_id") or "paper-default")
 
     DEFAULT_DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     try:
@@ -185,7 +152,7 @@ def run_daily_trading_cycle(
     position_states = get_position_states(
         universe=universe,
         config=config,
-        alpaca_client=trading_client if config.execution_mode in ["paper", "live"] else None,
+        broker_client=broker_client,
         sim_portfolio={},
     )
 
@@ -195,7 +162,7 @@ def run_daily_trading_cycle(
         position_states=position_states,
         config=config,
         account_cash=account_cash,
-        alpaca_client=trading_client if config.execution_mode in ["paper", "live"] else None,
+        broker_client=broker_client,
         sim_portfolio={},
         db_path=DEFAULT_DB_PATH,
         account_id=account_id,

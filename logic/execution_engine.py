@@ -22,14 +22,12 @@ import csv
 from logic.risk_config import load_risk_config, PortfolioRiskConfig
 from logic.sqlite_store import DEFAULT_DB_PATH, get_latest_account_snapshot, connect
 
+from logic.broker_client import BrokerClient
 from logic.data_structures import (
     Signal, PositionState, ExecutionConfig, OrderPlan, DecisionLogEntry
 )
 from logic.portfolio_state import update_sim_portfolio_after_trade
 from logic.risk_management import calculate_position_size, calculate_minimax_multiplier
-from alpaca.trading.enums import TimeInForce
-from alpaca.trading.client import TradingClient
-from logic.alpaca_exercises import place_market_order, place_bracket_order
 from logic.intuitive_criterion import survives_intuitive_criterion
 
 from logic.sqlite_store import (
@@ -361,7 +359,7 @@ def build_order_plan(
 def execute_order_plan(
     order_plan: OrderPlan,
     config: ExecutionConfig,
-    alpaca_client=None,
+    broker_client: BrokerClient,
     sim_portfolio: Optional[Dict[str, PositionState]] = None,
     verbose: bool = True
 ) -> Dict:
@@ -371,7 +369,7 @@ def execute_order_plan(
     Args:
         order_plan: the order to execute
         config: execution configuration
-        alpaca_client: Alpaca trading client (required for paper/live)
+        broker_client: broker client for paper/live execution
         sim_portfolio: simulation portfolio (required for simulation)
         verbose: whether to print execution details
     
@@ -436,36 +434,28 @@ def execute_order_plan(
         
         return result
     
-    # PAPER / LIVE MODE (Alpaca)
+    # PAPER / LIVE MODE (broker client)
     if config.execution_mode in ['paper', 'live']:
-        if alpaca_client is None:
-            result['error_message'] = 'Paper/live mode requires alpaca_client'
-            return result
-        
         try:
             # Choose between bracket and market order
             if order_plan.has_bracket():
                 # Submit bracket order (market entry + TP/SL)
-                # place_bracket_order returns a dict: {'main_order': <Order>, ...}
-                order_result = place_bracket_order(
-                    client=alpaca_client,
+                order_result = broker_client.place_bracket_order(
                     symbol=order_plan.symbol,
                     qty=order_plan.quantity,
                     side=order_plan.side,
                     take_profit_price=order_plan.tp_price,
                     stop_loss_price=order_plan.sl_price,
-                    tif=TimeInForce.DAY
+                    time_in_force=order_plan.time_in_force,
                 )
                 order = order_result['main_order'] if order_result else None
             else:
                 # Submit simple market order
-                # place_market_order returns an Order object directly
-                order = place_market_order(
-                    client=alpaca_client,
+                order = broker_client.place_market_order(
                     symbol=order_plan.symbol,
                     qty=order_plan.quantity,
                     side=order_plan.side,
-                    tif=TimeInForce.DAY
+                    time_in_force=order_plan.time_in_force,
                 )
             
             if order:
@@ -485,7 +475,7 @@ def execute_order_plan(
         except Exception as e:
             result['error_message'] = str(e)
             if verbose:
-                print(f"❌ Alpaca execution error: {e}")
+                print(f"❌ Broker execution error: {e}")
         
         return result
     
@@ -586,7 +576,7 @@ def run_trading_cycle(
     position_states: Dict[str, PositionState],
     config: ExecutionConfig,
     account_cash: float,
-    alpaca_client: Optional[TradingClient] = None,
+    broker_client: BrokerClient,
     sim_portfolio: Optional[Dict[str, PositionState]] = None,
     verbose: bool = True,
     db_path: Optional[Union[str, Path]] = None,
@@ -600,7 +590,7 @@ def run_trading_cycle(
         position_states: dict of current positions
         config: execution configuration
         account_cash: available cash for position sizing
-        alpaca_client: Alpaca client (for paper/live)
+        broker_client: broker client (for paper/live)
         sim_portfolio: simulation portfolio (for simulation)
         verbose: print progress
     
@@ -620,6 +610,8 @@ def run_trading_cycle(
     
     # Load risk configuration (single source for enforcement)
     risk_cfg: PortfolioRiskConfig = load_risk_config()
+
+    resolved_db_path: Optional[Union[str, Path]] = None
 
     # Compute pre-trade snapshot values (trades today, exposure, daily return)
     # Prefer the passed db_path, else use default DB location.
@@ -754,7 +746,6 @@ def run_trading_cycle(
     if risk_cfg.paper_trading_mode and verbose:
         print("🟡 PAPER TRADING MODE: True — executing in paper mode with guardrails enabled.")
     # Optional: SQLite persistence (trade attempts).
-    resolved_db_path: Optional[Union[str, Path]] = None
     if db_path is not None:
         resolved_db_path = db_path
         init_db(resolved_db_path)
@@ -1039,7 +1030,7 @@ def run_trading_cycle(
                 execution_result = execute_order_plan(
                     order_plan=order_plan,
                     config=config,
-                    alpaca_client=alpaca_client,
+                    broker_client=broker_client,
                     sim_portfolio=sim_portfolio,
                     verbose=verbose
                 )

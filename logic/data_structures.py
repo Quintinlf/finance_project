@@ -68,14 +68,14 @@ class PositionState:
         quantity: number of shares (positive for long, negative for short, 0 for flat)
         avg_entry_price: average price paid for current position
         side: 'long', 'short', or 'flat'
-        source: where this data came from ('alpaca' or 'sim')
+        source: where this data came from ('alpaca', 'paper', or 'sim')
         unrealized_pl: current unrealized profit/loss (optional)
     """
     symbol: str
     quantity: float
     avg_entry_price: float
     side: Literal['long', 'short', 'flat']
-    source: Literal['alpaca', 'sim']
+    source: Literal['alpaca', 'paper', 'sim']
     unrealized_pl: Optional[float] = None
     
     def __post_init__(self):

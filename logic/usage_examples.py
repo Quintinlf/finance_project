@@ -16,7 +16,7 @@ def example_1_basic_cycle():
     from logic.execution_engine import run_trading_cycle
     from logic.trade_log import log_decisions_batch
     from logic.data_structures import ExecutionConfig
-    from logic.alpaca_exercises import connect_trading_client, get_account_summary
+    from logic.broker_client import create_broker_client
     
     # Configuration
     config = ExecutionConfig(
@@ -33,9 +33,9 @@ def example_1_basic_cycle():
     
     universe = ["AAPL", "MSFT", "GOOGL", "AMZN", "TSLA"]
     
-    # Connect to Alpaca
-    trading_client = connect_trading_client(paper=True)
-    account = get_account_summary(trading_client)
+    # Connect to a broker client
+    broker_client = create_broker_client(execution_mode='paper')
+    account = broker_client.get_account_summary()
     
     # 1. Generate signals
     print("Generating signals...")
@@ -43,7 +43,7 @@ def example_1_basic_cycle():
     
     # 2. Get current positions
     print("Loading portfolio state...")
-    position_states = get_position_states(universe, config, trading_client)
+    position_states = get_position_states(universe, config, broker_client)
     
     # 3. Run trading cycle
     print("Executing trading cycle...")
@@ -52,7 +52,7 @@ def example_1_basic_cycle():
         position_states=position_states,
         config=config,
         account_cash=account['cash'],
-        alpaca_client=trading_client
+        broker_client=broker_client
     )
     
     # 4. Log decisions
@@ -72,6 +72,7 @@ def example_2_simulation_mode():
     from logic.portfolio_state import get_position_states
     from logic.execution_engine import run_trading_cycle
     from logic.data_structures import ExecutionConfig
+    from logic.broker_client import create_broker_client
     
     config = ExecutionConfig(
         execution_mode='simulation',  # Simulation mode
@@ -91,6 +92,7 @@ def example_2_simulation_mode():
     sim_portfolio = {}
     initial_cash = 100000.0
     current_cash = initial_cash
+    broker_client = create_broker_client(execution_mode='simulation', initial_cash=initial_cash)
     
     # Simulate 5 trading days
     for day in range(1, 6):
@@ -105,7 +107,7 @@ def example_2_simulation_mode():
         position_states = get_position_states(
             universe=universe,
             config=config,
-            alpaca_client=None,  # No Alpaca in simulation
+            broker_client=broker_client,
             sim_portfolio=sim_portfolio
         )
         
@@ -115,7 +117,7 @@ def example_2_simulation_mode():
             position_states=position_states,
             config=config,
             account_cash=current_cash,
-            alpaca_client=None,
+            broker_client=broker_client,
             sim_portfolio=sim_portfolio  # Pass for updates
         )
         
@@ -214,7 +216,7 @@ def example_4_manual_decisions():
     from logic.portfolio_state import get_position_states
     from logic.execution_engine import decide_action, build_order_plan, execute_order_plan
     from logic.data_structures import ExecutionConfig
-    from logic.alpaca_exercises import connect_trading_client, get_account_summary
+    from logic.broker_client import create_broker_client
     
     config = ExecutionConfig(
         execution_mode='paper',
@@ -230,8 +232,8 @@ def example_4_manual_decisions():
     
     universe = ["AAPL"]
     
-    trading_client = connect_trading_client(paper=True)
-    account = get_account_summary(trading_client)
+    broker_client = create_broker_client(execution_mode='paper')
+    account = broker_client.get_account_summary()
     
     # Step 1: Generate signal for one stock
     signals = generate_signals(universe, config)
@@ -243,7 +245,7 @@ def example_4_manual_decisions():
     print(f"  Prob Profit: {signal.prob_profit:.2f}")
     
     # Step 2: Get position state
-    position_states = get_position_states(universe, config, trading_client)
+    position_states = get_position_states(universe, config, broker_client)
     position_state = position_states[signal.symbol]
     
     print(f"\nPosition State:")
@@ -283,7 +285,7 @@ def example_4_manual_decisions():
         result = execute_order_plan(
             order_plan=order_plan,
             config=config,
-            alpaca_client=trading_client,
+            broker_client=broker_client,
             sim_portfolio=None
         )
         
@@ -369,7 +371,7 @@ def example_6_short_selling():
     from logic.portfolio_state import get_position_states
     from logic.execution_engine import run_trading_cycle
     from logic.data_structures import ExecutionConfig
-    from logic.alpaca_exercises import connect_trading_client, get_account_summary
+    from logic.broker_client import create_broker_client
     
     config = ExecutionConfig(
         execution_mode='paper',
@@ -385,8 +387,8 @@ def example_6_short_selling():
     
     universe = ["AAPL", "MSFT", "GOOGL"]
     
-    trading_client = connect_trading_client(paper=True)
-    account = get_account_summary(trading_client)
+    broker_client = create_broker_client(execution_mode='paper')
+    account = broker_client.get_account_summary()
     
     print("⚠️  SHORT SELLING ENABLED ⚠️")
     print("SELL signals on flat positions will open SHORT positions\n")
@@ -395,7 +397,7 @@ def example_6_short_selling():
     signals = generate_signals(universe, config)
     
     # Get positions
-    position_states = get_position_states(universe, config, trading_client)
+    position_states = get_position_states(universe, config, broker_client)
     
     # Run cycle
     decision_log = run_trading_cycle(
@@ -403,7 +405,7 @@ def example_6_short_selling():
         position_states=position_states,
         config=config,
         account_cash=account['cash'],
-        alpaca_client=trading_client
+        broker_client=broker_client
     )
     
     # Show decisions
