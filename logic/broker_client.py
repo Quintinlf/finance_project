@@ -36,7 +36,7 @@ class BrokerClient(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def place_market_order(self, *, symbol: str, qty: int, side: str, time_in_force: str = "day") -> Any:
+    def place_market_order(self, *, symbol: str, qty: int, side: str, time_in_force: str = "day") -> Optional[BrokerOrder]:
         raise NotImplementedError
 
     @abstractmethod
@@ -49,7 +49,7 @@ class BrokerClient(ABC):
         take_profit_price: float,
         stop_loss_price: float,
         time_in_force: str = "day",
-    ) -> Any:
+    ) -> Optional[BrokerOrder]:
         raise NotImplementedError
 
     @abstractmethod
@@ -207,12 +207,30 @@ class AlpacaBrokerClient(BrokerClient):
                 )
         return position_states
 
-    def place_market_order(self, *, symbol: str, qty: int, side: str, time_in_force: str = "day") -> Any:
+    def place_market_order(self, *, symbol: str, qty: int, side: str, time_in_force: str = "day") -> BrokerOrder:
         from alpaca.trading.enums import TimeInForce
         from logic.alpaca_exercises import place_market_order
 
         tif = TimeInForce.DAY if str(time_in_force).lower() == "day" else TimeInForce.GTC
-        return place_market_order(self._trading_client, symbol=symbol, qty=qty, side=side, tif=tif)
+        alpaca_order = place_market_order(self._trading_client, symbol=symbol, qty=qty, side=side, tif=tif)
+        
+        # Wrap Alpaca order response in BrokerOrder dataclass
+        if alpaca_order is None:
+            return None
+        
+        status = getattr(alpaca_order, "status", "accepted")
+        if hasattr(status, "value"):
+            status = status.value
+        
+        return BrokerOrder(
+            id=str(getattr(alpaca_order, "id", "")),
+            symbol=str(getattr(alpaca_order, "symbol", symbol)),
+            qty=int(getattr(alpaca_order, "qty", qty)),
+            side=side,
+            order_type="market",
+            status=str(status),
+            submitted_at=datetime.utcnow(),
+        )
 
     def place_bracket_order(
         self,
@@ -223,12 +241,12 @@ class AlpacaBrokerClient(BrokerClient):
         take_profit_price: float,
         stop_loss_price: float,
         time_in_force: str = "day",
-    ) -> Any:
+    ) -> BrokerOrder:
         from alpaca.trading.enums import TimeInForce
         from logic.alpaca_exercises import place_bracket_order
 
         tif = TimeInForce.DAY if str(time_in_force).lower() == "day" else TimeInForce.GTC
-        return place_bracket_order(
+        result = place_bracket_order(
             self._trading_client,
             symbol=symbol,
             qty=qty,
@@ -236,6 +254,28 @@ class AlpacaBrokerClient(BrokerClient):
             take_profit_price=take_profit_price,
             stop_loss_price=stop_loss_price,
             tif=tif,
+        )
+        
+        # Wrap Alpaca bracket order response in BrokerOrder dataclass
+        if result is None:
+            return None
+        
+        main_order = result.get("main_order") if isinstance(result, dict) else result
+        if main_order is None:
+            return None
+        
+        status = getattr(main_order, "status", "accepted")
+        if hasattr(status, "value"):
+            status = status.value
+        
+        return BrokerOrder(
+            id=str(getattr(main_order, "id", "")),
+            symbol=str(getattr(main_order, "symbol", symbol)),
+            qty=int(getattr(main_order, "qty", qty)),
+            side=side,
+            order_type="bracket",
+            status=str(status),
+            submitted_at=datetime.utcnow(),
         )
 
     def is_market_open(self, trading_date: date) -> bool:

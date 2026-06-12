@@ -395,7 +395,7 @@ def execute_order_plan(
     # DRY RUN: log but don't execute
     if config.dry_run:
         if verbose:
-            print(f"🟡 DRY RUN: {order_plan.side.upper()} {order_plan.quantity} {order_plan.symbol} @ market")
+            print(f"[DRY RUN] {order_plan.side.upper()} {order_plan.quantity} {order_plan.symbol} @ market")
             if order_plan.has_bracket():
                 print(f"   TP: ${order_plan.tp_price:.2f}, SL: ${order_plan.sl_price:.2f}")
         result['error_message'] = 'Dry run mode - order not executed'
@@ -425,12 +425,12 @@ def execute_order_plan(
             result['updated_sim_portfolio'] = updated_portfolio
             
             if verbose:
-                print(f"✅ SIMULATION: {order_plan.side.upper()} {order_plan.quantity} {order_plan.symbol}")
+                print(f"[SIMULATION] {order_plan.side.upper()} {order_plan.quantity} {order_plan.symbol}")
         
         except Exception as e:
             result['error_message'] = str(e)
             if verbose:
-                print(f"❌ Simulation error: {e}")
+                print(f"[SIMULATION ERROR] {e}")
         
         return result
     
@@ -440,7 +440,8 @@ def execute_order_plan(
             # Choose between bracket and market order
             if order_plan.has_bracket():
                 # Submit bracket order (market entry + TP/SL)
-                order_result = broker_client.place_bracket_order(
+                # Both PaperBrokerClient and AlpacaBrokerClient now return BrokerOrder
+                order = broker_client.place_bracket_order(
                     symbol=order_plan.symbol,
                     qty=order_plan.quantity,
                     side=order_plan.side,
@@ -448,7 +449,6 @@ def execute_order_plan(
                     stop_loss_price=order_plan.sl_price,
                     time_in_force=order_plan.time_in_force,
                 )
-                order = order_result['main_order'] if order_result else None
             else:
                 # Submit simple market order
                 order = broker_client.place_market_order(
@@ -464,7 +464,7 @@ def execute_order_plan(
                 
                 if verbose:
                     order_type = "BRACKET" if order_plan.has_bracket() else "MARKET"
-                    print(f"✅ {config.execution_mode.upper()}: {order_type} {order_plan.side.upper()} " +
+                    print(f"[OK] {config.execution_mode.upper()}: {order_type} {order_plan.side.upper()} " +
                           f"{order_plan.quantity} {order_plan.symbol}")
                     if order_plan.has_bracket():
                         print(f"   TP: ${order_plan.tp_price:.2f} | SL: ${order_plan.sl_price:.2f}")
@@ -475,7 +475,7 @@ def execute_order_plan(
         except Exception as e:
             result['error_message'] = str(e)
             if verbose:
-                print(f"❌ Broker execution error: {e}")
+                print(f"[ERROR] Broker execution error: {e}")
         
         return result
     
@@ -744,7 +744,7 @@ def run_trading_cycle(
 
     # If paper trading mode is enabled, print a clear warning
     if risk_cfg.paper_trading_mode and verbose:
-        print("🟡 PAPER TRADING MODE: True — executing in paper mode with guardrails enabled.")
+        print("[INFO] PAPER TRADING MODE: True — executing in paper mode with guardrails enabled.")
     # Optional: SQLite persistence (trade attempts).
     if db_path is not None:
         resolved_db_path = db_path
@@ -1071,7 +1071,7 @@ def run_trading_cycle(
             except Exception as e:
                 log_entry.error_message = f"Planning/execution error: {str(e)}"
                 if verbose:
-                    print(f"❌ Error on {symbol}: {e}")
+                    print(f"[ERROR] Error on {symbol}: {e}")
 
                 if resolved_db_path is not None:
                     trade_id = str(uuid.uuid4())

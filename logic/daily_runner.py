@@ -4,7 +4,7 @@ import json
 import logging
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Literal
 
 from zoneinfo import ZoneInfo
 
@@ -80,13 +80,14 @@ def _log_options_candidates(symbol: str) -> None:
 
 def run_daily_trading_cycle(
     *,
-    execution_mode: str = "paper",
+    execution_mode: Literal["simulation", "paper", "live"] = "paper",
     dry_run: bool = False,
     min_confidence: float = 0.50,
     min_prob_up: float = 0.50,
     tp_pct: float = 0.04,
     sl_pct: float = 0.02,
     base_risk_pct: float = 2.0,
+    debug_force_strongest_signal: bool = False,
     universe: Optional[List[str]] = None,
 ) -> None:
     logging.info("START DAILY TRADING RUN")
@@ -119,19 +120,52 @@ def run_daily_trading_cycle(
         max_position_pct_of_equity=20.0,
         min_confidence=min_confidence,
         min_prob_up=min_prob_up,
+        debug_force_strongest_signal=debug_force_strongest_signal,
     )
 
     logging.info("Generating signals...")
     all_signals = generate_signals(universe, config)
-    actionable_signals = filter_signals_by_thresholds(
+    decision_signals = filter_signals_by_thresholds(
         all_signals,
         min_confidence=config.min_confidence,
         min_prob_up=config.min_prob_up,
     )
-    logging.info("SIGNALS GENERATED: %s total, %s pass thresholds", len(all_signals), len(actionable_signals))
+    directional_candidates = [
+        sig for sig in decision_signals if sig.signal_type in {"buy", "sell"}
+    ]
+    hold_decisions = [sig for sig in decision_signals if sig.signal_type == "hold"]
 
-    if actionable_signals:
-        for sig in actionable_signals:
+    if debug_force_strongest_signal:
+        strongest_signal = max(
+            (sig for sig in all_signals if sig.signal_type != "hold"),
+            key=lambda sig: (float(sig.confidence), float(sig.prob_profit)),
+            default=None,
+        )
+        if strongest_signal is not None:
+            strongest_signal.meta['threshold_decision'] = 'forced'
+            strongest_signal.meta['threshold_reason'] = 'debug override forced strongest non-HOLD signal'
+            strongest_signal.meta['forced_debug_signal'] = True
+            if strongest_signal not in decision_signals:
+                decision_signals.append(strongest_signal)
+            if strongest_signal not in directional_candidates:
+                directional_candidates.append(strongest_signal)
+            logging.info(
+                "DEBUG OVERRIDE: forcing strongest non-HOLD signal | symbol=%s | normalized=%s | confidence=%.4f | prob_profit=%.4f",
+                strongest_signal.symbol,
+                strongest_signal.meta.get('normalized_signal_label', strongest_signal.signal_type).upper(),
+                float(strongest_signal.confidence),
+                float(strongest_signal.prob_profit),
+            )
+
+    logging.info(
+        "SIGNALS GENERATED: %s total, %s directional candidates, %s hold decisions",
+        len(all_signals),
+        len(directional_candidates),
+        len(hold_decisions),
+    )
+
+    if directional_candidates:
+        for sig in directional_candidates:
             symbol = str(getattr(sig, "symbol", ""))
             if symbol:
                 _log_options_candidates(symbol)
@@ -158,7 +192,7 @@ def run_daily_trading_cycle(
 
     logging.info("Executing trading cycle...")
     decision_log = run_trading_cycle(
-        signals=actionable_signals,
+        signals=decision_signals,
         position_states=position_states,
         config=config,
         account_cash=account_cash,

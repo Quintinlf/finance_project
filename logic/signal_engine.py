@@ -7,9 +7,11 @@ for generating trading signals across a universe of stocks.
 Key function: generate_signals(universe, config) -> List[Signal]
 """
 
-import yfinance as yf
+import logging
 import math
 from typing import List, Dict, Any, Optional, Literal, cast
+
+import yfinance as yf
 
 from logic.data_structures import Signal, ExecutionConfig
 from logic.trading_functions import unified_bayesian_gp_forecast, calculate_bollinger_bands
@@ -38,6 +40,17 @@ def _shannon_entropy(values: Dict[str, float]) -> float:
     if not normalized:
         return 0.0
     return float(-sum(p * math.log(max(p, 1e-12)) for p in normalized.values()))
+
+
+def _normalize_forecast_label(label: Any) -> Literal['buy', 'sell', 'hold']:
+    normalized = str(label).strip().lower().replace("_", " ")
+    if normalized in {"strong buy", "buy"}:
+        return cast(Literal['buy', 'sell', 'hold'], 'buy')
+    if normalized in {"strong sell", "sell"}:
+        return cast(Literal['buy', 'sell', 'hold'], 'sell')
+    if normalized in {"hold", "neutral"}:
+        return cast(Literal['buy', 'sell', 'hold'], 'hold')
+    return cast(Literal['buy', 'sell', 'hold'], 'hold')
 
 
 def generate_signals(
@@ -130,10 +143,15 @@ def _generate_single_signal(symbol: str, config: ExecutionConfig) -> Optional[Si
     ensemble_z_score = forecast_result['ensemble'].get('z_score', 0.0)
     rsi_value = forecast_result['rsi']['value']
     
-    # Check signal alignment
+    original_signal_label = str(base_signal)
+    normalized_signal_type = _normalize_forecast_label(original_signal_label)
+    signal_strength = float(base_confidence)
+
+    # Check signal alignment using the normalized directional label.
+    normalized_signal_upper = normalized_signal_type.upper()
     signals_agree = (
-        (base_signal == 'BUY' and bb_signal == 'BUY') or
-        (base_signal == 'SELL' and bb_signal == 'SELL') or
+        (normalized_signal_upper == 'BUY' and bb_signal == 'BUY') or
+        (normalized_signal_upper == 'SELL' and bb_signal == 'SELL') or
         bb_signal == 'NEUTRAL'
     )
     
@@ -146,11 +164,17 @@ def _generate_single_signal(symbol: str, config: ExecutionConfig) -> Optional[Si
         # Reduce confidence when they conflict
         combined_confidence = base_confidence * 0.85
     
-    # Normalize signal type to lowercase for consistency
-    normalized_signal_type = str(base_signal).lower()
-    if normalized_signal_type not in {'buy', 'sell', 'hold'}:
-        normalized_signal_type = 'hold'
-    signal_type = cast(Literal['buy', 'sell', 'hold'], normalized_signal_type)
+    if original_signal_label != normalized_signal_upper:
+        logging.info(
+            "SIGNAL NORMALIZED | symbol=%s | original=%s | normalized=%s | confidence=%.4f | prob_profit=%.4f",
+            symbol,
+            original_signal_label,
+            normalized_signal_upper,
+            float(combined_confidence),
+            float(ensemble_forecast),
+        )
+
+    signal_type = normalized_signal_type
 
     # Game-theory context: regime -> beliefs -> payoffs.
     regime = compute_market_regime(price_history)
@@ -192,10 +216,15 @@ def _generate_single_signal(symbol: str, config: ExecutionConfig) -> Optional[Si
         type_beliefs=type_beliefs,
         meta={
             'base_confidence': base_confidence,
+            'signal_strength': signal_strength,
+            'original_signal_label': original_signal_label,
+            'normalized_signal_label': normalized_signal_upper,
+            'confidence_adjustment_factor': float(combined_confidence / signal_strength) if signal_strength else 0.0,
             'bb_signal': bb_signal,
             'bb_z_score': bb_z_score,
             'bb_width': bb_width,
             'ensemble_z_score': ensemble_z_score,
+            'ensemble_forecast_std': float(forecast_result['ensemble'].get('std', 0.0) or 0.0),
             'ensemble_forecast_return': one_step_return,
             'rsi_value': rsi_value,
             'signals_agree': signals_agree,
@@ -237,18 +266,64 @@ def filter_signals_by_thresholds(
     Returns:
         Filtered list containing only actionable signals
     """
-    actionable = []
+    evaluated: List[Signal] = []
     
     for signal in signals:
-        # Only consider buy/sell signals (skip hold)
+        original_label = str(signal.meta.get('original_signal_label', signal.signal_type.upper()))
+        normalized_label = str(signal.meta.get('normalized_signal_label', signal.signal_type)).upper()
+        confidence = float(signal.confidence)
+        prob_profit = float(signal.prob_profit)
+
         if signal.signal_type == 'hold':
+            reason = 'explicit HOLD decision retained for logging'
+            signal.meta['threshold_decision'] = 'hold'
+            signal.meta['threshold_reason'] = reason
+            logging.info(
+                "SIGNAL FILTER | symbol=%s | original=%s | normalized=%s | confidence=%.4f | prob_profit=%.4f | decision=HOLD | reason=%s",
+                signal.symbol,
+                original_label,
+                normalized_label,
+                confidence,
+                prob_profit,
+                reason,
+            )
+            evaluated.append(signal)
             continue
         
-        # Check thresholds
-        meets_confidence = signal.confidence >= min_confidence
-        meets_prob = signal.prob_profit >= min_prob_up
-        
+        meets_confidence = confidence >= min_confidence
+        meets_prob = prob_profit >= min_prob_up
+
         if meets_confidence and meets_prob:
-            actionable.append(signal)
+            signal.meta['threshold_decision'] = 'pass'
+            signal.meta['threshold_reason'] = 'meets confidence and probability thresholds'
+            logging.info(
+                "SIGNAL FILTER | symbol=%s | original=%s | normalized=%s | confidence=%.4f | prob_profit=%.4f | decision=PASS | reason=meets confidence and probability thresholds",
+                signal.symbol,
+                original_label,
+                normalized_label,
+                confidence,
+                prob_profit,
+            )
+            evaluated.append(signal)
+            continue
+
+        rejection_reasons = []
+        if not meets_confidence:
+            rejection_reasons.append(f"confidence {confidence:.4f} < {min_confidence:.4f}")
+        if not meets_prob:
+            rejection_reasons.append(f"prob_profit {prob_profit:.4f} < {min_prob_up:.4f}")
+        reason = '; '.join(rejection_reasons) if rejection_reasons else 'unknown threshold failure'
+        signal.meta['threshold_decision'] = 'reject'
+        signal.meta['threshold_rejection_reason'] = reason
+        signal.meta['threshold_reason'] = reason
+        logging.info(
+            "SIGNAL FILTER | symbol=%s | original=%s | normalized=%s | confidence=%.4f | prob_profit=%.4f | decision=REJECT | reason=%s",
+            signal.symbol,
+            original_label,
+            normalized_label,
+            confidence,
+            prob_profit,
+            reason,
+        )
     
-    return actionable
+    return evaluated

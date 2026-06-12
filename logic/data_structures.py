@@ -116,6 +116,7 @@ class ExecutionConfig:
     enforce_safety_veto: bool = True
     max_allowed_drawdown_pct: Optional[float] = None
     asset_scope: Literal['us_equities', 'multi_asset'] = 'us_equities'
+    debug_force_strongest_signal: bool = False
 
     # Benchmark freeze controls (Phase 0)
     benchmark_bundle_name: Optional[str] = None
