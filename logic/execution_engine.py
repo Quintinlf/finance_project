@@ -40,6 +40,7 @@ from logic.sqlite_store import (
     insert_uncertainty_metric,
     insert_tail_risk_metric,
 )
+from logic.model_performance_tracker import init_model_performance_tracker, log_model_decision
 
 
 # ========================================================================
@@ -752,6 +753,35 @@ def run_trading_cycle(
     elif config.execution_mode in ['paper', 'live', 'simulation']:
         # Keep opt-in by default; notebook can explicitly pass db_path.
         resolved_db_path = None
+
+    performance_db_path = resolved_db_path if resolved_db_path is not None else DEFAULT_DB_PATH
+    try:
+        init_model_performance_tracker(performance_db_path)
+    except Exception:
+        # Instrumentation is best-effort only.
+        pass
+
+    def _log_component_performance_event(current_signal: Signal, current_entry: DecisionLogEntry) -> None:
+        try:
+            component_snapshot = current_signal.meta.get('component_snapshot')
+            if not component_snapshot:
+                return
+            decision_key = (
+                f"{current_entry.timestamp.astimezone(timezone.utc).isoformat()}"
+                f"|{current_entry.symbol}|{current_entry.signal_type}|{current_entry.action}"
+            )
+            log_model_decision(
+                decision_key=decision_key,
+                timestamp=current_entry.timestamp,
+                symbol=current_entry.symbol,
+                action=current_entry.action,
+                price_at_signal=current_signal.meta.get('current_price'),
+                component_snapshot=component_snapshot,
+                next_day_return=None,  # backfilled asynchronously when next-day data is available
+                db_path=performance_db_path,
+            )
+        except Exception:
+            return
     
     for signal in signals:
         symbol = signal.symbol
@@ -897,6 +927,7 @@ def run_trading_cycle(
                         db_path=resolved_db_path,
                     )
 
+                _log_component_performance_event(signal, log_entry)
                 log_entries.append(log_entry)
                 continue
 
@@ -976,6 +1007,7 @@ def run_trading_cycle(
                                 error=block_reason,
                                 db_path=resolved_db_path,
                             )
+                        _log_component_performance_event(signal, log_entry)
                         log_entries.append(log_entry)
                         continue
 
@@ -1003,6 +1035,7 @@ def run_trading_cycle(
                             error=log_entry.error_message,
                             db_path=resolved_db_path,
                         )
+                    _log_component_performance_event(signal, log_entry)
                     log_entries.append(log_entry)
                     continue
                 
@@ -1094,6 +1127,8 @@ def run_trading_cycle(
             # action was 'hold' or 'rejected' - no execution
             if verbose and action == 'rejected':
                 print(f"⛔ {symbol}: {reason}")
+
+        _log_component_performance_event(signal, log_entry)
         
         log_entries.append(log_entry)
     

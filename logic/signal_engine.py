@@ -22,6 +22,7 @@ from logic.game_utils import (
     calculate_equilibrium_payoffs,
     build_deviation_from_market_data,
 )
+from logic.model_performance_tracker import build_component_snapshot
 
 
 def _normalize_prob_map(values: Dict[str, float]) -> Dict[str, float]:
@@ -206,6 +207,14 @@ def _generate_single_signal(symbol: str, config: ExecutionConfig) -> Optional[Si
     regime_entropy = _shannon_entropy(regime_probs)
     max_belief_prob = max(type_beliefs.values()) if type_beliefs else 0.0
     instability_tag = 'unstable' if (belief_entropy > 1.0 or max_belief_prob < 0.45) else 'stable'
+    component_snapshot = build_component_snapshot(
+        forecast_result=forecast_result,
+        bb_signal=bb_signal,
+        bb_z_score=float(bb_z_score),
+        ensemble_signal=normalized_signal_upper,
+        ensemble_confidence=float(combined_confidence),
+        rsi_value=float(rsi_value),
+    )
     
     # Build Signal object
     signal = Signal(
@@ -243,6 +252,7 @@ def _generate_single_signal(symbol: str, config: ExecutionConfig) -> Optional[Si
             'uncertainty_gate_mode_snapshot': config.uncertainty_gate_mode,
             'kl_divergence': None,
             'js_divergence': None,
+            'component_snapshot': component_snapshot,
             'full_forecast': forecast_result  # Keep for advanced use
         }
     )
