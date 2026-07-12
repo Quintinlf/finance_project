@@ -654,13 +654,17 @@ def calculate_bollinger_bands(df, window=20, num_std=2):
     return df
 
 
-def unified_bayesian_gp_forecast(ticker, period="200d", interval="1d", num_lags=10):
-    
+def unified_bayesian_gp_forecast(ticker, period="200d", interval="1d", num_lags=10, show_plot=False):
+
     """
     Combined Bayesian Linear Regression + Gaussian Process forecasting system.
     Uses both approaches and creates an ensemble prediction with uncertainty quantification.
-    
+
     NEW: Incorporates Bollinger Bands z-scores as features for better signal quality.
+
+    show_plot: if False (default), the forecast chart is built but never shown, so
+    calling this from the automated signal pipeline doesn't pop up a blocking GUI
+    window per symbol. Pass True for interactive/notebook use.
     """
     # Download and prepare data
     df = yf.download(ticker, period=period, interval=interval, progress=False)
@@ -919,8 +923,13 @@ def unified_bayesian_gp_forecast(ticker, period="200d", interval="1d", num_lags=
     plt.grid(True, alpha=0.3)
     
     plt.tight_layout()
-    plt.show()
-    
+    if show_plot:
+        plt.show()
+    else:
+        # FIX: Explicitly close the figure to prevent blocking headless/CI environments
+        # and to eliminate memory leaks across sequential asset loops in the universe.
+        plt.close()
+
     # ==============================
     # 📋 RESULTS SUMMARY
     # ==============================

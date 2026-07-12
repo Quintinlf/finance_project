@@ -1,9 +1,14 @@
 import logging
 import os
 import sys
+import json
+import importlib
+import uuid
+from pathlib import Path
 from typing import Literal, cast
 
-from logic.daily_runner import run_daily_trading_cycle
+DEBUG_LOG_PATH = Path("debug-73ea0c.log")
+DEBUG_SESSION_ID = "73ea0c"
 
 
 def configure_logging() -> None:
@@ -13,8 +18,88 @@ def configure_logging() -> None:
     )
 
 
+def _debug_log(*, run_id: str, hypothesis_id: str, location: str, message: str, data: dict) -> None:
+    # #region agent log
+    payload = {
+        "sessionId": DEBUG_SESSION_ID,
+        "id": f"log_{uuid.uuid4().hex}",
+        "timestamp": int(datetime_now_ms()),
+        "location": location,
+        "message": message,
+        "data": data,
+        "runId": run_id,
+        "hypothesisId": hypothesis_id,
+    }
+    try:
+        with DEBUG_LOG_PATH.open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps(payload, ensure_ascii=True) + "\n")
+    except Exception:
+        pass
+    # #endregion
+
+
+def datetime_now_ms() -> int:
+    from datetime import datetime, timezone
+
+    return int(datetime.now(timezone.utc).timestamp() * 1000)
+
+
+def _verify_required_packages() -> tuple[bool, list[str]]:
+    required = [
+        "numpy",
+        "pandas",
+        "scipy",
+        "matplotlib",
+        "plotly",
+        "yfinance",
+        "dotenv",
+        "tabulate",
+        "alpaca",
+        "emcee",
+    ]
+    missing: list[str] = []
+    for pkg in required:
+        try:
+            importlib.import_module(pkg)
+        except ModuleNotFoundError:
+            missing.append(pkg)
+    return (len(missing) == 0, missing)
+
+
 def main() -> int:
+    # FIX: Force stdout/stderr to UTF-8 to prevent UnicodeEncodeError on Windows environments.
+    # Without this, console prints containing emojis (e.g., 🔵, 📊) crash silently
+    # under standard cp1252 encoding, causing the signal pipeline to fail with 0 signals.
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
     configure_logging()
+    run_id = f"env-check-{uuid.uuid4().hex[:8]}"
+
+    has_deps, missing = _verify_required_packages()
+    # #region agent log
+    _debug_log(
+        run_id=run_id,
+        hypothesis_id="H1",
+        location="run_daily_bot.py:main",
+        message="Dependency preflight result",
+        data={"python_executable": sys.executable, "missing_count": len(missing), "missing": missing},
+    )
+    # #endregion
+    if not has_deps:
+        # #region agent log
+        _debug_log(
+            run_id=run_id,
+            hypothesis_id="H3",
+            location="run_daily_bot.py:main",
+            message="Startup halted due to missing dependencies",
+            data={"missing": missing},
+        )
+        # #endregion
+        for name in missing:
+            print(f"MISSING DEPENDENCY: {name}")
+        print("Install required packages with: python -m pip install -r requirements.txt")
+        return 1
 
     execution_mode_raw = os.getenv("EXECUTION_MODE", "paper").strip().lower()
     if execution_mode_raw not in {"simulation", "paper", "live"}:
@@ -35,6 +120,8 @@ def main() -> int:
     universe_env = os.getenv("UNIVERSE", "").strip()
     universe = [s.strip().upper() for s in universe_env.split(",") if s.strip()] or None
 
+    from logic.daily_runner import run_daily_trading_cycle
+
     run_daily_trading_cycle(
         execution_mode=execution_mode,
         dry_run=dry_run,
@@ -52,6 +139,11 @@ def main() -> int:
 if __name__ == "__main__":
     try:
         sys.exit(main())
+    except ModuleNotFoundError as exc:
+        missing_name = getattr(exc, "name", None) or str(exc).replace("No module named ", "").strip("'\"")
+        print(f"MISSING DEPENDENCY: {missing_name}")
+        print("Install required packages with: python -m pip install -r requirements.txt")
+        sys.exit(1)
     except Exception:
         logging.exception("Daily trading run failed")
         sys.exit(1)
