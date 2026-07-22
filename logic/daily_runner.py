@@ -18,6 +18,7 @@ from logic.options_engine import (
     select_put_contract,
 )
 from logic.portfolio_state import get_position_states
+from logic.position_reconciler import reconcile_position_exits
 from logic.signal_engine import (
     filter_signals_by_thresholds,
     generate_signals,
@@ -122,6 +123,28 @@ def run_daily_trading_cycle(
         min_prob_up=min_prob_up,
         debug_force_strongest_signal=debug_force_strongest_signal,
     )
+
+    # Protect existing positions FIRST, every cycle, regardless of signals or
+    # universe membership. This is the guardrail for the Mar-24 failure mode:
+    # any open long lacking an active exit order gets a fresh GTC OCO exit so
+    # positions never sit unmanaged (and never silently pin portfolio exposure).
+    try:
+        exit_results = reconcile_position_exits(
+            broker_client=broker_client,
+            tp_pct=tp_pct,
+            sl_pct=sl_pct,
+            dry_run=dry_run,
+            verbose=True,
+            exit_style="stop",  # downside-only: protect the floor, let winners run
+        )
+        attached = sum(1 for r in exit_results if r.action == "attached")
+        logging.info(
+            "EXIT RECONCILE SUMMARY: %s positions checked, %s exits attached",
+            len(exit_results),
+            attached,
+        )
+    except Exception as exc:
+        logging.warning("Exit reconciliation failed (%s). Continuing with cycle.", exc)
 
     logging.info("Generating signals...")
     all_signals = generate_signals(universe, config)

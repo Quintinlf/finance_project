@@ -208,7 +208,7 @@ class DecisionLogEntry:
     execution_mode: str
     
     # Decision
-    action: Literal['buy', 'sell', 'hold', 'rejected']
+    action: Literal['buy', 'sell', 'hold', 'rejected', 'skipped']
     reason: str
     
     # Order details (if action was buy/sell)

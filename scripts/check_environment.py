@@ -64,6 +64,12 @@ def _probe_package(import_name: str) -> Tuple[bool, str]:
 
 
 def main() -> int:
+    # FIX: Force stdout/stderr to UTF-8 to prevent UnicodeEncodeError on Windows environments.
+    # Without this, console prints containing emojis (e.g., 🔵, 📊) crash silently
+    # under standard cp1252 encoding, causing the signal pipeline to fail with 0 signals.
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
     run_id = f"check-env-{uuid.uuid4().hex[:8]}"
     print("Finance_project environment check")
     print(f"Python executable: {sys.executable}")

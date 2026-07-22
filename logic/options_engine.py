@@ -23,7 +23,6 @@ def get_option_chain(symbol: str) -> List[Dict[str, Any]]:
     try:
         from alpaca.data.historical import OptionHistoricalDataClient  # type: ignore
         from alpaca.data.requests import OptionChainRequest  # type: ignore
-        from alpaca.data.timeframe import TimeFrame  # type: ignore
         from alpaca.data.enums import OptionsFeed  # type: ignore
 
         try:
@@ -34,10 +33,7 @@ def get_option_chain(symbol: str) -> List[Dict[str, Any]]:
         except Exception:
             client = OptionHistoricalDataClient()
         req = OptionChainRequest(
-            symbol_or_symbols=[symbol],
-            start=datetime.utcnow() - timedelta(days=3),
-            end=datetime.utcnow(),
-            timeframe=TimeFrame.Day,
+            underlying_symbol=symbol,
             feed=OptionsFeed.OPRA,
         )
         chain = client.get_option_chain(req)
@@ -146,3 +142,82 @@ def select_call_contract(chain: List[Dict[str, Any]], target_delta: float = 0.30
             "delta": None,
         }
     return selected
+
+
+def _get_spot_price(symbol: str) -> Optional[float]:
+    """Best-effort last daily close, used to find the strike closest to ATM."""
+    try:
+        import yfinance as yf
+
+        data = yf.download(symbol, period="5d", interval="1d", progress=False)
+        if data.empty:
+            return None
+        close = data["Close"].iloc[-1]
+        return float(close.item() if hasattr(close, "item") else close)
+    except Exception:
+        return None
+
+
+def _build_osi_symbol(symbol: str, expiration: str, option_type: str, strike: float) -> str:
+    """Build a standard OSI option symbol, e.g. AAPL260717C00325000."""
+    exp_date = datetime.fromisoformat(expiration).date()
+    exp_part = exp_date.strftime("%y%m%d")
+    type_char = "C" if option_type == "call" else "P"
+    strike_part = f"{int(round(strike * 1000)):08d}"
+    return f"{symbol.upper()}{exp_part}{type_char}{strike_part}"
+
+
+def get_target_option_contract(
+    symbol: str,
+    signal_direction: str,
+    expiry_days_out: int = 7,
+) -> Optional[str]:
+    """
+    Resolve the OSI symbol for the strike closest to at-the-money, at the
+    expiration closest to expiry_days_out, for a directional signal.
+
+    signal_direction: 'LONG' -> call, 'SHORT' -> put.
+    Returns None if no chain, no matching expiration, or no spot price is
+    available. Note: the chain returned by get_option_chain doesn't carry
+    volume/open-interest, so this picks nearest-to-spot strike only — it
+    does not filter by liquidity.
+    """
+    direction = str(signal_direction).upper()
+    if direction not in {"LONG", "SHORT"}:
+        raise ValueError(f"signal_direction must be 'LONG' or 'SHORT', got {signal_direction!r}")
+    option_type = "call" if direction == "LONG" else "put"
+
+    chain = get_option_chain(symbol)
+    if not chain:
+        return None
+
+    today = datetime.utcnow().date()
+
+    def _dte(exp_str: str) -> Optional[int]:
+        try:
+            return (datetime.fromisoformat(exp_str).date() - today).days
+        except Exception:
+            return None
+
+    expirations = {row.get("expiration") for row in chain if row.get("expiration")}
+    valid_expirations = [exp for exp in expirations if _dte(exp) is not None]
+    if not valid_expirations:
+        return None
+
+    target_expiry = min(valid_expirations, key=lambda exp: abs(_dte(exp) - expiry_days_out))
+
+    candidates = [
+        row for row in chain
+        if row.get("expiration") == target_expiry
+        and row.get("type") == option_type
+        and row.get("strike") is not None
+    ]
+    if not candidates:
+        return None
+
+    spot_price = _get_spot_price(symbol)
+    if spot_price is None:
+        return None
+
+    best = min(candidates, key=lambda row: abs(float(row["strike"]) - spot_price))
+    return _build_osi_symbol(symbol, target_expiry, option_type, float(best["strike"]))

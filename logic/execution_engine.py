@@ -18,9 +18,65 @@ import uuid
 from zoneinfo import ZoneInfo
 from datetime import timezone
 import csv
+import json
+
+DEBUG_LOG_PATH = Path("debug-73ea0c.log")
+DEBUG_SESSION_ID = "73ea0c"
+
+
+def _debug_risk_log(*, run_id: str, hypothesis_id: str, location: str, message: str, data: dict) -> None:
+    # #region agent log
+    payload = {
+        "sessionId": DEBUG_SESSION_ID,
+        "timestamp": int(datetime.now(timezone.utc).timestamp() * 1000),
+        "location": location,
+        "message": message,
+        "data": data,
+        "runId": run_id,
+        "hypothesisId": hypothesis_id,
+    }
+    try:
+        with DEBUG_LOG_PATH.open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps(payload, ensure_ascii=True) + "\n")
+    except Exception:
+        pass
+    # #endregion
+
+
+def _print_risk_trace(*, symbol: str, trace: dict, verbose: bool) -> None:
+    if not verbose:
+        return
+    print(f"\n[RISK TRACE] {symbol}")
+    for key, value in trace.items():
+        print(f"   {key}: {value}")
+
+
+def _build_risk_trace(
+    *,
+    equity_ctx: AccountEquityContext,
+    risk_cfg: PortfolioRiskConfig,
+    order_plan: OrderPlan,
+    current_price: float,
+    outcome: str,
+    rejection_reason: Optional[str],
+) -> dict:
+    max_dollar = float(equity_ctx.equity) * float(risk_cfg.max_position_size)
+    proposed_value = float(order_plan.quantity) * float(current_price)
+    capped_qty = int(max_dollar / float(current_price)) if current_price > 0 else 0
+    return {
+        "equity_source_used": equity_ctx.equity_source,
+        "account_equity_value": round(float(equity_ctx.equity), 2),
+        "max_position_size_value": float(risk_cfg.max_position_size),
+        "computed_max_dollar_position": round(max_dollar, 2),
+        "proposed_order_value": round(proposed_value, 2),
+        "capped_quantity": capped_qty,
+        "final_decision": outcome.upper(),
+        "rejection_reason": rejection_reason or "",
+    }
 
 from logic.risk_config import load_risk_config, PortfolioRiskConfig
 from logic.sqlite_store import DEFAULT_DB_PATH, get_latest_account_snapshot, connect
+from logic.account_equity import AccountEquityContext, resolve_account_equity
 
 from logic.broker_client import BrokerClient
 from logic.data_structures import (
@@ -246,7 +302,9 @@ def build_order_plan(
     position_state: PositionState,
     config: ExecutionConfig,
     account_cash: float,
-    current_price: float
+    current_price: float,
+    account_equity: Optional[float] = None,
+    max_position_fraction: Optional[float] = None,
 ) -> OrderPlan:
     """
     Build a concrete order plan with sizing and TP/SL levels.
@@ -268,6 +326,12 @@ def build_order_plan(
         4. Determine if bracket order (TP + SL) or market only
     """
     symbol = signal.symbol
+    sizing_equity = float(account_equity if account_equity is not None else account_cash)
+    risk_cap_fraction = (
+        float(max_position_fraction)
+        if max_position_fraction is not None
+        else config.max_position_pct_of_equity / 100.0
+    )
     
     # Determine side (buy or sell)
     if signal.signal_type == 'buy':
@@ -281,20 +345,25 @@ def build_order_plan(
     if side == 'buy':
         # Calculate base shares to buy based on risk
         base_qty = calculate_position_size(
-            account_balance=account_cash,
+            account_balance=sizing_equity,
             risk_per_trade_pct=config.base_risk_pct,
             stop_loss_pct=config.sl_pct * 100,  # Function expects percentage as 0-100
             price=current_price
         )
         
-        # Cap at max position size
-        max_shares = int((account_cash * config.max_position_pct_of_equity / 100) / current_price)
+        # Cap at max position size (planner fraction aligned with risk layer)
+        max_shares = int((sizing_equity * risk_cap_fraction) / current_price)
         base_qty = min(base_qty, max_shares)
         
         # Apply minimax confidence multiplier (hybrid mode)
         mm = calculate_minimax_multiplier(signal)
         quantity = int(base_qty * mm)
-        quantity = max(1, quantity)  # At least 1 share
+        if max_shares < 1:
+            quantity = 0
+        elif quantity < 1:
+            quantity = 1
+        else:
+            quantity = min(quantity, max_shares)
         
         # Store minimax multiplier in signal metadata for audit trail
         signal.meta['minimax_applied_multiplier'] = mm
@@ -317,18 +386,23 @@ def build_order_plan(
             # Opening short position (if shorting enabled)
             # Calculate base shares to sell based on risk
             base_qty = calculate_position_size(
-                account_balance=account_cash,
+                account_balance=sizing_equity,
                 risk_per_trade_pct=config.base_risk_pct,
                 stop_loss_pct=config.sl_pct * 100,
                 price=current_price
             )
-            max_shares = int((account_cash * config.max_position_pct_of_equity / 100) / current_price)
+            max_shares = int((sizing_equity * risk_cap_fraction) / current_price)
             base_qty = min(base_qty, max_shares)
             
             # Apply minimax confidence multiplier (hybrid mode)
             mm = calculate_minimax_multiplier(signal)
             quantity = int(base_qty * mm)
-            quantity = max(1, quantity)
+            if max_shares < 1:
+                quantity = 0
+            elif quantity < 1:
+                quantity = 1
+            else:
+                quantity = min(quantity, max_shares)
             
             # Store minimax multiplier in signal metadata for audit trail
             signal.meta['minimax_applied_multiplier'] = mm
@@ -485,6 +559,57 @@ def execute_order_plan(
     return result
 
 
+def route_options_order(
+    *,
+    contract_symbol: str,
+    side: str,
+    qty: int,
+    broker_client: BrokerClient,
+    dry_run: bool = True,
+) -> Dict:
+    """
+    Submit (or dry-run log) a single-leg market order for an options contract.
+
+    contract_symbol must be the OSI-format symbol (e.g. 'AAPL260717C00325000') —
+    Alpaca infers it's an options order from that symbol format; there is no
+    separate asset_class field to set on MarketOrderRequest.
+
+    GUARDRAIL: submission is wrapped in try/except so a rejected or
+    under-margined options order is returned as a failed result, not raised,
+    and never takes down the caller's loop.
+    """
+    result: Dict = {'executed': False, 'broker_order_id': None, 'error_message': None}
+
+    if dry_run:
+        print(f"[DRY RUN] {side.upper()} {qty} {contract_symbol} (options)")
+        result['error_message'] = 'Dry run mode - options order not executed'
+        return result
+
+    trading_client = getattr(broker_client, '_trading_client', None)
+    if trading_client is None:
+        result['error_message'] = 'No live trading client available for options execution'
+        return result
+
+    try:
+        from alpaca.trading.enums import OrderSide, TimeInForce
+        from alpaca.trading.requests import MarketOrderRequest
+
+        side_enum = OrderSide.BUY if side.lower() == 'buy' else OrderSide.SELL
+        order_request = MarketOrderRequest(
+            symbol=contract_symbol,
+            qty=qty,
+            side=side_enum,
+            time_in_force=TimeInForce.DAY,
+        )
+        order = trading_client.submit_order(order_request)
+        result['executed'] = True
+        result['broker_order_id'] = str(getattr(order, 'id', ''))
+    except Exception as exc:
+        result['error_message'] = f"Options order execution error: {exc}"
+
+    return result
+
+
 # ========================================================================
 # STEP 4: ORCHESTRATION (End-to-End Trading Cycle)
 # ========================================================================
@@ -501,32 +626,31 @@ def enforce_risk_limits(
     risk_cfg: PortfolioRiskConfig,
     account_cash: float,
     trades_today: int,
-    daily_return: float,
+    daily_return: Optional[float],
     exposure: float,
     db_path: Union[str, Path],
     current_price: float,
-) -> Tuple[bool, Optional[OrderPlan], Optional[str]]:
-    """Return (allowed, possibly_modified_plan, reason_if_blocked).
+    account_equity: float,
+) -> Tuple[bool, Optional[OrderPlan], Optional[str], str]:
+    """Return (allowed, possibly_modified_plan, reason, outcome).
 
-    This enforces hard guardrails like daily loss limits, max trades per day,
-    portfolio exposure caps, and max position size. It may return a modified
-    OrderPlan with a reduced quantity when capping is applied.
+    outcome is one of: execute, reject, skip
     """
     # Duplicate prevention: if already long and attempting to open long
     if action == 'buy' and position_state.side == 'long' and getattr(position_state, 'quantity', 0):
-        return False, None, 'Blocked: duplicate order - existing open position'
+        return False, None, 'Blocked: duplicate order - existing open position', 'reject'
 
     # Daily loss kill switch
     try:
-        if daily_return <= -float(risk_cfg.daily_loss_limit):
-            return False, None, 'Daily loss limit reached — trading halted.'
+        if daily_return is not None and daily_return <= -float(risk_cfg.daily_loss_limit):
+            return False, None, 'Daily loss limit reached — trading halted.', 'reject'
     except Exception:
         pass
 
     # Max trades per day
     try:
         if trades_today >= int(risk_cfg.max_trades_per_day) and action in {'buy', 'sell'}:
-            return False, None, 'Blocked: max trades per day reached'
+            return False, None, 'Blocked: max trades per day reached', 'reject'
     except Exception:
         pass
 
@@ -534,26 +658,39 @@ def enforce_risk_limits(
     if action == 'buy':
         try:
             if exposure >= float(risk_cfg.max_portfolio_exposure):
-                return False, None, 'Blocked: portfolio exposure limit reached'
+                return False, None, 'Blocked: portfolio exposure limit reached', 'reject'
         except Exception:
             pass
 
-        # Max position size (notional)
+        # Max position size (notional) — uses canonical account_equity passed by caller
         try:
-            latest = get_latest_account_snapshot(db_path=db_path)
-            account_equity = float(latest.get('equity') or latest.get('portfolio_value') or account_cash)
-        except Exception:
-            account_equity = float(account_cash)
-
-        try:
-            max_dollar_position = account_equity * float(risk_cfg.max_position_size)
+            max_dollar_position = float(account_equity) * float(risk_cfg.max_position_size)
             proposed_notional = float(order_plan.quantity) * float(current_price)
+            capped_qty = int(max_dollar_position / float(current_price)) if current_price > 0 else 0
+
+            if order_plan.quantity <= 0 or proposed_notional <= 0:
+                return (
+                    False,
+                    None,
+                    (
+                        f"position_below_minimum: planned {order_plan.quantity} shares "
+                        f"at ${current_price:.2f} below 1-share minimum"
+                    ),
+                    'skip',
+                )
+
             if proposed_notional > max_dollar_position:
-                # Cap quantity
-                capped_qty = int(max_dollar_position / float(current_price))
                 if capped_qty < 1:
-                    return False, None, 'Blocked: max position size caps order below minimum notional ($1)'
-                # create a shallow copy of order_plan with adjusted quantity
+                    return (
+                        False,
+                        None,
+                        (
+                            f"position_below_minimum: max ${max_dollar_position:.2f} "
+                            f"({risk_cfg.max_position_size:.0%} of ${account_equity:.2f}) "
+                            f"cannot fund 1 share at ${current_price:.2f}"
+                        ),
+                        'skip',
+                    )
                 new_plan = OrderPlan(
                     symbol=order_plan.symbol,
                     side=order_plan.side,
@@ -565,11 +702,11 @@ def enforce_risk_limits(
                     time_in_force=order_plan.time_in_force,
                     reason=(order_plan.reason + ' | Capped by max_position_size')
                 )
-                return True, new_plan, None
+                return True, new_plan, None, 'execute'
         except Exception:
             pass
 
-    return True, order_plan, None
+    return True, order_plan, None, 'execute'
 
 
 def run_trading_cycle(
@@ -613,10 +750,18 @@ def run_trading_cycle(
     risk_cfg: PortfolioRiskConfig = load_risk_config()
 
     resolved_db_path: Optional[Union[str, Path]] = None
+    if db_path is not None:
+        resolved_db_path = db_path
+        init_db(resolved_db_path)
 
-    # Compute pre-trade snapshot values (trades today, exposure, daily return)
-    # Prefer the passed db_path, else use default DB location.
     snapshot_db_path = resolved_db_path if resolved_db_path is not None else DEFAULT_DB_PATH
+
+    equity_ctx = resolve_account_equity(
+        broker_client=broker_client,
+        db_path=snapshot_db_path,
+        account_id=account_id,
+        fallback_cash=account_cash,
+    )
 
     def _get_trades_executed_today(db_path: Union[str, Path]) -> int:
         # Count decisions.executed=1 where execution_timestamp in US/Eastern is today
@@ -649,49 +794,10 @@ def run_trading_cycle(
             return 0
         return count
 
-    def _compute_daily_return(db_path: Union[str, Path]) -> float:
-        # Use latest account snapshot: compare equity to last_equity
-        try:
-            snap = get_latest_account_snapshot(db_path=db_path)
-            if not snap:
-                # Missing snapshot — conservative: return a sentinel to trigger block
-                return -1.0
-            equity = snap.get('equity') or snap.get('portfolio_value') or None
-            last_equity = snap.get('last_equity')
-            if equity is None or last_equity is None:
-                return -1.0
-            try:
-                return float(equity) / float(last_equity) - 1.0
-            except Exception:
-                return -1.0
-        except Exception:
-            return -1.0
-
-    def _compute_current_exposure(db_path: Union[str, Path], account_cash: float) -> float:
-        # Prefer account snapshot values
-        try:
-            snap = get_latest_account_snapshot(db_path=db_path)
-            if snap:
-                portfolio_value = snap.get('portfolio_value')
-                cash = snap.get('cash')
-                if portfolio_value is None or cash is None:
-                    return 1.0
-                try:
-                    cash = float(cash)
-                    pv = float(portfolio_value)
-                    if cash <= 0:
-                        return 1.0
-                    return pv / cash
-                except Exception:
-                    return 1.0
-        except Exception:
-            return 1.0
-        # Fallback: use provided account_cash and assume portfolio_value = account_cash
-        return 0.0
-
     trades_today = _get_trades_executed_today(snapshot_db_path)
-    daily_return = _compute_daily_return(snapshot_db_path)
-    exposure = _compute_current_exposure(snapshot_db_path, account_cash)
+    daily_return = equity_ctx.daily_return
+    exposure = equity_ctx.exposure_fraction
+    risk_run_id = f"risk-{uuid.uuid4().hex[:8]}"
 
     # Pre-trade snapshot logging
     snapshot_path = Path("trade_logs") / "run_snapshots.csv"
@@ -713,18 +819,13 @@ def run_trading_cycle(
                     "daily_loss_limit",
                     "paper_trading_mode",
                 ])
-            latest_portfolio_value = None
-            try:
-                latest = get_latest_account_snapshot(db_path=snapshot_db_path)
-                latest_portfolio_value = latest.get('portfolio_value') if latest else None
-            except Exception:
-                latest_portfolio_value = None
+            latest_portfolio_value = equity_ctx.portfolio_value
             writer.writerow([
                 datetime.now(timezone.utc).isoformat(),
                 latest_portfolio_value,
                 f"{exposure:.4f}",
                 trades_today,
-                f"{daily_return:.6f}",
+                f"{daily_return:.6f}" if daily_return is not None else "",
                 risk_cfg.max_portfolio_exposure,
                 risk_cfg.max_position_size,
                 risk_cfg.max_trades_per_day,
@@ -738,21 +839,33 @@ def run_trading_cycle(
     # Print a concise pre-trade snapshot
     if verbose:
         print("\n📋 Pre-trade snapshot:")
-        print(f"   Exposure: {exposure:.4f}")
+        print(f"   Equity source: {equity_ctx.equity_source}")
+        print(f"   Account equity: ${equity_ctx.equity:,.2f}")
+        print(f"   Exposure (invested fraction): {exposure:.4f}")
         print(f"   Trades today (executed): {trades_today}")
-        print(f"   Daily return: {daily_return:.4f}")
+        if daily_return is not None:
+            print(f"   Daily return: {daily_return:.4f}")
+        else:
+            print("   Daily return: N/A (last_equity unavailable)")
         print(f"   Risk config: exposure={risk_cfg.max_portfolio_exposure}, max_pos={risk_cfg.max_position_size}, max_trades/day={risk_cfg.max_trades_per_day}, daily_loss_limit={risk_cfg.daily_loss_limit}, paper_mode={risk_cfg.paper_trading_mode}")
+        _debug_risk_log(
+            run_id=risk_run_id,
+            hypothesis_id="H1",
+            location="execution_engine.py:run_trading_cycle",
+            message="Pre-trade equity context resolved",
+            data={
+                "equity_source": equity_ctx.equity_source,
+                "equity": equity_ctx.equity,
+                "cash": equity_ctx.cash,
+                "portfolio_value": equity_ctx.portfolio_value,
+                "exposure_fraction": exposure,
+                "daily_return": daily_return,
+            },
+        )
 
     # If paper trading mode is enabled, print a clear warning
     if risk_cfg.paper_trading_mode and verbose:
         print("[INFO] PAPER TRADING MODE: True — executing in paper mode with guardrails enabled.")
-    # Optional: SQLite persistence (trade attempts).
-    if db_path is not None:
-        resolved_db_path = db_path
-        init_db(resolved_db_path)
-    elif config.execution_mode in ['paper', 'live', 'simulation']:
-        # Keep opt-in by default; notebook can explicitly pass db_path.
-        resolved_db_path = None
 
     performance_db_path = resolved_db_path if resolved_db_path is not None else DEFAULT_DB_PATH
     try:
@@ -932,13 +1045,15 @@ def run_trading_cycle(
                 continue
 
             try:
-                # Build order plan
+                # Build order plan (planner uses same equity + cap fraction as risk layer)
                 order_plan = build_order_plan(
                     signal=signal,
                     position_state=position_state,
                     config=config,
                     account_cash=account_cash,
-                    current_price=current_price
+                    current_price=current_price,
+                    account_equity=equity_ctx.equity,
+                    max_position_fraction=risk_cfg.max_position_size,
                 )
                 
                 # Store plan details in log
@@ -956,26 +1071,38 @@ def run_trading_cycle(
                     if order_plan.sl_price:
                         print(f"   SL: ${order_plan.sl_price:.2f}")
 
+                if order_plan.quantity <= 0:
+                    skip_reason = (
+                        f"position_below_minimum: cannot size at least 1 share at "
+                        f"${current_price:.2f} within {risk_cfg.max_position_size:.0%} of "
+                        f"${equity_ctx.equity:.2f} equity"
+                    )
+                    trace = _build_risk_trace(
+                        equity_ctx=equity_ctx,
+                        risk_cfg=risk_cfg,
+                        order_plan=order_plan,
+                        current_price=current_price,
+                        outcome="skip",
+                        rejection_reason=skip_reason,
+                    )
+                    _print_risk_trace(symbol=symbol, trace=trace, verbose=verbose)
+                    _debug_risk_log(
+                        run_id=risk_run_id,
+                        hypothesis_id="H2",
+                        location="execution_engine.py:run_trading_cycle",
+                        message="Order skipped at planning stage",
+                        data={"symbol": symbol, **trace},
+                    )
+                    log_entry.action = 'skipped'
+                    log_entry.reason = skip_reason
+                    signal.meta['risk_trace'] = trace
+                    _log_component_performance_event(signal, log_entry)
+                    log_entries.append(log_entry)
+                    continue
+
                 # RISK CHECK: enforce hard guardrails before attempting to persist/execute
                 try:
-                    trades_today = 0
-                    daily_return = 0.0
-                    exposure = 0.0
-                    try:
-                        # best-effort helpers if available
-                        if resolved_db_path is not None:
-                            trades_today = int(count_trades_today(db_path=resolved_db_path))
-                    except Exception:
-                        trades_today = 0
-                    try:
-                        latest_snapshot = get_latest_account_snapshot(db_path=resolved_db_path) if resolved_db_path is not None else {}
-                        daily_return = float(latest_snapshot.get('daily_return', 0.0) or 0.0)
-                        exposure = float(latest_snapshot.get('exposure', 0.0) or 0.0)
-                    except Exception:
-                        daily_return = 0.0
-                        exposure = 0.0
-
-                    allowed, maybe_plan, block_reason = enforce_risk_limits(
+                    allowed, maybe_plan, block_reason, outcome = enforce_risk_limits(
                         order_plan=order_plan,
                         action=action,
                         position_state=position_state,
@@ -984,9 +1111,36 @@ def run_trading_cycle(
                         trades_today=trades_today,
                         daily_return=daily_return,
                         exposure=exposure,
-                        db_path=resolved_db_path,
+                        db_path=snapshot_db_path,
                         current_price=current_price,
+                        account_equity=equity_ctx.equity,
                     )
+
+                    trace = _build_risk_trace(
+                        equity_ctx=equity_ctx,
+                        risk_cfg=risk_cfg,
+                        order_plan=maybe_plan or order_plan,
+                        current_price=current_price,
+                        outcome=outcome,
+                        rejection_reason=block_reason,
+                    )
+                    _print_risk_trace(symbol=symbol, trace=trace, verbose=verbose)
+                    _debug_risk_log(
+                        run_id=risk_run_id,
+                        hypothesis_id="H3",
+                        location="execution_engine.py:run_trading_cycle",
+                        message="Risk enforcement result",
+                        data={"symbol": symbol, "allowed": allowed, **trace},
+                    )
+                    signal.meta['risk_trace'] = trace
+
+                    if outcome == 'skip':
+                        log_entry.action = 'skipped'
+                        log_entry.reason = block_reason or 'position_below_minimum'
+                        _log_component_performance_event(signal, log_entry)
+                        log_entries.append(log_entry)
+                        continue
+
                     if not allowed:
                         log_entry.action = 'rejected'
                         log_entry.reason = block_reason
