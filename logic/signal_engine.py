@@ -16,7 +16,7 @@ import yfinance as yf
 from logic.data_structures import Signal, ExecutionConfig
 from logic.trading_functions import unified_bayesian_gp_forecast, calculate_bollinger_bands
 from logic.game_utils import (
-    compute_market_regime,
+    compute_market_state,
     infer_type_beliefs,
     build_expected_return_path,
     calculate_equilibrium_payoffs,
@@ -178,7 +178,7 @@ def _generate_single_signal(symbol: str, config: ExecutionConfig) -> Optional[Si
     signal_type = normalized_signal_type
 
     # Game-theory context: regime -> beliefs -> payoffs.
-    regime = compute_market_regime(price_history)
+    regime = compute_market_state(price_history)
     one_step_return = float(forecast_result['ensemble'].get('forecast', 0.0))
     expected_return_path = build_expected_return_path(one_step_return, regime, horizon=5)
     equilibrium_payoffs = calculate_equilibrium_payoffs(expected_return_path, regime)

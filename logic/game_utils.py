@@ -18,8 +18,13 @@ MARKET_TYPES = ("t_trend", "t_manipulator", "t_exhausted", "t_range")
 
 
 @dataclass
-class MarketRegime:
-    """Probability distribution over high-level market regimes."""
+class MarketState:
+    """Probability mixture over market *character*: trending, ranging, or volatile.
+
+    Carries no directional view. A high ``prob_trend`` says the market is
+    trending, not which way — see ``logic.thesis.context.MarketDirection`` for
+    the BULL/BEAR/SIDEWAYS label, which is a separate concept.
+    """
 
     prob_trend: float
     prob_range: float
@@ -89,9 +94,9 @@ def _softmax(values: Sequence[float]) -> List[float]:
     return [x / denom for x in exps]
 
 
-def compute_market_regime(price_history: pd.DataFrame, period: int = 20) -> MarketRegime:
+def compute_market_state(price_history: pd.DataFrame, period: int = 20) -> MarketState:
     """
-    Compute regime probabilities from recent price action.
+    Compute market-character probabilities from recent price action.
 
     Scores:
         S_trend = trend_strength / sigma
@@ -99,11 +104,11 @@ def compute_market_regime(price_history: pd.DataFrame, period: int = 20) -> Mark
         S_vol   = sigma + vol_of_vol
     """
     if price_history is None or price_history.empty or "Close" not in price_history.columns:
-        return MarketRegime(1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0)
+        return MarketState(1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0)
 
     close = price_history["Close"].dropna()
     if close.empty:
-        return MarketRegime(1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0)
+        return MarketState(1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0)
 
     returns = close.pct_change().dropna()
     window_returns = returns.tail(max(5, period))
@@ -125,14 +130,14 @@ def compute_market_regime(price_history: pd.DataFrame, period: int = 20) -> Mark
     s_vol = sigma + vol_of_vol
 
     p_trend, p_range, p_high_vol = _softmax([s_trend, s_range, s_vol])
-    return MarketRegime(p_trend, p_range, p_high_vol)
+    return MarketState(p_trend, p_range, p_high_vol)
 
 
 def infer_type_beliefs(
     signal_type: str,
     rsi_value: float,
     bb_z_score: float,
-    regime: MarketRegime,
+    regime: MarketState,
 ) -> Dict[str, float]:
     """
     Build posterior belief vector beta over market types.
@@ -166,7 +171,7 @@ def infer_type_beliefs(
 
 def build_expected_return_path(
     one_step_return: float,
-    regime: MarketRegime,
+    regime: MarketState,
     horizon: int = 5,
 ) -> List[float]:
     """Project a small return trajectory from the one-step forecast."""
@@ -195,7 +200,7 @@ def _discounted_sum(values: Sequence[float], gamma: float) -> float:
 
 def calculate_equilibrium_payoffs(
     expected_returns: Sequence[float],
-    regime: MarketRegime,
+    regime: MarketState,
 ) -> TypeEquilibrium:
     """Compute x(t) equilibrium payoffs for each type in return-space units."""
     if not expected_returns:

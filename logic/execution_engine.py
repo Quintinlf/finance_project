@@ -11,6 +11,8 @@ Key components:
 4. run_trading_cycle: orchestrates the full decision → execution flow
 """
 
+from __future__ import annotations
+
 from typing import List, Dict, Optional, Tuple, Union
 from datetime import datetime
 from pathlib import Path
@@ -20,8 +22,58 @@ from datetime import timezone
 import csv
 import json
 
+from logic.risk_config import load_risk_config, PortfolioRiskConfig
+from logic.sqlite_store import DEFAULT_DB_PATH, get_latest_account_snapshot, connect
+from logic.account_equity import AccountEquityContext, resolve_account_equity
+
+from logic.broker_client import BrokerClient
+from logic.data_structures import (
+    Signal, PositionState, ExecutionConfig, OrderPlan, DecisionLogEntry
+)
+from logic.portfolio_state import update_sim_portfolio_after_trade
+from logic.risk_management import calculate_position_size, calculate_minimax_multiplier
+from logic.intuitive_criterion import survives_intuitive_criterion
+
+from logic.sqlite_store import (
+    DEFAULT_DB_PATH,
+    init_db,
+    create_trade_attempt,
+    set_trade_broker_order_id,
+    mark_trade_open,
+    mark_trade_failed,
+    insert_uncertainty_metric,
+    insert_tail_risk_metric,
+)
+from logic.model_performance_tracker import init_model_performance_tracker, log_model_decision
+
 DEBUG_LOG_PATH = Path("debug-73ea0c.log")
 DEBUG_SESSION_ID = "73ea0c"
+# #region agent log
+_AGENT_DEBUG_LOG_PATH = Path("debug-384872.log")
+_AGENT_DEBUG_SESSION_ID = "384872"
+try:
+    with _AGENT_DEBUG_LOG_PATH.open("a", encoding="utf-8") as _fh:
+        _fh.write(
+            json.dumps(
+                {
+                    "sessionId": _AGENT_DEBUG_SESSION_ID,
+                    "timestamp": int(datetime.now(timezone.utc).timestamp() * 1000),
+                    "location": "execution_engine.py:module_import",
+                    "message": "execution_engine imported successfully",
+                    "data": {
+                        "AccountEquityContext": AccountEquityContext.__name__,
+                        "AccountEquityContext_module": AccountEquityContext.__module__,
+                    },
+                    "runId": "post-fix",
+                    "hypothesisId": "H1_import_order",
+                },
+                ensure_ascii=True,
+            )
+            + "\n"
+        )
+except Exception:
+    pass
+# #endregion
 
 
 def _debug_risk_log(*, run_id: str, hypothesis_id: str, location: str, message: str, data: dict) -> None:
@@ -73,30 +125,6 @@ def _build_risk_trace(
         "final_decision": outcome.upper(),
         "rejection_reason": rejection_reason or "",
     }
-
-from logic.risk_config import load_risk_config, PortfolioRiskConfig
-from logic.sqlite_store import DEFAULT_DB_PATH, get_latest_account_snapshot, connect
-from logic.account_equity import AccountEquityContext, resolve_account_equity
-
-from logic.broker_client import BrokerClient
-from logic.data_structures import (
-    Signal, PositionState, ExecutionConfig, OrderPlan, DecisionLogEntry
-)
-from logic.portfolio_state import update_sim_portfolio_after_trade
-from logic.risk_management import calculate_position_size, calculate_minimax_multiplier
-from logic.intuitive_criterion import survives_intuitive_criterion
-
-from logic.sqlite_store import (
-    DEFAULT_DB_PATH,
-    init_db,
-    create_trade_attempt,
-    set_trade_broker_order_id,
-    mark_trade_open,
-    mark_trade_failed,
-    insert_uncertainty_metric,
-    insert_tail_risk_metric,
-)
-from logic.model_performance_tracker import init_model_performance_tracker, log_model_decision
 
 
 # ========================================================================

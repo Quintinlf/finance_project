@@ -245,7 +245,7 @@ The system supports two logging paths:
 
 ### Game-Theoretic Analysis
 - `logic/game_utils.py`: **Signaling game theory core**
-  - Market regime inference: compute_market_regime(...)
+  - Market state inference: compute_market_state(...)
   - Equilibrium payoff calculation: calculate_equilibrium_payoffs(...)
   - Type belief inference: infer_type_beliefs(...)
   - Expected return path projection: build_expected_return_path(...)

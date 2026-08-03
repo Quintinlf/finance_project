@@ -24,6 +24,7 @@ from logic.signal_engine import (
     generate_signals,
 )
 from logic.sqlite_store import init_db, insert_decisions
+from logic.thesis import shadow_log_theses
 
 
 DEFAULT_DB_PATH = Path("trade_logs") / "trading.db"
@@ -186,6 +187,13 @@ def run_daily_trading_cycle(
         len(directional_candidates),
         len(hold_decisions),
     )
+
+    # Phase 0 shadow logging: build a TradeThesis per signal and write it to
+    # trade_logs/theses/<date>.jsonl. Read-only with respect to trading — nothing
+    # downstream consumes these yet. This exists so the thesis shape can be
+    # validated against real market days before Phase 1 depends on it.
+    theses_logged = shadow_log_theses(all_signals, run_date=today_str)
+    logging.info("THESES SHADOW-LOGGED: %s", theses_logged)
 
     if directional_candidates:
         for sig in directional_candidates:
