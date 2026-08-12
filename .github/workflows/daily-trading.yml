@@ -46,6 +46,18 @@ jobs:
           mkdir -p trade_logs
           mkdir -p artifacts
 
+      # Without this the run still "succeeds": missing credentials make
+      # create_broker_client fall back to an in-memory broker, the bot trades a
+      # fake book, and nothing reaches Alpaca. Fail here instead, with an
+      # actionable message, before wasting three minutes on signals.
+      - name: Verify Alpaca credentials are present
+        run: |
+          if [ -z "${APCA_API_KEY_ID}" ] || [ -z "${APCA_API_SECRET_KEY}" ]; then
+            echo "::error title=Missing Alpaca credentials::Repository secrets ALPACA_API_KEY and/or ALPACA_SECRET_KEY are not set, so this run would trade an in-memory fake broker and reach Alpaca never. Add them under Settings > Secrets and variables > Actions."
+            exit 1
+          fi
+          echo "Alpaca credentials present (key ends ...${APCA_API_KEY_ID: -4})."
+
       - name: Execute daily trading entrypoint
         env:
           EXECUTION_MODE: "paper"
@@ -55,8 +67,14 @@ jobs:
           TP_PCT: "0.04"
           SL_PCT: "0.02"
           BASE_RISK_PCT: "2.0"
+          UNIVERSE_SCOPE: "all"
+          INVERSE_ROUTING: "true"
+          # Refuse the silent in-memory fallback: a fake fill in CI is worse
+          # than a failed job, because it looks like success.
+          STRICT_BROKER: "true"
         run: |
-          python run_daily_bot.py
+          set -o pipefail
+          python run_daily_bot.py 2>&1 | tee trade_logs/run-$(date -u +'%Y%m%d').log
 
       - name: Upload run artifacts
         if: always()
@@ -68,12 +86,38 @@ jobs:
             learned_params.json
           if-no-files-found: warn
 
+      - name: Summarise the run
+        if: always()
+        run: |
+          LOG=$(ls -t trade_logs/run-*.log 2>/dev/null | head -1)
+          {
+            echo "## Daily trading run"
+            echo ""
+            if [ -z "$LOG" ]; then
+              echo "No run log produced - the bot did not get far enough to write one."
+              exit 0
+            fi
+            echo '```'
+            grep -E "ACCOUNT:|UNIVERSE SCREEN|TRADING UNIVERSE|SIGNALS GENERATED|INVERSE ROUTING|ORDERS ATTEMPTED|ORDERS SUBMITTED|Decision summary|ORDER REJECTED|ORDER NOT SUBMITTED|BROKER CONNECTION FAILED" "$LOG" | sed 's/^[0-9-]* [0-9:,]* | [A-Z]* | //' || echo "(no summary lines matched)"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Commit and push updated trade logs
+        if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add -f trade_logs/*.csv trade_logs/*.db trade_logs/*.jsonl learned_params.json 2>/dev/null || true
+          # Add each path on its own. Listing them in one `git add` meant a
+          # single missing file (learned_params.json never exists) failed the
+          # whole command, `|| true` swallowed it, and nothing was ever staged
+          # - which is why the database never persisted between runs and every
+          # run started from an empty history.
+          for path in trade_logs/*.csv trade_logs/*.db trade_logs/*.jsonl trade_logs/*.log learned_params.json; do
+            if compgen -G "$path" > /dev/null; then
+              git add -f $path && echo "staged: $path"
+            fi
+          done
 
           if git diff --cached --quiet; then
             echo "No log changes to commit."
@@ -81,4 +125,6 @@ jobs:
           fi
 
           git commit -m "Daily automated trading run ($(date -u +'%Y-%m-%d %H:%M UTC'))"
+          # Another run may have pushed since checkout; rebase rather than fail.
+          git pull --rebase --autostash origin main || true
           git push

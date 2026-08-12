@@ -654,7 +654,15 @@ def calculate_bollinger_bands(df, window=20, num_std=2):
     return df
 
 
-def unified_bayesian_gp_forecast(ticker, period="200d", interval="1d", num_lags=10, show_plot=False):
+def unified_bayesian_gp_forecast(
+    ticker,
+    period="200d",
+    interval="1d",
+    num_lags=10,
+    show_plot=False,
+    price_history=None,
+    build_plot=True,
+):
 
     """
     Combined Bayesian Linear Regression + Gaussian Process forecasting system.
@@ -665,9 +673,21 @@ def unified_bayesian_gp_forecast(ticker, period="200d", interval="1d", num_lags=
     show_plot: if False (default), the forecast chart is built but never shown, so
     calling this from the automated signal pipeline doesn't pop up a blocking GUI
     window per symbol. Pass True for interactive/notebook use.
+
+    price_history: optional pre-fetched OHLCV frame. When supplied, no download
+    happens and the forecast is computed purely from the rows given. The
+    backtester relies on this to hand over history truncated at the bar being
+    evaluated — that truncation is what keeps the replay free of lookahead.
+
+    build_plot: set False to skip figure construction entirely. The plot is
+    built and immediately discarded when show_plot is False, which is fine for
+    one daily run but dominates the runtime of a multi-thousand-call backtest.
     """
-    # Download and prepare data
-    df = yf.download(ticker, period=period, interval=interval, progress=False)
+    # Download and prepare data, unless the caller supplied it.
+    if price_history is not None:
+        df = price_history.copy()
+    else:
+        df = yf.download(ticker, period=period, interval=interval, progress=False)
     if df.empty or len(df) < max(20, num_lags + 1):
         print(f"❌ Not enough data for {ticker}")
         return None
@@ -840,95 +860,96 @@ def unified_bayesian_gp_forecast(ticker, period="200d", interval="1d", num_lags=
     # 📊 VISUALIZATION
     # ==============================
     
-    plt.figure(figsize=(16, 12))
+    if build_plot:
+        plt.figure(figsize=(16, 12))
     
-    # Plot 1: Model Predictions Comparison
-    plt.subplot(3, 2, 1)
-    recent_dates = df.index[-50:]  # Last 50 days
-    recent_returns = df['Return'].iloc[-50:].values
-    recent_bayesian = y_pred_bayesian[-50:]
+        # Plot 1: Model Predictions Comparison
+        plt.subplot(3, 2, 1)
+        recent_dates = df.index[-50:]  # Last 50 days
+        recent_returns = df['Return'].iloc[-50:].values
+        recent_bayesian = y_pred_bayesian[-50:]
     
-    plt.plot(recent_dates, recent_returns, 'k-', label='Actual Returns', alpha=0.7)
-    plt.plot(recent_dates, recent_bayesian, 'b-', label='Bayesian Prediction', alpha=0.8)
-    plt.fill_between(recent_dates, 
-                     recent_bayesian - 2*y_std_bayesian[-50:],
-                     recent_bayesian + 2*y_std_bayesian[-50:],
-                     color='blue', alpha=0.2, label='Bayesian 95% CI')
-    plt.title(f'{ticker}: Bayesian Linear Regression')
-    plt.legend()
-    plt.grid(True, alpha=0.3)
+        plt.plot(recent_dates, recent_returns, 'k-', label='Actual Returns', alpha=0.7)
+        plt.plot(recent_dates, recent_bayesian, 'b-', label='Bayesian Prediction', alpha=0.8)
+        plt.fill_between(recent_dates, 
+                         recent_bayesian - 2*y_std_bayesian[-50:],
+                         recent_bayesian + 2*y_std_bayesian[-50:],
+                         color='blue', alpha=0.2, label='Bayesian 95% CI')
+        plt.title(f'{ticker}: Bayesian Linear Regression')
+        plt.legend()
+        plt.grid(True, alpha=0.3)
     
-    # Plot 2: GP Performance on recent data
-    plt.subplot(3, 2, 2)
-    gp_pred_recent, gp_std_recent = gp_predict(
-        X_gp_train[-30:], y_gp_train[-30:], X_gp_train[-30:],
-        noise_var=1e-4, kernel_func=rbf_kernel, length_scale=1.0, variance=1.0
-    )
+        # Plot 2: GP Performance on recent data
+        plt.subplot(3, 2, 2)
+        gp_pred_recent, gp_std_recent = gp_predict(
+            X_gp_train[-30:], y_gp_train[-30:], X_gp_train[-30:],
+            noise_var=1e-4, kernel_func=rbf_kernel, length_scale=1.0, variance=1.0
+        )
     
-    plt.plot(recent_dates[-30:], y_gp_train[-30:], 'k-', label='Actual', alpha=0.7)
-    plt.plot(recent_dates[-30:], gp_pred_recent, 'orange', label='GP Prediction', alpha=0.8)
-    plt.fill_between(recent_dates[-30:], 
-                     gp_pred_recent - 2*gp_std_recent,
-                     gp_pred_recent + 2*gp_std_recent,
-                     color='orange', alpha=0.2, label='GP 95% CI')
-    plt.title(f'{ticker}: Gaussian Process')
-    plt.legend()
-    plt.grid(True, alpha=0.3)
+        plt.plot(recent_dates[-30:], y_gp_train[-30:], 'k-', label='Actual', alpha=0.7)
+        plt.plot(recent_dates[-30:], gp_pred_recent, 'orange', label='GP Prediction', alpha=0.8)
+        plt.fill_between(recent_dates[-30:], 
+                         gp_pred_recent - 2*gp_std_recent,
+                         gp_pred_recent + 2*gp_std_recent,
+                         color='orange', alpha=0.2, label='GP 95% CI')
+        plt.title(f'{ticker}: Gaussian Process')
+        plt.legend()
+        plt.grid(True, alpha=0.3)
     
-    # Plot 3: RSI
-    plt.subplot(3, 2, 3)
-    plt.plot(recent_dates, df['RSI'].iloc[-50:], 'purple', linewidth=2)
-    plt.axhline(70, color='red', linestyle='--', alpha=0.7, label='Overbought')
-    plt.axhline(30, color='green', linestyle='--', alpha=0.7, label='Oversold')
-    plt.axhline(current_rsi, color='orange', linewidth=3, label=f'Current: {current_rsi:.1f}')
-    plt.title(f'RSI (Signal: {rsi_signal.upper()})')
-    plt.legend()
-    plt.grid(True, alpha=0.3)
+        # Plot 3: RSI
+        plt.subplot(3, 2, 3)
+        plt.plot(recent_dates, df['RSI'].iloc[-50:], 'purple', linewidth=2)
+        plt.axhline(70, color='red', linestyle='--', alpha=0.7, label='Overbought')
+        plt.axhline(30, color='green', linestyle='--', alpha=0.7, label='Oversold')
+        plt.axhline(current_rsi, color='orange', linewidth=3, label=f'Current: {current_rsi:.1f}')
+        plt.title(f'RSI (Signal: {rsi_signal.upper()})')
+        plt.legend()
+        plt.grid(True, alpha=0.3)
     
-    # Plot 4: Ensemble Forecast Comparison
-    plt.subplot(3, 2, 4)
-    methods = ['Bayesian', 'GP', 'Ensemble']
-    forecasts = [bayesian_forecast, gp_forecast, ensemble_forecast]
-    uncertainties = [bayesian_std, gp_std, ensemble_std]
-    colors = ['blue', 'orange', 'green']
+        # Plot 4: Ensemble Forecast Comparison
+        plt.subplot(3, 2, 4)
+        methods = ['Bayesian', 'GP', 'Ensemble']
+        forecasts = [bayesian_forecast, gp_forecast, ensemble_forecast]
+        uncertainties = [bayesian_std, gp_std, ensemble_std]
+        colors = ['blue', 'orange', 'green']
     
-    bars = plt.bar(methods, forecasts, color=colors, alpha=0.7)
-    plt.errorbar(methods, forecasts, yerr=[2*u for u in uncertainties], 
-                fmt='none', color='black', capsize=5)
-    plt.title('Forecast Comparison')
-    plt.ylabel('Predicted Return')
-    plt.grid(True, alpha=0.3)
+        bars = plt.bar(methods, forecasts, color=colors, alpha=0.7)
+        plt.errorbar(methods, forecasts, yerr=[2*u for u in uncertainties], 
+                    fmt='none', color='black', capsize=5)
+        plt.title('Forecast Comparison')
+        plt.ylabel('Predicted Return')
+        plt.grid(True, alpha=0.3)
     
-    # Add value labels on bars
-    for bar, forecast, std in zip(bars, forecasts, uncertainties):
-        plt.text(bar.get_x() + bar.get_width()/2, bar.get_height() + std,
-                f'{forecast:.4f}', ha='center', va='bottom')
+        # Add value labels on bars
+        for bar, forecast, std in zip(bars, forecasts, uncertainties):
+            plt.text(bar.get_x() + bar.get_width()/2, bar.get_height() + std,
+                    f'{forecast:.4f}', ha='center', va='bottom')
     
-    # Plot 5: Signal Confidence
-    plt.subplot(3, 2, 5)
-    signal_colors = {'STRONG BUY': 'darkgreen', 'BUY': 'green', 
-                    'HOLD': 'gray', 'SELL': 'red', 'STRONG SELL': 'darkred'}
+        # Plot 5: Signal Confidence
+        plt.subplot(3, 2, 5)
+        signal_colors = {'STRONG BUY': 'darkgreen', 'BUY': 'green', 
+                        'HOLD': 'gray', 'SELL': 'red', 'STRONG SELL': 'darkred'}
     
-    plt.bar(['Final Signal'], [confidence], 
-           color=signal_colors.get(final_signal, 'gray'), alpha=0.8)
-    plt.ylim(0, 1)
-    plt.title(f'Trading Signal: {final_signal}')
-    plt.ylabel('Confidence')
+        plt.bar(['Final Signal'], [confidence], 
+               color=signal_colors.get(final_signal, 'gray'), alpha=0.8)
+        plt.ylim(0, 1)
+        plt.title(f'Trading Signal: {final_signal}')
+        plt.ylabel('Confidence')
     
-    # Plot 6: Uncertainty Comparison
-    plt.subplot(3, 2, 6)
-    plt.bar(methods, [2*u for u in uncertainties], color=colors, alpha=0.7)
-    plt.title('Model Uncertainty (95% CI width)')
-    plt.ylabel('Uncertainty Range')
-    plt.grid(True, alpha=0.3)
+        # Plot 6: Uncertainty Comparison
+        plt.subplot(3, 2, 6)
+        plt.bar(methods, [2*u for u in uncertainties], color=colors, alpha=0.7)
+        plt.title('Model Uncertainty (95% CI width)')
+        plt.ylabel('Uncertainty Range')
+        plt.grid(True, alpha=0.3)
     
-    plt.tight_layout()
-    if show_plot:
-        plt.show()
-    else:
-        # FIX: Explicitly close the figure to prevent blocking headless/CI environments
-        # and to eliminate memory leaks across sequential asset loops in the universe.
-        plt.close()
+        plt.tight_layout()
+        if show_plot:
+            plt.show()
+        else:
+            # FIX: Explicitly close the figure to prevent blocking headless/CI environments
+            # and to eliminate memory leaks across sequential asset loops in the universe.
+            plt.close()
 
     # ==============================
     # 📋 RESULTS SUMMARY

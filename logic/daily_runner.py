@@ -8,9 +8,12 @@ from typing import Dict, List, Optional, Literal
 
 from zoneinfo import ZoneInfo
 
+from logic.account_equity import resolve_account_equity
 from logic.broker_client import create_broker_client
 from logic.data_structures import ExecutionConfig
 from logic.execution_engine import run_trading_cycle
+from logic.fill_reconciler import reconcile_fills
+from logic.inverse_routing import format_routing_table, route_signals
 from logic.options_engine import (
     filter_expirations_by_dte,
     get_option_chain,
@@ -19,12 +22,18 @@ from logic.options_engine import (
 )
 from logic.portfolio_state import get_position_states
 from logic.position_reconciler import reconcile_position_exits
+from logic.risk_config import load_risk_config
 from logic.signal_engine import (
     filter_signals_by_thresholds,
     generate_signals,
 )
 from logic.sqlite_store import init_db, insert_decisions
 from logic.thesis import shadow_log_theses
+from logic.universe import (
+    build_tradeable_universe,
+    format_affordability_table,
+    lookup as lookup_asset,
+)
 
 
 DEFAULT_DB_PATH = Path("trade_logs") / "trading.db"
@@ -67,6 +76,21 @@ def _summarize_decisions(decision_log) -> Dict[str, int]:
     return summary
 
 
+def _held_symbols(broker_client) -> List[str]:
+    """Symbols with a non-zero position, regardless of universe membership.
+
+    Passing an empty universe returns only what the broker actually holds, which
+    is what we need to make sure a holding stays sellable even after it drops
+    out of the affordable set.
+    """
+    try:
+        states = broker_client.get_position_states([])
+    except Exception as exc:
+        logging.warning("Could not read held positions (%s). Assuming none.", exc)
+        return []
+    return [sym for sym, state in states.items() if float(getattr(state, "quantity", 0) or 0) != 0]
+
+
 def _log_options_candidates(symbol: str) -> None:
     chain = get_option_chain(symbol)
     filtered = filter_expirations_by_dte(chain)
@@ -91,6 +115,9 @@ def run_daily_trading_cycle(
     base_risk_pct: float = 2.0,
     debug_force_strongest_signal: bool = False,
     universe: Optional[List[str]] = None,
+    universe_scope: str = "all",
+    screen_affordability: bool = True,
+    enable_inverse_routing: bool = True,
 ) -> None:
     logging.info("START DAILY TRADING RUN")
 
@@ -109,8 +136,90 @@ def run_daily_trading_cycle(
         logging.info("Duplicate run detected for %s. Forcing dry_run=True.", today_str)
         dry_run = True
 
-    if universe is None:
-        universe = ["AAPL", "MSFT", "AMZN", "NVDA", "GOOGL"]
+    summary = broker_client.get_account_summary()
+    account_cash = float(summary.get("cash", 0.0) or 0.0)
+    account_id = str(summary.get("account_id") or "paper-default")
+
+    DEFAULT_DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        init_db(DEFAULT_DB_PATH)
+    except Exception as exc:
+        logging.warning("SQLite init failed (%s). Proceeding without DB persistence.", exc)
+
+    equity_ctx = resolve_account_equity(
+        broker_client=broker_client,
+        db_path=DEFAULT_DB_PATH,
+        account_id=account_id,
+        fallback_cash=account_cash,
+    )
+    logging.info(
+        "ACCOUNT: equity=$%.2f (source=%s) | cash=$%.2f | exposure=%.1f%%",
+        equity_ctx.equity,
+        equity_ctx.equity_source,
+        equity_ctx.cash,
+        equity_ctx.exposure_fraction * 100.0,
+    )
+
+    # Record realized P&L from actual broker fills before doing anything else.
+    # Exits fire broker-side via bracket orders, so without this step the trades
+    # table never learns how any position actually turned out — which is why
+    # every historical pnl was zero.
+    try:
+        reconcile_fills(
+            broker_client,
+            account_id=account_id,
+            db_path=DEFAULT_DB_PATH,
+            dry_run=dry_run,
+        )
+    except Exception as exc:
+        logging.warning("Fill reconciliation failed (%s). Continuing with cycle.", exc)
+
+    risk_cfg = load_risk_config()
+    # The binding cap is whichever of the two limits is tighter: build_order_plan
+    # sizes against config.max_position_pct_of_equity, enforce_risk_limits then
+    # re-checks against risk_cfg.max_position_size. Screening on the tighter one
+    # keeps the screen honest about what will actually fill.
+    position_cap_fraction = min(0.20, float(risk_cfg.max_position_size))
+
+    held = _held_symbols(broker_client)
+    if held:
+        logging.info("CURRENTLY HELD: %s", ", ".join(sorted(held)))
+
+    if universe is not None:
+        logging.info("UNIVERSE: %s symbols from explicit override", len(universe))
+    elif not screen_affordability:
+        from logic.universe import get_symbols
+
+        universe = get_symbols(universe_scope)
+        logging.info("UNIVERSE: scope=%s, %s symbols, affordability screen OFF",
+                     universe_scope, len(universe))
+    else:
+        universe, verdicts = build_tradeable_universe(
+            scope=universe_scope,
+            account_equity=equity_ctx.equity,
+            max_position_fraction=position_cap_fraction,
+            always_include=held,
+        )
+        affordable = sum(1 for v in verdicts if v.affordable)
+        logging.info(
+            "UNIVERSE SCREEN: scope=%s | %s/%s affordable at $%.2f/position "
+            "(%.0f%% of $%.2f equity)\n%s",
+            universe_scope,
+            affordable,
+            len(verdicts),
+            equity_ctx.equity * position_cap_fraction,
+            position_cap_fraction * 100.0,
+            equity_ctx.equity,
+            format_affordability_table(verdicts),
+        )
+        if not universe:
+            logging.error(
+                "No affordable symbols and no open positions. Nothing to do — "
+                "the account needs more capital or a cheaper universe scope."
+            )
+            return
+
+    logging.info("TRADING UNIVERSE (%s): %s", len(universe), ", ".join(universe))
 
     config = ExecutionConfig(
         execution_mode=execution_mode,
@@ -187,6 +296,16 @@ def run_daily_trading_cycle(
         len(directional_candidates),
         len(hold_decisions),
     )
+    for sig in directional_candidates:
+        asset = lookup_asset(sig.symbol)
+        logging.info(
+            "  %-5s %-4s conf=%.2f prob=%.2f | %s",
+            sig.symbol,
+            str(sig.signal_type).upper(),
+            float(sig.confidence),
+            float(sig.prob_profit),
+            f"{asset.sector} / {asset.underlying}" if asset else "unclassified",
+        )
 
     # Phase 0 shadow logging: build a TradeThesis per signal and write it to
     # trade_logs/theses/<date>.jsonl. Read-only with respect to trading — nothing
@@ -203,16 +322,6 @@ def run_daily_trading_cycle(
     else:
         logging.info("OPTIONS CANDIDATES FOR TODAY: none")
 
-    summary = broker_client.get_account_summary()
-    account_cash = float(summary.get("cash", 0.0) or 0.0)
-    account_id = str(summary.get("account_id") or "paper-default")
-
-    DEFAULT_DB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    try:
-        init_db(DEFAULT_DB_PATH)
-    except Exception as exc:
-        logging.warning("SQLite init failed (%s). Proceeding without DB persistence.", exc)
-
     logging.info("Loading portfolio state...")
     position_states = get_position_states(
         universe=universe,
@@ -220,6 +329,31 @@ def run_daily_trading_cycle(
         broker_client=broker_client,
         sim_portfolio={},
     )
+
+    # Long-only book: a SELL on something we do not hold is unexecutable and
+    # would be dropped. Route those into long positions in inverse funds, and
+    # route a BUY on an underlying whose inverse we hold into closing it.
+    if enable_inverse_routing:
+        broker_states = broker_client.get_position_states([])
+        known_states = {**broker_states, **position_states}
+        routing = route_signals(decision_signals, known_states)
+        decision_signals = routing.signals
+        logging.info("INVERSE ROUTING: %s\n%s",
+                     routing.summary(), format_routing_table(routing.outcomes))
+
+        extra = [s for s in routing.extra_symbols if s not in position_states]
+        if extra:
+            # Proxy tickers need position state too, or decide_action reads them
+            # as absent and treats an existing holding as flat.
+            logging.info("Loading portfolio state for routed symbols: %s", ", ".join(extra))
+            position_states.update(
+                get_position_states(
+                    universe=extra,
+                    config=config,
+                    broker_client=broker_client,
+                    sim_portfolio={},
+                )
+            )
 
     logging.info("Executing trading cycle...")
     decision_log = run_trading_cycle(

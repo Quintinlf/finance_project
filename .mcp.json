@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "eos": {
+      "command": "python",
+      "args": [
+        "C:\\Users\\Windows User\\My_folder\\mcp_server\\server.py"
+      ]
+    }
+  }
+}

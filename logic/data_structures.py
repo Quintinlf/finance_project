@@ -136,6 +136,29 @@ class ExecutionConfig:
     max_belief_entropy: Optional[float] = None
     max_kl_divergence: Optional[float] = None
 
+    # EOS finance-domain integration (physics_finance / quantum_finance /
+    # finance_ml algorithms, imported via logic.eos_bridge).
+    #
+    # eos_mode controls what the enrichment is allowed to do:
+    #   'off'    - never call the eos algorithms at all
+    #   'shadow' - compute them and record into Signal.meta['eos'], but let
+    #              nothing influence a trade. Costs ~1 GARCH + 1 HMM fit per
+    #              symbol per cycle and changes no decision.
+    #   'enforce'- shadow, plus the individual eos_use_* switches below take
+    #              effect on sizing and confidence.
+    #
+    # Default is 'shadow': the strategy has no measured edge yet, so these are
+    # logged for backtest comparison before any of them is allowed to trade.
+    eos_mode: Literal['off', 'shadow', 'enforce'] = 'shadow'
+    eos_use_garch_exits: bool = False       # scale tp/sl by GARCH vol ratio
+    eos_use_hurst_confidence: bool = False  # adjust confidence by Hurst regime
+    eos_garch_max_scale: float = 2.0
+    eos_garch_min_scale: float = 0.5
+    # Refit the eos estimators every Nth bar per symbol instead of every bar.
+    # 1 = always refit (correct for a once-a-day live run). Raise it for
+    # backtests, where a full refit per symbol per bar dominates runtime.
+    eos_enrichment_stride: int = 1
+
     def to_dict(self) -> Dict[str, Any]:
         """Serialize config so benchmark snapshots are easy to freeze to disk."""
         return asdict(self)

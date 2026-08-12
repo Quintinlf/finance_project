@@ -25,6 +25,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Callable, Iterable, List, Optional, Sequence, Tuple, Any, cast
+import logging
 import os
 import threading
 
@@ -273,15 +274,48 @@ def format_table(rows, headers) -> str:
 # Core account operations
 # ======================
 def get_account_summary(client: TradingClient) -> dict:
-    """Return a dict with key account fields. No printing."""
+    """Return a dict with key account fields. No printing.
+
+    Includes the order-blocking flags GET /v2/account documents
+    (``trading_blocked``, ``account_blocked``, ``trade_suspended_by_user``)
+    plus the PDT counters, so callers can gate submission on ``can_trade``
+    instead of discovering the block through a rejected order.
+    """
     acct = client.get_account()
+
+    def _flag(name: str) -> bool:
+        return bool(getattr(acct, name, False))
+
     summary = {
         "status": getattr(getattr(acct, "status", ""), "value", str(getattr(acct, "status", ""))),
         "cash": float(getattr(acct, "cash", 0) or 0),
         "portfolio_value": float(getattr(acct, "portfolio_value", 0) or 0),
         "buying_power": float(getattr(acct, "buying_power", 0) or 0),
+        "trading_blocked": _flag("trading_blocked"),
+        "account_blocked": _flag("account_blocked"),
+        "trade_suspended_by_user": _flag("trade_suspended_by_user"),
+        "transfers_blocked": _flag("transfers_blocked"),
+        "shorting_enabled": _flag("shorting_enabled"),
+        "pattern_day_trader": _flag("pattern_day_trader"),
+        "daytrade_count": int(getattr(acct, "daytrade_count", 0) or 0),
+        "daytrading_buying_power": float(getattr(acct, "daytrading_buying_power", 0) or 0),
     }
+    summary["can_trade"] = not (
+        summary["trading_blocked"] or summary["account_blocked"] or summary["trade_suspended_by_user"]
+    )
     return summary
+
+
+def account_block_reasons(summary: dict) -> List[str]:
+    """Human-readable reasons an account cannot currently place orders."""
+    reasons = []
+    if summary.get("account_blocked"):
+        reasons.append("account_blocked: account activity by user is prohibited")
+    if summary.get("trading_blocked"):
+        reasons.append("trading_blocked: the account is not allowed to place orders")
+    if summary.get("trade_suspended_by_user"):
+        reasons.append("trade_suspended_by_user: trading was suspended in account settings")
+    return reasons
 
 
 def format_account_summary(summary: dict) -> str:
@@ -299,6 +333,12 @@ def list_all_orders(client: TradingClient):
     return client.get_orders()
 
 
+# GET /v2/orders documents `limit` as "Defaults to 50 and max is 500". Every
+# call below passes it explicitly: relying on the default silently truncates
+# the result set, which matters most for the wash-trade check and cancel-all.
+ORDERS_PAGE_LIMIT = 500
+
+
 def fetch_recent_closed_orders(client: TradingClient, limit: int = 10) -> List[dict]:
     """
     Return a normalized list of recently closed/filled orders for account-level snapshots.
@@ -306,7 +346,15 @@ def fetch_recent_closed_orders(client: TradingClient, limit: int = 10) -> List[d
     This is intended for notebook reporting and SQLite snapshot sync.
     """
     try:
-        req = GetOrdersRequest(status=QueryOrderStatus.CLOSED)
+        # direction=desc is the documented default, stated here because the
+        # rows are truncated to `limit` after sorting; nested=True rolls
+        # bracket/OCO legs up under their parent instead of listing them flat.
+        req = GetOrdersRequest(
+            status=QueryOrderStatus.CLOSED,
+            limit=max(int(limit), 1) if limit > 0 else ORDERS_PAGE_LIMIT,
+            direction="desc",
+            nested=True,
+        )
         orders = cast(List[Any], client.get_orders(filter=req))
     except Exception:
         return []
@@ -376,16 +424,47 @@ def format_positions_table(positions) -> str:
 # =====================
 # Order helper routines
 # =====================
+class OrderSubmissionError(RuntimeError):
+    """An order was rejected by the broker, carrying the broker's own reason.
+
+    Previously both submitters caught APIError and returned None, so the reason
+    Alpaca gave — insufficient buying power, wash trade, non-tradable asset —
+    was discarded and every failure reached the decision log as the useless
+    string "Order submission returned None". 17 buy attempts failed that way
+    with no recoverable explanation. The message is the whole point of this
+    exception; callers should log it and put it in the decision record.
+    """
+
+    def __init__(self, message: str, *, symbol: str, qty: Any, side: str, order_class: str) -> None:
+        super().__init__(message)
+        self.message = message
+        self.symbol = symbol
+        self.qty = qty
+        self.side = side
+        self.order_class = order_class
+
+
 def place_market_order(
     client: TradingClient, *, symbol: str, qty: int, side: str, tif: TimeInForce = TimeInForce.DAY
 ):
-    """Submit a market order. Returns the order object or None on API error. No printing."""
+    """Submit a market order. Returns the order object.
+
+    Raises OrderSubmissionError with the broker's message when Alpaca rejects
+    the order, rather than silently returning None.
+    """
     side_enum = OrderSide.BUY if side.lower() == "buy" else OrderSide.SELL
     req = MarketOrderRequest(symbol=symbol, qty=qty, side=side_enum, time_in_force=tif)
     try:
         return client.submit_order(req)
-    except APIError:
-        return None
+    except APIError as exc:
+        message = str(exc)
+        logging.error(
+            "ORDER REJECTED | %s %s x%s (market, tif=%s) | broker said: %s",
+            side.upper(), symbol, qty, getattr(tif, "value", tif), message,
+        )
+        raise OrderSubmissionError(
+            message, symbol=symbol, qty=qty, side=side, order_class="market"
+        ) from exc
 
 
 def place_bracket_order(
@@ -411,8 +490,10 @@ def place_bracket_order(
         tif: Time in force
     
     Returns:
-        dict with keys: 'main_order', 'take_profit_order', 'stop_loss_order'
-        or None on error
+        dict with keys: 'main_order', 'take_profit_price', 'stop_loss_price'
+
+    Raises:
+        OrderSubmissionError with the broker's own rejection message.
     """
     from alpaca.trading.requests import StopLossRequest, TakeProfitRequest
     
@@ -437,8 +518,15 @@ def place_bracket_order(
             'stop_loss_price': stop_loss_price
         }
     except APIError as e:
-        print(f"Error placing bracket order: {e}")
-        return None
+        message = str(e)
+        logging.error(
+            "ORDER REJECTED | %s %s x%s (bracket, tp=%.2f, sl=%.2f, tif=%s) | broker said: %s",
+            side.upper(), symbol, qty, take_profit_price, stop_loss_price,
+            getattr(tif, "value", tif), message,
+        )
+        raise OrderSubmissionError(
+            message, symbol=symbol, qty=qty, side=side, order_class="bracket"
+        ) from e
 
 
 def format_order_table(order) -> str:
@@ -490,7 +578,9 @@ def place_limit_order_with_wash_check(
         symbol=symbol, qty=qty, side=side_enum, limit_price=limit_price, time_in_force=tif
     )
 
-    open_filter = GetOrdersRequest(status=QueryOrderStatus.OPEN, symbols=[symbol])
+    open_filter = GetOrdersRequest(
+        status=QueryOrderStatus.OPEN, symbols=[symbol], limit=ORDERS_PAGE_LIMIT, nested=True
+    )
     open_orders = cast(List[Any], client.get_orders(filter=open_filter))
     opposite = OrderSide.SELL if side_enum == OrderSide.BUY else OrderSide.BUY
     conflicting = []
@@ -509,22 +599,39 @@ def place_limit_order_with_wash_check(
         return None, []
 
 
-def cancel_all_open_orders(client: TradingClient):
-    """Cancel all open orders. Returns dict with 'cancelled' and 'failed' lists. No printing."""
-    open_filter = GetOrdersRequest(status=QueryOrderStatus.OPEN)
-    open_orders = cast(List[Any], client.get_orders(filter=open_filter))
-    cancelled = []
-    failed = []
-    for o in open_orders:
-        try:
+def cancel_all_open_orders(client: TradingClient, max_passes: int = 10):
+    """Cancel all open orders. Returns dict with 'cancelled' and 'failed' lists. No printing.
+
+    A single GET /v2/orders call returns at most 500 orders, so this re-queries
+    until a pass finds nothing left to cancel. `nested=True` rolls bracket/OCO
+    legs up under their parent, so each leg is not cancelled a second time after
+    its parent already took it down.
+    """
+    cancelled: List[Any] = []
+    failed: List[dict] = []
+    seen: set = set()
+
+    for _ in range(max(int(max_passes), 1)):
+        open_filter = GetOrdersRequest(
+            status=QueryOrderStatus.OPEN, limit=ORDERS_PAGE_LIMIT, nested=True
+        )
+        open_orders = cast(List[Any], client.get_orders(filter=open_filter))
+        pending = [o for o in open_orders if str(getattr(o, "id", "")) not in seen]
+        if not pending:
+            break
+
+        for o in pending:
             oid = getattr(o, "id", None)
             if oid is None:
                 failed.append({"id": None, "error": "Order missing id"})
                 continue
-            client.cancel_order_by_id(oid)
-            cancelled.append(oid)
-        except APIError as e:
-            failed.append({"id": getattr(o, "id", None), "error": str(e)})
+            seen.add(str(oid))
+            try:
+                client.cancel_order_by_id(oid)
+                cancelled.append(oid)
+            except APIError as e:
+                failed.append({"id": oid, "error": str(e)})
+
     return {"cancelled": cancelled, "failed": failed}
 
 

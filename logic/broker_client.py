@@ -11,6 +11,8 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import date, datetime
 from typing import Any, Dict, Iterable, Optional
+import logging
+import os
 
 from logic.data_structures import PositionState
 
@@ -19,11 +21,28 @@ from logic.data_structures import PositionState
 class BrokerOrder:
     id: str
     symbol: str
-    qty: int
+    qty: float
     side: str
     order_type: str
     status: str = "accepted"
     submitted_at: datetime = field(default_factory=datetime.utcnow)
+
+
+def _order_qty(alpaca_order: Any, fallback: float) -> float:
+    """Read an order quantity off an Alpaca order response.
+
+    Alpaca documents Order.qty as a *string* that "can take up to 9 decimal
+    points" (GET/POST /v2/orders), so fractional-share orders come back as e.g.
+    "0.5". Parsing that with int() raises ValueError, which would lose track of
+    an order that the broker has already accepted.
+    """
+    raw = getattr(alpaca_order, "qty", None)
+    if raw is None:
+        return float(fallback)
+    try:
+        return float(raw)
+    except (TypeError, ValueError):
+        return float(fallback)
 
 
 class BrokerClient(ABC):
@@ -76,6 +95,12 @@ class PaperBrokerClient(BrokerClient):
             "portfolio_value": portfolio_value,
             "account_id": self._account_id,
             "status": "PAPER",
+            # Mirrors the GET /v2/account blocking flags so callers can gate on
+            # the same keys regardless of which broker client is in use.
+            "trading_blocked": False,
+            "account_blocked": False,
+            "trade_suspended_by_user": False,
+            "can_trade": True,
         }
 
     def get_position_states(self, universe: Iterable[str]) -> Dict[str, PositionState]:
@@ -168,6 +193,9 @@ class AlpacaBrokerClient(BrokerClient):
     def __init__(self, trading_client: Any, *, paper: bool = True) -> None:
         self._trading_client = trading_client
         self._paper = paper
+        # Reason the most recent submission was rejected, so the caller can put
+        # the broker's own words in the decision log instead of a bare None.
+        self.last_order_error: Optional[str] = None
 
     def get_account_summary(self) -> Dict[str, Any]:
         from logic.alpaca_exercises import get_account_summary
@@ -207,17 +235,27 @@ class AlpacaBrokerClient(BrokerClient):
                 )
         return position_states
 
-    def place_market_order(self, *, symbol: str, qty: int, side: str, time_in_force: str = "day") -> BrokerOrder:
+    def place_market_order(
+        self, *, symbol: str, qty: int, side: str, time_in_force: str = "day"
+    ) -> Optional[BrokerOrder]:
         from alpaca.trading.enums import TimeInForce
-        from logic.alpaca_exercises import place_market_order
+        from logic.alpaca_exercises import OrderSubmissionError, place_market_order
 
         tif = TimeInForce.DAY if str(time_in_force).lower() == "day" else TimeInForce.GTC
-        alpaca_order = place_market_order(self._trading_client, symbol=symbol, qty=qty, side=side, tif=tif)
-        
+        self.last_order_error = None
+        try:
+            alpaca_order = place_market_order(
+                self._trading_client, symbol=symbol, qty=qty, side=side, tif=tif
+            )
+        except OrderSubmissionError as exc:
+            self.last_order_error = exc.message
+            return None
+
         # Wrap Alpaca order response in BrokerOrder dataclass
         if alpaca_order is None:
+            self.last_order_error = "broker returned no order object"
             return None
-        
+
         status = getattr(alpaca_order, "status", "accepted")
         if hasattr(status, "value"):
             status = status.value
@@ -225,7 +263,7 @@ class AlpacaBrokerClient(BrokerClient):
         return BrokerOrder(
             id=str(getattr(alpaca_order, "id", "")),
             symbol=str(getattr(alpaca_order, "symbol", symbol)),
-            qty=int(getattr(alpaca_order, "qty", qty)),
+            qty=_order_qty(alpaca_order, qty),
             side=side,
             order_type="market",
             status=str(status),
@@ -241,29 +279,36 @@ class AlpacaBrokerClient(BrokerClient):
         take_profit_price: float,
         stop_loss_price: float,
         time_in_force: str = "day",
-    ) -> BrokerOrder:
+    ) -> Optional[BrokerOrder]:
         from alpaca.trading.enums import TimeInForce
-        from logic.alpaca_exercises import place_bracket_order
+        from logic.alpaca_exercises import OrderSubmissionError, place_bracket_order
 
         tif = TimeInForce.DAY if str(time_in_force).lower() == "day" else TimeInForce.GTC
-        result = place_bracket_order(
-            self._trading_client,
-            symbol=symbol,
-            qty=qty,
-            side=side,
-            take_profit_price=take_profit_price,
-            stop_loss_price=stop_loss_price,
-            tif=tif,
-        )
-        
+        self.last_order_error = None
+        try:
+            result = place_bracket_order(
+                self._trading_client,
+                symbol=symbol,
+                qty=qty,
+                side=side,
+                take_profit_price=take_profit_price,
+                stop_loss_price=stop_loss_price,
+                tif=tif,
+            )
+        except OrderSubmissionError as exc:
+            self.last_order_error = exc.message
+            return None
+
         # Wrap Alpaca bracket order response in BrokerOrder dataclass
         if result is None:
+            self.last_order_error = "broker returned no bracket result"
             return None
-        
+
         main_order = result.get("main_order") if isinstance(result, dict) else result
         if main_order is None:
+            self.last_order_error = "bracket result contained no main order"
             return None
-        
+
         status = getattr(main_order, "status", "accepted")
         if hasattr(status, "value"):
             status = status.value
@@ -271,7 +316,7 @@ class AlpacaBrokerClient(BrokerClient):
         return BrokerOrder(
             id=str(getattr(main_order, "id", "")),
             symbol=str(getattr(main_order, "symbol", symbol)),
-            qty=int(getattr(main_order, "qty", qty)),
+            qty=_order_qty(main_order, qty),
             side=side,
             order_type="bracket",
             status=str(status),
@@ -291,17 +336,46 @@ class AlpacaBrokerClient(BrokerClient):
             return True
 
 
+class BrokerConnectionError(RuntimeError):
+    """Could not reach the real broker when the caller required one."""
+
+
 def create_broker_client(
     *,
     execution_mode: str,
     creds: Optional[Any] = None,
     paper: Optional[bool] = None,
     initial_cash: float = 100000.0,
+    strict: Optional[bool] = None,
 ) -> BrokerClient:
-    """Return a valid broker client for the requested execution mode."""
+    """Return a broker client for the requested execution mode.
+
+    When `execution_mode` is 'paper' or 'live' and the Alpaca connection cannot
+    be established, this used to fall back to an in-memory `PaperBrokerClient`
+    seeded with $100,000 — silently, via a bare `except Exception`. The run then
+    "traded" a fake book that vanished when the process exited, and reported
+    success. That is exactly how a scheduled GitHub Actions job ran green for
+    months without a single order ever reaching Alpaca.
+
+    Now the failure is logged loudly with its cause, and in `strict` mode it
+    raises instead. Strict defaults to True in CI (where nobody is watching a
+    terminal and a fake fill is worthless) and False locally, so ad-hoc
+    experimentation without credentials still works. Override explicitly, or
+    set STRICT_BROKER=true/false.
+    """
     mode = str(execution_mode).lower()
     if mode == "simulation":
         return PaperBrokerClient(initial_cash=initial_cash)
+
+    if strict is None:
+        strict_env = os.getenv("STRICT_BROKER", "").strip().lower()
+        if strict_env in {"1", "true", "yes", "y"}:
+            strict = True
+        elif strict_env in {"0", "false", "no", "n"}:
+            strict = False
+        else:
+            # No terminal to watch and no human to notice a fake fill.
+            strict = os.getenv("CI", "").strip().lower() in {"1", "true"}
 
     try:
         if creds is None:
@@ -312,6 +386,27 @@ def create_broker_client(
 
         paper_mode = paper if paper is not None else mode != "live"
         trading_client = connect_trading_client(creds, paper=paper_mode)
-        return AlpacaBrokerClient(trading_client, paper=paper_mode)
-    except Exception:
+        client = AlpacaBrokerClient(trading_client, paper=paper_mode)
+        # Force one real API call now. Constructing a TradingClient does no I/O,
+        # so bad credentials would otherwise stay hidden until the first order.
+        client.get_account_summary()
+        return client
+    except Exception as exc:
+        message = (
+            f"Could not connect to Alpaca in '{mode}' mode: {type(exc).__name__}: {exc}. "
+            f"Check that APCA_API_KEY_ID/APCA_API_SECRET_KEY (or ALPACA_API_KEY/"
+            f"ALPACA_SECRET_KEY, or API_KEY/SECRET_KEY) are set in the environment. "
+            f"In GitHub Actions these come from repository secrets."
+        )
+        if strict:
+            logging.error("BROKER CONNECTION FAILED (strict mode): %s", message)
+            raise BrokerConnectionError(message) from exc
+
+        logging.error(
+            "BROKER CONNECTION FAILED: %s\n"
+            "  Falling back to an IN-MEMORY simulated broker with $%.2f. "
+            "NOTHING FROM THIS RUN WILL REACH ALPACA and all state is discarded "
+            "when the process exits.",
+            message, initial_cash,
+        )
         return PaperBrokerClient(initial_cash=initial_cash)

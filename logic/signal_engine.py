@@ -14,6 +14,7 @@ from typing import List, Dict, Any, Optional, Literal, cast
 import yfinance as yf
 
 from logic.data_structures import Signal, ExecutionConfig
+from logic import eos_bridge
 from logic.trading_functions import unified_bayesian_gp_forecast, calculate_bollinger_bands
 from logic.game_utils import (
     compute_market_state,
@@ -57,7 +58,9 @@ def _normalize_forecast_label(label: Any) -> Literal['buy', 'sell', 'hold']:
 def generate_signals(
     universe: List[str],
     config: ExecutionConfig,
-    verbose: bool = False
+    verbose: bool = False,
+    price_data: Optional[Dict[str, Any]] = None,
+    build_plot: bool = True,
 ) -> List[Signal]:
     """
     Generate trading signals for all symbols in the universe.
@@ -67,9 +70,16 @@ def generate_signals(
         config: execution configuration (contains thresholds)
         verbose: whether to print progress
     
+    price_data: optional {symbol: OHLCV frame} of pre-fetched history. When
+        given, no download happens for that symbol and the signal is computed
+        only from the rows supplied. The backtester passes history truncated at
+        the bar under evaluation; that truncation is what keeps the replay
+        honest about what was knowable at decision time.
+    build_plot: pass False to skip figure construction inside the forecast.
+
     Returns:
         List of Signal objects, one per symbol analyzed
-    
+
     Process:
         1. Fetch recent price data for each symbol
         2. Calculate Bollinger Bands
@@ -78,13 +88,18 @@ def generate_signals(
         5. Package as Signal object
     """
     signals = []
-    
+
     for i, symbol in enumerate(universe, 1):
         if verbose:
             print(f"[{i}/{len(universe)}] Analyzing {symbol}...")
-        
+
         try:
-            signal = _generate_single_signal(symbol, config)
+            signal = _generate_single_signal(
+                symbol,
+                config,
+                price_history=(price_data or {}).get(symbol),
+                build_plot=build_plot,
+            )
             if signal:
                 signals.append(signal)
         except Exception as e:
@@ -95,20 +110,41 @@ def generate_signals(
     return signals
 
 
-def _generate_single_signal(symbol: str, config: ExecutionConfig) -> Optional[Signal]:
+def _generate_single_signal(
+    symbol: str,
+    config: ExecutionConfig,
+    price_history: Optional[Any] = None,
+    build_plot: bool = True,
+) -> Optional[Signal]:
     """
     Generate signal for a single symbol.
-    
+
+    price_history: everything knowable as of the decision bar, or None to fetch
+        live. When supplied it is sliced here into the same two windows
+        production uses — ~3 months for Bollinger/regime, 200 days for the
+        forecast — so a replayed signal matches a live one bar for bar.
+
     Returns:
         Signal object or None if insufficient data
     """
-    # Fetch price data
-    ticker_data = yf.Ticker(symbol)
-    price_history = ticker_data.history(period="3mo", interval="1d")
-    
+    forecast_history = None
+    if price_history is None:
+        # Fetch a year rather than 3 months so the eos enrichment has enough
+        # observations for a stable GARCH/HMM fit (both need >= 60 returns; a
+        # 3-month window yields ~62 and fits badly). The Bollinger/regime slice
+        # below is still the same trailing ~63 bars, so signal behaviour is
+        # unchanged — only the history retained alongside it is longer.
+        ticker_data = yf.Ticker(symbol)
+        eos_history = ticker_data.history(period="1y", interval="1d")
+        price_history = eos_history.tail(63)
+    else:
+        eos_history = price_history
+        forecast_history = price_history.tail(200)
+        price_history = price_history.tail(63)  # ~3 months of trading days
+
     if price_history.empty:
         return None
-    
+
     # Calculate Bollinger Bands
     df_with_bb = calculate_bollinger_bands(price_history, window=20, num_std=2)
     bb_z_score = df_with_bb['BB_Z_Score'].iloc[-1]
@@ -124,8 +160,12 @@ def _generate_single_signal(symbol: str, config: ExecutionConfig) -> Optional[Si
         bb_signal = "NEUTRAL"
     
     # Run forecast model
-    forecast_result = unified_bayesian_gp_forecast(symbol)
-    
+    forecast_result = unified_bayesian_gp_forecast(
+        symbol,
+        price_history=forecast_history,
+        build_plot=build_plot,
+    )
+
     if not forecast_result:
         return None
     
@@ -202,6 +242,47 @@ def _generate_single_signal(symbol: str, config: ExecutionConfig) -> Optional[Si
         't_range': float((0.35 * abs(one_step_return)) - (0.15 * deviation_payoff.hunting_cost)),
     }
 
+    # EOS enrichment: GARCH volatility, Hurst regime, HMM regime, tail risk,
+    # and quantum price levels from the physics/quantum/finance-ML domains.
+    # In 'shadow' mode this only populates meta; in 'enforce' mode the Hurst
+    # multiplier below is allowed to move confidence.
+    eos_enrichment: Dict[str, Any] = {}
+    eos_mode = getattr(config, 'eos_mode', 'off')
+    if eos_mode in {'shadow', 'enforce'}:
+        try:
+            eos_enrichment = eos_bridge.build_enrichment(
+                price_history=eos_history,
+                spot_price=float(current_price),
+                cache_key=symbol,
+                stride=int(getattr(config, 'eos_enrichment_stride', 1) or 1),
+            )
+        except Exception as exc:
+            # Never let an enrichment failure cost a trading decision.
+            logging.warning("EOS enrichment failed for %s (%s). Continuing.", symbol, exc)
+            eos_enrichment = {'available': False, 'error': str(exc)}
+
+    hurst_adjustment = eos_bridge.hurst_confidence_multiplier(
+        signal_type=signal_type,
+        bb_signal=bb_signal,
+        enrichment=eos_enrichment,
+    )
+    if eos_mode == 'enforce' and getattr(config, 'eos_use_hurst_confidence', False):
+        if hurst_adjustment.get('applied'):
+            pre_hurst_confidence = combined_confidence
+            combined_confidence = max(
+                0.0, min(1.0, combined_confidence * float(hurst_adjustment['multiplier']))
+            )
+            logging.info(
+                "EOS HURST ADJUST | symbol=%s | %.4f -> %.4f | %s",
+                symbol,
+                pre_hurst_confidence,
+                combined_confidence,
+                hurst_adjustment.get('reason'),
+            )
+            hurst_adjustment['enforced'] = True
+    if eos_enrichment:
+        eos_enrichment['hurst_confidence_adjustment'] = hurst_adjustment
+
     regime_probs = regime.as_dict()
     belief_entropy = _shannon_entropy(type_beliefs)
     regime_entropy = _shannon_entropy(regime_probs)
@@ -253,6 +334,7 @@ def _generate_single_signal(symbol: str, config: ExecutionConfig) -> Optional[Si
             'kl_divergence': None,
             'js_divergence': None,
             'component_snapshot': component_snapshot,
+            'eos': eos_enrichment,
             'full_forecast': forecast_result  # Keep for advanced use
         }
     )
@@ -267,22 +349,33 @@ def filter_signals_by_thresholds(
 ) -> List[Signal]:
     """
     Filter signals that meet minimum thresholds.
-    
+
     Args:
         signals: list of Signal objects
         min_confidence: minimum confidence threshold
-        min_prob_up: minimum probability of profit
-    
+        min_prob_up: minimum probability the move goes the signal's way
+
     Returns:
         Filtered list containing only actionable signals
+
+    Note on direction: `Signal.prob_profit` carries what the forecaster calls
+    `prob_profit_up` — P(next return > 0) from the ensemble's normal CDF. It is
+    a *directional* probability, not "probability this trade makes money". So a
+    SELL must be judged against the down-tail, 1 - prob_profit. Comparing a SELL
+    to `prob_profit >= min_prob_up` rejects exactly the most confident bearish
+    calls: a STRONG SELL at prob_profit=0.0005 is a 99.95% down-read, and the
+    naive test throws it out for being "too low".
     """
     evaluated: List[Signal] = []
-    
+
     for signal in signals:
         original_label = str(signal.meta.get('original_signal_label', signal.signal_type.upper()))
         normalized_label = str(signal.meta.get('normalized_signal_label', signal.signal_type)).upper()
         confidence = float(signal.confidence)
         prob_profit = float(signal.prob_profit)
+        # Probability the market moves the way this signal is betting.
+        directional_prob = (1.0 - prob_profit) if signal.signal_type == 'sell' else prob_profit
+        signal.meta['directional_probability'] = directional_prob
 
         if signal.signal_type == 'hold':
             reason = 'explicit HOLD decision retained for logging'
@@ -301,18 +394,19 @@ def filter_signals_by_thresholds(
             continue
         
         meets_confidence = confidence >= min_confidence
-        meets_prob = prob_profit >= min_prob_up
+        meets_prob = directional_prob >= min_prob_up
 
         if meets_confidence and meets_prob:
             signal.meta['threshold_decision'] = 'pass'
             signal.meta['threshold_reason'] = 'meets confidence and probability thresholds'
             logging.info(
-                "SIGNAL FILTER | symbol=%s | original=%s | normalized=%s | confidence=%.4f | prob_profit=%.4f | decision=PASS | reason=meets confidence and probability thresholds",
+                "SIGNAL FILTER | symbol=%s | original=%s | normalized=%s | confidence=%.4f | prob_profit=%.4f | p_dir=%.4f | decision=PASS | reason=meets confidence and probability thresholds",
                 signal.symbol,
                 original_label,
                 normalized_label,
                 confidence,
                 prob_profit,
+                directional_prob,
             )
             evaluated.append(signal)
             continue
@@ -321,19 +415,23 @@ def filter_signals_by_thresholds(
         if not meets_confidence:
             rejection_reasons.append(f"confidence {confidence:.4f} < {min_confidence:.4f}")
         if not meets_prob:
-            rejection_reasons.append(f"prob_profit {prob_profit:.4f} < {min_prob_up:.4f}")
+            direction_word = 'down' if signal.signal_type == 'sell' else 'up'
+            rejection_reasons.append(
+                f"P({direction_word}) {directional_prob:.4f} < {min_prob_up:.4f}"
+            )
         reason = '; '.join(rejection_reasons) if rejection_reasons else 'unknown threshold failure'
         signal.meta['threshold_decision'] = 'reject'
         signal.meta['threshold_rejection_reason'] = reason
         signal.meta['threshold_reason'] = reason
         logging.info(
-            "SIGNAL FILTER | symbol=%s | original=%s | normalized=%s | confidence=%.4f | prob_profit=%.4f | decision=REJECT | reason=%s",
+            "SIGNAL FILTER | symbol=%s | original=%s | normalized=%s | confidence=%.4f | prob_profit=%.4f | p_dir=%.4f | decision=REJECT | reason=%s",
             signal.symbol,
             original_label,
             normalized_label,
             confidence,
             prob_profit,
+            directional_prob,
             reason,
         )
-    
+
     return evaluated

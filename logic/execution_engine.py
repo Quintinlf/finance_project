@@ -16,6 +16,7 @@ from __future__ import annotations
 from typing import List, Dict, Optional, Tuple, Union
 from datetime import datetime
 from pathlib import Path
+import logging
 import uuid
 from zoneinfo import ZoneInfo
 from datetime import timezone
@@ -27,6 +28,7 @@ from logic.sqlite_store import DEFAULT_DB_PATH, get_latest_account_snapshot, con
 from logic.account_equity import AccountEquityContext, resolve_account_equity
 
 from logic.broker_client import BrokerClient
+from logic import eos_bridge
 from logic.data_structures import (
     Signal, PositionState, ExecutionConfig, OrderPlan, DecisionLogEntry
 )
@@ -325,6 +327,60 @@ def apply_uncertainty_gate(
 # STEP 2: ORDER PLANNING (Sizing + TP/SL)
 # ========================================================================
 
+def resolve_exit_pcts(signal: Signal, config: ExecutionConfig) -> Tuple[float, float]:
+    """Take-profit and stop-loss fractions for this signal, as (tp_pct, sl_pct).
+
+    Volatility-aware exits: a fixed 2% stop is a different bet in a quiet tape
+    than in a violent one. When `eos_mode` is 'enforce' and `eos_use_garch_exits`
+    is set, both legs scale by the GARCH forecast volatility ratio so the stop
+    sits at a roughly constant sigma distance. Every other case returns the
+    configured percentages unchanged.
+
+    Both `build_order_plan` and the backtester's position opener call this, so
+    a replayed trade gets the same exit levels a live one would. Records the
+    decision under `signal.meta['eos_exit_scaling']` either way.
+    """
+    eos_exits = eos_bridge.scale_exit_pcts(
+        tp_pct=config.tp_pct,
+        sl_pct=config.sl_pct,
+        enrichment=signal.meta.get('eos'),
+        max_scale=getattr(config, 'eos_garch_max_scale', 2.0),
+        min_scale=getattr(config, 'eos_garch_min_scale', 0.5),
+    )
+    enforced = (
+        getattr(config, 'eos_mode', 'off') == 'enforce'
+        and getattr(config, 'eos_use_garch_exits', False)
+        and eos_exits['applied']
+    )
+    tp_pct = eos_exits['tp_pct'] if enforced else config.tp_pct
+    sl_pct = eos_exits['sl_pct'] if enforced else config.sl_pct
+    signal.meta['eos_exit_scaling'] = {
+        **eos_exits,
+        'enforced': enforced,
+        'effective_tp_pct': tp_pct,
+        'effective_sl_pct': sl_pct,
+    }
+
+    # Leverage correction for inverse-routed signals. A -2x fund travels twice
+    # as far as its underlying, so exit bands expressed on the underlying have
+    # to be halved or the trade closes on half the move the signal asked for.
+    divisor = signal.meta.get('exit_leverage_divisor')
+    if divisor:
+        try:
+            factor = float(divisor)
+        except (TypeError, ValueError):
+            factor = 1.0
+        if factor > 0 and factor != 1.0:
+            tp_pct, sl_pct = tp_pct / factor, sl_pct / factor
+            signal.meta['exit_leverage_applied'] = {
+                'divisor': factor,
+                'tp_pct': tp_pct,
+                'sl_pct': sl_pct,
+            }
+
+    return tp_pct, sl_pct
+
+
 def build_order_plan(
     signal: Signal,
     position_state: PositionState,
@@ -360,7 +416,9 @@ def build_order_plan(
         if max_position_fraction is not None
         else config.max_position_pct_of_equity / 100.0
     )
-    
+
+    effective_tp_pct, effective_sl_pct = resolve_exit_pcts(signal, config)
+
     # Determine side (buy or sell)
     if signal.signal_type == 'buy':
         side = 'buy'
@@ -375,7 +433,7 @@ def build_order_plan(
         base_qty = calculate_position_size(
             account_balance=sizing_equity,
             risk_per_trade_pct=config.base_risk_pct,
-            stop_loss_pct=config.sl_pct * 100,  # Function expects percentage as 0-100
+            stop_loss_pct=effective_sl_pct * 100,  # Function expects percentage as 0-100
             price=current_price
         )
         
@@ -397,8 +455,8 @@ def build_order_plan(
         signal.meta['minimax_applied_multiplier'] = mm
         
         # Calculate TP/SL for long position
-        tp_price = round(current_price * (1 + config.tp_pct), 2)
-        sl_price = round(current_price * (1 - config.sl_pct), 2)
+        tp_price = round(current_price * (1 + effective_tp_pct), 2)
+        sl_price = round(current_price * (1 - effective_sl_pct), 2)
         
     else:  # sell
         if position_state.side == 'long':
@@ -416,7 +474,7 @@ def build_order_plan(
             base_qty = calculate_position_size(
                 account_balance=sizing_equity,
                 risk_per_trade_pct=config.base_risk_pct,
-                stop_loss_pct=config.sl_pct * 100,
+                stop_loss_pct=effective_sl_pct * 100,
                 price=current_price
             )
             max_shares = int((sizing_equity * risk_cap_fraction) / current_price)
@@ -436,8 +494,8 @@ def build_order_plan(
             signal.meta['minimax_applied_multiplier'] = mm
             
             # For shorts, TP is below entry, SL is above
-            tp_price = round(current_price * (1 - config.tp_pct), 2)
-            sl_price = round(current_price * (1 + config.sl_pct), 2)
+            tp_price = round(current_price * (1 - effective_tp_pct), 2)
+            sl_price = round(current_price * (1 + effective_sl_pct), 2)
     
     # Build OrderPlan
     plan = OrderPlan(
@@ -539,6 +597,25 @@ def execute_order_plan(
     
     # PAPER / LIVE MODE (broker client)
     if config.execution_mode in ['paper', 'live']:
+        # GET /v2/account exposes trading_blocked / account_blocked /
+        # trade_suspended_by_user. Submitting into a blocked account only earns
+        # a rejection, so check first and report why rather than eating it.
+        try:
+            account = broker_client.get_account_summary() or {}
+        except Exception:
+            account = {}
+        if account and account.get('can_trade') is False:
+            blocked_on = [
+                flag for flag in ('account_blocked', 'trading_blocked', 'trade_suspended_by_user')
+                if account.get(flag)
+            ]
+            result['error_message'] = (
+                'Broker account cannot place orders: ' + (', '.join(blocked_on) or 'can_trade=False')
+            )
+            if verbose:
+                print(f"[BLOCKED] {result['error_message']}")
+            return result
+
         try:
             # Choose between bracket and market order
             if order_plan.has_bracket():
@@ -573,8 +650,24 @@ def execute_order_plan(
                         print(f"   TP: ${order_plan.tp_price:.2f} | SL: ${order_plan.sl_price:.2f}")
                     print(f"   Order ID: {order.id}")
             else:
-                result['error_message'] = 'Order submission returned None'
-        
+                # Prefer the broker's own rejection message. Falling back to the
+                # generic string is what made 17 failed buys undiagnosable.
+                broker_reason = getattr(broker_client, 'last_order_error', None)
+                result['error_message'] = (
+                    f"Order rejected by broker: {broker_reason}"
+                    if broker_reason
+                    else 'Order submission returned None (no reason reported by broker)'
+                )
+                logging.error(
+                    "ORDER NOT SUBMITTED | %s %s x%s | %s",
+                    order_plan.side.upper(),
+                    order_plan.symbol,
+                    order_plan.quantity,
+                    result['error_message'],
+                )
+                if verbose:
+                    print(f"[ERROR] {result['error_message']}")
+
         except Exception as e:
             result['error_message'] = str(e)
             if verbose:

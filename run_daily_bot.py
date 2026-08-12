@@ -117,8 +117,20 @@ def main() -> int:
     debug_force_strongest_signal_env = os.getenv("DEBUG_FORCE_STRONGEST_SIGNAL", "false").strip().lower()
     debug_force_strongest_signal = debug_force_strongest_signal_env in {"1", "true", "yes", "y"}
 
+    # UNIVERSE is an explicit ticker override and skips the affordability screen.
+    # UNIVERSE_SCOPE picks a named scope from logic/universe.py instead
+    # (equities | commodities | agriculture | energy | metals | all).
     universe_env = os.getenv("UNIVERSE", "").strip()
     universe = [s.strip().upper() for s in universe_env.split(",") if s.strip()] or None
+    universe_scope = os.getenv("UNIVERSE_SCOPE", "all").strip().lower()
+    screen_env = os.getenv("SCREEN_AFFORDABILITY", "true").strip().lower()
+    screen_affordability = screen_env in {"1", "true", "yes", "y"}
+
+    # Long-only book, so bearish signals are expressed by buying inverse funds
+    # rather than being dropped. Set INVERSE_ROUTING=false to go back to
+    # discarding unexecutable SELLs.
+    inverse_env = os.getenv("INVERSE_ROUTING", "true").strip().lower()
+    enable_inverse_routing = inverse_env in {"1", "true", "yes", "y"}
 
     from logic.daily_runner import run_daily_trading_cycle
 
@@ -132,6 +144,9 @@ def main() -> int:
         base_risk_pct=base_risk_pct,
         debug_force_strongest_signal=debug_force_strongest_signal,
         universe=universe,
+        universe_scope=universe_scope,
+        screen_affordability=screen_affordability,
+        enable_inverse_routing=enable_inverse_routing,
     )
     return 0
 
