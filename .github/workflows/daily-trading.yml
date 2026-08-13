@@ -4,6 +4,15 @@ on:
   schedule:
     - cron: "0 14 * * 1-5"
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Log decisions without submitting orders"
+        type: boolean
+        default: true
+      universe_scope:
+        description: "equities | commodities | agriculture | energy | metals | all"
+        type: string
+        default: "all"
 
 permissions:
   contents: write
@@ -20,10 +29,15 @@ jobs:
       PYTHONUNBUFFERED: "1"
       CI: "true"
       GITHUB_ACTIONS: "true"
-      API_KEY: ${{ secrets['ALPACA_API_KEY'] }}
-      SECRET_KEY: ${{ secrets['ALPACA_SECRET_KEY'] }}
-      APCA_API_KEY_ID: ${{ secrets['ALPACA_API_KEY'] }}
-      APCA_API_SECRET_KEY: ${{ secrets['ALPACA_SECRET_KEY'] }}
+      # Accept either naming. `||` in a GitHub expression yields the first
+      # non-empty value, so ALPACA_* wins if present and API_KEY/SECRET_KEY
+      # (matching the local .env convention) works as the fallback. Without
+      # this, a secret stored under the other name reads as an empty string
+      # and the run looks exactly like having no credentials at all.
+      API_KEY: ${{ secrets.ALPACA_API_KEY || secrets.API_KEY }}
+      SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY || secrets.SECRET_KEY }}
+      APCA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY || secrets.API_KEY }}
+      APCA_API_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY || secrets.SECRET_KEY }}
 
     steps:
       - name: Checkout repository
@@ -53,7 +67,7 @@ jobs:
       - name: Verify Alpaca credentials are present
         run: |
           if [ -z "${APCA_API_KEY_ID}" ] || [ -z "${APCA_API_SECRET_KEY}" ]; then
-            echo "::error title=Missing Alpaca credentials::Repository secrets ALPACA_API_KEY and/or ALPACA_SECRET_KEY are not set, so this run would trade an in-memory fake broker and reach Alpaca never. Add them under Settings > Secrets and variables > Actions."
+            echo "::error title=Missing Alpaca credentials::No Alpaca credentials found. Set repository secrets named either ALPACA_API_KEY/ALPACA_SECRET_KEY or API_KEY/SECRET_KEY under Settings > Secrets and variables > Actions. Without them this run would trade an in-memory fake broker and never reach Alpaca."
             exit 1
           fi
           echo "Alpaca credentials present (key ends ...${APCA_API_KEY_ID: -4})."
@@ -61,13 +75,16 @@ jobs:
       - name: Execute daily trading entrypoint
         env:
           EXECUTION_MODE: "paper"
-          DRY_RUN: "false"
+          # Scheduled runs trade; a manual run defaults to dry so the first
+          # verification of a new credential set proves the connection without
+          # submitting anything.
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run && 'true' || 'false' }}
           MIN_CONF: "0.50"
           MIN_PROB_UP: "0.50"
           TP_PCT: "0.04"
           SL_PCT: "0.02"
           BASE_RISK_PCT: "2.0"
-          UNIVERSE_SCOPE: "all"
+          UNIVERSE_SCOPE: ${{ inputs.universe_scope || 'all' }}
           INVERSE_ROUTING: "true"
           # Refuse the silent in-memory fallback: a fake fill in CI is worse
           # than a failed job, because it looks like success.
