@@ -5,7 +5,7 @@ from __future__ import annotations
 import unittest
 
 from logic.data_structures import ExecutionConfig, PositionState, Signal
-from logic.execution_engine import resolve_exit_pcts
+from logic.execution_engine import build_order_plan, resolve_exit_pcts
 from logic.inverse_routing import format_routing_table, route_signals
 from logic.universe import (
     INVERSE_PROXIES,
@@ -25,6 +25,16 @@ def fake_prices(symbols):
 
 def no_prices(symbols):
     return {s: None for s in symbols}
+
+
+# The live rejection this guards against: UNG traded near $10 while its proxy
+# KOLD was $29.81, and the bracket went out with a $10.20 take-profit.
+KOLD_PRICE = 29.81
+UNG_PRICE = 10.00
+
+
+def proxy_priced(symbols):
+    return {s: KOLD_PRICE for s in symbols}
 
 
 def make_signal(symbol: str, signal_type: str, confidence=0.8, prob_profit=0.2) -> Signal:
@@ -106,22 +116,30 @@ class TestLeverageScaling(unittest.TestCase):
 
 
 class TestResolveInverse(unittest.TestCase):
+    def test_returns_the_proxy_price(self):
+        proxy, _, price = resolve_inverse("UNG", price_lookup=proxy_priced)
+        self.assertEqual(proxy.symbol, "KOLD")
+        self.assertAlmostEqual(price, KOLD_PRICE)
+
     def test_unpriceable_proxy_is_rejected(self):
-        proxy, reason = resolve_inverse("SLV", price_lookup=no_prices)
+        proxy, reason, price = resolve_inverse("SLV", price_lookup=no_prices)
         self.assertIsNone(proxy)
+        self.assertIsNone(price)
         self.assertIn("no current price", reason)
 
     def test_uncovered_symbol_reports_its_reason(self):
-        proxy, reason = resolve_inverse("WEAT", price_lookup=fake_prices)
+        proxy, reason, price = resolve_inverse("WEAT", price_lookup=fake_prices)
         self.assertIsNone(proxy)
+        self.assertIsNone(price)
         self.assertIn("wheat", reason)
 
     def test_lookup_failure_is_caught(self):
         def boom(symbols):
             raise RuntimeError("network down")
 
-        proxy, reason = resolve_inverse("SLV", price_lookup=boom)
+        proxy, reason, price = resolve_inverse("SLV", price_lookup=boom)
         self.assertIsNone(proxy)
+        self.assertIsNone(price)
         self.assertIn("network down", reason)
 
 
@@ -207,6 +225,66 @@ class TestRouting(unittest.TestCase):
         self.assertIn(("IAU", "buy"), symbols)
         self.assertIn(("CORN", "hold"), symbols)
         self.assertNotIn("WEAT", [s for s, _ in symbols])
+
+    def test_routed_signal_is_repriced_onto_the_proxy(self):
+        """The KOLD rejection: exit levels must come from the proxy's price."""
+        signal = make_signal("UNG", "sell")
+        signal.meta["current_price"] = UNG_PRICE
+        result = route_signals(
+            [signal], {}, price_lookup=proxy_priced, verbose=False
+        )
+        routed = result.signals[0]
+        self.assertEqual(routed.symbol, "KOLD")
+        self.assertAlmostEqual(routed.meta["current_price"], KOLD_PRICE)
+        self.assertAlmostEqual(routed.meta["underlying_price"], UNG_PRICE)
+
+    def test_bracket_levels_bracket_the_proxy_price(self):
+        """End to end: the plan Alpaca would receive must be self-consistent."""
+        signal = make_signal("UNG", "sell")
+        signal.meta["current_price"] = UNG_PRICE
+        result = route_signals([signal], {}, price_lookup=proxy_priced, verbose=False)
+        routed = result.signals[0]
+
+        config = ExecutionConfig(
+            execution_mode="simulation", tp_pct=0.04, sl_pct=0.02,
+            base_risk_pct=2.0, max_position_pct_of_equity=20.0,
+        )
+        plan = build_order_plan(
+            signal=routed,
+            position_state=position("KOLD", 0),
+            config=config,
+            account_cash=500.0,
+            current_price=float(routed.meta["current_price"]),
+            account_equity=500.0,
+            max_position_fraction=0.20,
+        )
+        # This is precisely what the broker rejected: a take-profit below the
+        # base price. Both legs must straddle the proxy's own price.
+        self.assertGreater(plan.tp_price, KOLD_PRICE)
+        self.assertLess(plan.sl_price, KOLD_PRICE)
+        # -2x leverage halves the bands: 4%/2% on the underlying -> 2%/1%.
+        self.assertAlmostEqual(plan.tp_price, round(KOLD_PRICE * 1.02, 2), places=2)
+        self.assertAlmostEqual(plan.sl_price, round(KOLD_PRICE * 0.99, 2), places=2)
+
+    def test_exit_routing_is_blocked_when_the_proxy_cannot_be_priced(self):
+        signal = make_signal("SLV", "buy", prob_profit=0.9)
+        result = route_signals(
+            [signal], {"ZSL": position("ZSL", 4)}, price_lookup=no_prices, verbose=False
+        )
+        self.assertEqual(result.signals, [])
+        self.assertEqual(result.outcomes[0].action, "unroutable")
+        self.assertIn("cannot price", result.outcomes[0].reason)
+
+    def test_exit_routing_reprices_onto_the_proxy_too(self):
+        signal = make_signal("UNG", "buy", prob_profit=0.9)
+        signal.meta["current_price"] = UNG_PRICE
+        result = route_signals(
+            [signal], {"KOLD": position("KOLD", 3)},
+            price_lookup=proxy_priced, verbose=False,
+        )
+        routed = result.signals[0]
+        self.assertEqual(routed.signal_type, "sell")
+        self.assertAlmostEqual(routed.meta["current_price"], KOLD_PRICE)
 
     def test_summary_and_table_render(self):
         result = self._route([make_signal("SLV", "sell"), make_signal("WEAT", "sell")])

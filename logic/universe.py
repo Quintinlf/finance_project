@@ -332,29 +332,36 @@ def coverage_report(scope: str = "all") -> str:
 def resolve_inverse(
     symbol: str,
     price_lookup: Optional[Callable[[Sequence[str]], Dict[str, Optional[float]]]] = None,
-) -> Tuple[Optional[InverseProxy], str]:
-    """Return the tradable inverse proxy for `symbol`, plus why if there isn't one.
+) -> Tuple[Optional[InverseProxy], str, Optional[float]]:
+    """Return the tradable inverse proxy for `symbol`, why not, and its price.
 
     Price-checks the proxy before returning it. Inverse products are unusually
     prone to closure and reverse splits — a stale ticker in the table would
     otherwise turn into a rejected order at the broker with a confusing message.
+
+    The price is returned rather than only formatted into the message because
+    the caller *must* re-price the routed signal onto the proxy. Sizing and
+    bracket levels are both derived from `Signal.meta['current_price']`, so
+    leaving the underlying's price on a proxy order produces exit levels for
+    the wrong instrument — Alpaca rejected a KOLD bracket with a $10.20 target
+    against a $29.81 base price exactly this way.
     """
     proxy = inverse_for(symbol)
     if proxy is None:
         return None, NO_INVERSE_COVERAGE.get(
             str(symbol).strip().upper(), f"no inverse proxy mapped for {symbol}"
-        )
+        ), None
 
     lookup_fn = price_lookup or fetch_last_prices
     try:
         prices = lookup_fn([proxy.symbol])
     except Exception as exc:
-        return None, f"{proxy.symbol}: price lookup failed ({exc})"
+        return None, f"{proxy.symbol}: price lookup failed ({exc})", None
 
     price = prices.get(proxy.symbol)
     if price is None or price <= 0:
-        return None, f"{proxy.symbol}: no current price (delisted or untradable?)"
-    return proxy, f"{proxy.symbol} @ ${price:,.2f} (-{proxy.leverage:g}x {symbol})"
+        return None, f"{proxy.symbol}: no current price (delisted or untradable?)", None
+    return proxy, f"{proxy.symbol} @ ${price:,.2f} (-{proxy.leverage:g}x {symbol})", float(price)
 
 
 # ========================================================================

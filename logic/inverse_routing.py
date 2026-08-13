@@ -98,6 +98,7 @@ def _build_routed_signal(
     proxy: InverseProxy,
     side: str,
     reason: str,
+    proxy_price: float,
 ) -> Signal:
     """Clone a signal onto the proxy ticker, inverting the directional read."""
     # The routed signal bets on the proxy rising, which is the underlying
@@ -106,6 +107,13 @@ def _build_routed_signal(
     prob_profit = inverted_prob if side == "buy" else float(original.prob_profit)
 
     meta = dict(original.meta)
+    # Re-price onto the proxy. `build_order_plan` derives both position size
+    # and the bracket levels from meta['current_price'], so carrying the
+    # underlying's price here produces exit prices for the wrong instrument.
+    # UNG at ~$10 routed to KOLD at ~$29.81 yielded a $10.20 take-profit and
+    # a broker rejection: "take_profit.limit_price must be >= base_price".
+    meta["underlying_price"] = original.meta.get("current_price")
+    meta["current_price"] = float(proxy_price)
     meta["inverse_routing"] = {
         "routed_from": original.symbol,
         "original_signal_type": original.signal_type,
@@ -175,20 +183,35 @@ def route_signals(
 
         # --- BUY on the underlying while holding its inverse: close the bet.
         if signal_type == "buy" and proxy_hint is not None and held_proxy > 0:
+            proxy, detail, proxy_price = resolve_inverse(symbol, price_lookup=price_lookup)
+            if proxy is None or proxy_price is None:
+                # Cannot price the proxy, so cannot build a valid exit order.
+                # Say so rather than emitting one at the underlying's price.
+                result.outcomes.append(RoutingOutcome(
+                    symbol, signal_type, "unroutable",
+                    reason=f"holding {proxy_hint.symbol} but cannot price it: {detail}",
+                ))
+                if verbose:
+                    logger.warning(
+                        "INVERSE ROUTE (exit blocked) | holding %s but cannot price it: %s",
+                        proxy_hint.symbol, detail,
+                    )
+                continue
             routed = _build_routed_signal(
-                signal, proxy_hint, "sell",
-                reason=f"bullish on {symbol} while holding {proxy_hint.symbol}; closing the bearish position",
+                signal, proxy, "sell",
+                reason=f"bullish on {symbol} while holding {proxy.symbol}; closing the bearish position",
+                proxy_price=proxy_price,
             )
             result.signals.append(routed)
             result.outcomes.append(RoutingOutcome(
                 symbol, signal_type, "routed_exit",
-                routed_symbol=proxy_hint.symbol, leverage=proxy_hint.leverage,
-                reason=f"exiting {held_proxy:g} shares of {proxy_hint.symbol}",
+                routed_symbol=proxy.symbol, leverage=proxy.leverage,
+                reason=f"exiting {held_proxy:g} shares of {proxy.symbol}",
             ))
             if verbose:
                 logger.info(
-                    "INVERSE ROUTE (exit) | BUY %s -> SELL %s (closing bearish position)",
-                    symbol, proxy_hint.symbol,
+                    "INVERSE ROUTE (exit) | BUY %s -> SELL %s @ $%.2f (closing bearish position)",
+                    symbol, proxy.symbol, proxy_price,
                 )
             continue
 
@@ -198,8 +221,8 @@ def route_signals(
             continue
 
         # --- SELL while flat: the case that used to be dropped entirely.
-        proxy, detail = resolve_inverse(symbol, price_lookup=price_lookup)
-        if proxy is None:
+        proxy, detail, proxy_price = resolve_inverse(symbol, price_lookup=price_lookup)
+        if proxy is None or proxy_price is None:
             result.outcomes.append(RoutingOutcome(
                 symbol, signal_type, "unroutable", reason=detail,
             ))
@@ -210,6 +233,7 @@ def route_signals(
         routed = _build_routed_signal(
             signal, proxy, "buy",
             reason=f"bearish on {symbol} with no short capability; expressing via {proxy.symbol}",
+            proxy_price=proxy_price,
         )
         result.signals.append(routed)
         result.outcomes.append(RoutingOutcome(
