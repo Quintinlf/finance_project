@@ -1,3 +1,4 @@
 utc_timestamp,portfolio_value,exposure,trades_today,daily_return,max_portfolio_exposure,max_position_size,max_trades_per_day,daily_loss_limit,paper_trading_mode
 2026-08-13T03:47:59.855402+00:00,492.17,0.2635,0,0.003446,0.3,0.2,3,0.02,True
 2026-08-13T14:51:53.059002+00:00,491.5,0.2625,0,-0.001219,0.3,0.2,3,0.02,True
+2026-08-14T14:45:40.177565+00:00,491.87,0.3639,0,0.002201,0.3,0.2,3,0.02,True
