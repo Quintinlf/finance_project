@@ -12,6 +12,17 @@ DEBUG_SESSION_ID = "73ea0c"
 
 
 def configure_logging() -> None:
+    # The signal and execution output is full of emoji status glyphs. On Windows
+    # the console defaults to cp1252, which cannot encode them, so a local run
+    # died with UnicodeEncodeError partway through the cycle — after orders had
+    # already been decided. CI (Linux/UTF-8) never saw it. Force UTF-8 so the
+    # bot is runnable on the machine it is developed on.
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding="utf-8", errors="replace")
+        except (AttributeError, ValueError):
+            pass
+
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s | %(levelname)s | %(message)s",

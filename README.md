@@ -480,6 +480,41 @@ For implementation details, see `TRADING_ENGINE_README.md` and `COMPLETE_WORKFLO
 - `trading.ipynb`: notebook-driven execution workflow
 - `Exercises/`: educational notebooks and ML finance study material
 
+## Dashboard
+
+A static dashboard renders the bot's state for a laptop or iPad. No server and
+no API keys in the browser — the daily workflow commits `docs/data.json` and
+GitHub Pages serves the folder.
+
+```bash
+python scripts/build_dashboard.py   # rebuild docs/data.json
+python -m http.server 8000 -d docs  # then open http://localhost:8000
+```
+
+Opening `docs/index.html` from disk will not work: the page fetches
+`data.json`, which `file://` blocks. Serve the folder over HTTP.
+
+**One-time setup**
+
+1. *Settings > Pages > Deploy from a branch > `main` > `/docs`.* Every daily run
+   then redeploys it by committing.
+2. On the iPad, open the Pages URL in Safari and *Share > Add to Home Screen*.
+3. Optional — push notifications. Add repository secrets for either channel
+   (`TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID`, or `PUSHOVER_TOKEN` +
+   `PUSHOVER_USER`) and a `DASHBOARD_URL` repository variable. Without them the
+   step no-ops.
+4. Optional — `EOS_REPO_TOKEN`, a token with read access to the repo holding
+   `mcp_server`. Without it CI cannot load the 27 finance algorithms and the
+   run falls back to reduced built-in logic, which is **not** the configuration
+   backtests are validated under. Locally, set `EOS_ROOT` to the `mcp_server`
+   directory.
+
+The panels worth knowing about: an alert banner naming anything that stopped
+the bot acting (exposure at the cap, signals that passed with no order
+submitted, models running reduced), and a backtest table showing every window
+against buy-and-hold with its 95% confidence interval rather than one
+flattering window.
+
 ## Notes And Disclaimer
 
 - This project is educational/research software and not financial advice.
