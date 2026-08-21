@@ -777,17 +777,36 @@ def enforce_risk_limits(
 
     # Exposure cap for new BUYs
     if action == 'buy':
-        try:
-            if exposure >= float(risk_cfg.max_portfolio_exposure):
-                return False, None, 'Blocked: portfolio exposure limit reached', 'reject'
-        except Exception:
-            pass
+        # The exposure cap is a *ceiling on the resulting book*, not a gate on
+        # the current one. Rejecting outright whenever exposure is under the cap
+        # but close to it throws away every trade the account could still afford;
+        # instead, size the order down into whatever room is left. Only a book
+        # already at or over the cap has nothing to work with — and that needs a
+        # trim (see logic/exposure_manager.py), not a smaller buy.
+        max_exposure = float(risk_cfg.max_portfolio_exposure)
+        exposure_headroom_pct = max_exposure - float(exposure)
+        if exposure_headroom_pct <= 0:
+            return (
+                False,
+                None,
+                (
+                    f'Blocked: portfolio exposure limit reached '
+                    f'({exposure:.1%} >= {max_exposure:.0%}) — trim a position to free room'
+                ),
+                'reject',
+            )
 
         # Max position size (notional) — uses canonical account_equity passed by caller
         try:
             max_dollar_position = float(account_equity) * float(risk_cfg.max_position_size)
+            exposure_headroom = exposure_headroom_pct * float(account_equity)
+            # Whichever ceiling binds first wins.
+            notional_ceiling = min(max_dollar_position, exposure_headroom)
+            binding_cap = (
+                'max_position_size' if max_dollar_position <= exposure_headroom else 'exposure headroom'
+            )
             proposed_notional = float(order_plan.quantity) * float(current_price)
-            capped_qty = int(max_dollar_position / float(current_price)) if current_price > 0 else 0
+            capped_qty = int(notional_ceiling / float(current_price)) if current_price > 0 else 0
 
             if order_plan.quantity <= 0 or proposed_notional <= 0:
                 return (
@@ -800,15 +819,18 @@ def enforce_risk_limits(
                     'skip',
                 )
 
-            if proposed_notional > max_dollar_position:
+            if proposed_notional > notional_ceiling:
                 if capped_qty < 1:
                     return (
                         False,
                         None,
                         (
-                            f"position_below_minimum: max ${max_dollar_position:.2f} "
-                            f"({risk_cfg.max_position_size:.0%} of ${account_equity:.2f}) "
-                            f"cannot fund 1 share at ${current_price:.2f}"
+                            f"position_below_minimum: {binding_cap} allows only "
+                            f"${notional_ceiling:.2f} "
+                            f"(max_position_size ${max_dollar_position:.2f}, "
+                            f"exposure headroom ${exposure_headroom:.2f} at {exposure:.1%} "
+                            f"of a {max_exposure:.0%} cap) "
+                            f"but 1 share costs ${current_price:.2f}"
                         ),
                         'skip',
                     )
@@ -821,7 +843,7 @@ def enforce_risk_limits(
                     tp_price=order_plan.tp_price,
                     sl_price=order_plan.sl_price,
                     time_in_force=order_plan.time_in_force,
-                    reason=(order_plan.reason + ' | Capped by max_position_size')
+                    reason=(order_plan.reason + f' | Capped by {binding_cap}')
                 )
                 return True, new_plan, None, 'execute'
         except Exception:

@@ -15,10 +15,11 @@ overnight. Levels are anchored to the position's *current* price, not its
 (possibly stale) average entry, so a position that has already run up is
 protected at today's value rather than being dumped at a long-ago entry level.
 
-Default policy is **stop-loss only** (`exit_style="stop"`): protect the
-downside without capping upside or force-selling a winner — the strategy's own
-SELL signals still handle profit-taking. Pass `exit_style="oco"` to instead
-attach a full take-profit + stop-loss OCO (the fresh-entry trade-plan style).
+Default policy is a **GTC trailing stop** (`exit_style="trailing"`). The
+earlier fixed-stop default protected the downside but never harvested a winner,
+so an appreciating position held its market value — and therefore its share of
+the portfolio exposure budget — indefinitely. Pass `exit_style="stop"` for a
+fixed stop, or `exit_style="oco"` for a full take-profit + stop-loss OCO.
 
 Only long positions are protected for now (the system does not short). The
 submission path is wrapped so a rejected exit is reported, never raised, and
@@ -65,7 +66,10 @@ def _has_protective_sell(orders: List[Any]) -> bool:
             continue
         order_type = _enum_str(getattr(order, "type", None))
         order_class = _enum_str(getattr(order, "order_class", None))
-        if order_type in {"limit", "stop", "stop_limit"} or order_class in {"oco", "bracket", "oto"}:
+        # "trailing_stop" must be in this set: without it a trailing exit is not
+        # recognised as protection and a fresh one is stacked on every cycle,
+        # eventually over-committing the position's shares.
+        if order_type in {"limit", "stop", "stop_limit", "trailing_stop"} or order_class in {"oco", "bracket", "oto"}:
             return True
     return False
 
@@ -93,6 +97,39 @@ def _submit_protective_stop(
         return str(getattr(order, "id", "") or ""), None
     except Exception as exc:
         return None, f"GTC stop submission failed ({exc})"
+
+
+def _submit_trailing_stop(
+    trading_client: Any,
+    *,
+    symbol: str,
+    qty: int,
+    trail_pct: float,
+) -> Tuple[Optional[str], Optional[str]]:
+    """Attach a GTC trailing stop SELL.
+
+    A fixed stop and a "let winners run" policy combine badly: the stop sits at
+    its original level while the position appreciates, so the winner is never
+    harvested and its (growing) market value permanently occupies the portfolio
+    exposure budget. A trailing stop keeps the downside protection, follows the
+    position up, and does eventually exit — which is what frees the budget back
+    up for the next signal.
+    """
+    from alpaca.trading.enums import OrderSide, TimeInForce
+    from alpaca.trading.requests import TrailingStopOrderRequest
+
+    try:
+        req = TrailingStopOrderRequest(
+            symbol=symbol,
+            qty=qty,
+            side=OrderSide.SELL,
+            time_in_force=TimeInForce.GTC,
+            trail_percent=round(float(trail_pct) * 100.0, 2),
+        )
+        order = trading_client.submit_order(req)
+        return str(getattr(order, "id", "") or ""), None
+    except Exception as exc:
+        return None, f"GTC trailing stop submission failed ({exc})"
 
 
 def _submit_protective_oco(
@@ -145,13 +182,16 @@ def reconcile_position_exits(
     sl_pct: float,
     dry_run: bool = True,
     verbose: bool = True,
-    exit_style: str = "stop",
+    exit_style: str = "trailing",
 ) -> List[ExitReconciliationResult]:
     """Ensure every open long position has an active protective GTC exit order.
 
     exit_style:
-        "stop" (default) — attach a GTC stop-loss only (protect downside, let
-            winners run; profit-taking left to the strategy's SELL signals).
+        "trailing" (default) — attach a GTC trailing stop at ``sl_pct``. Protects
+            the downside, follows a winner up, and still eventually exits so the
+            position stops occupying the portfolio exposure budget forever.
+        "stop" — attach a fixed GTC stop-loss only. Never harvests a winner; see
+            logic/exposure_manager.py for why that deadlocked this account.
         "oco" — attach a GTC OCO (take-profit + stop-loss) trade plan.
 
     Operates directly on the underlying Alpaca trading client when available.
@@ -202,7 +242,12 @@ def reconcile_position_exits(
         tp_price = round(anchor * (1 + tp_pct), 2)
         sl_price = round(anchor * (1 - sl_pct), 2)
         int_qty = int(qty)
-        levels = f"SL ${sl_price}" if style == "stop" else f"TP ${tp_price} / SL ${sl_price}"
+        if style == "trailing":
+            levels = f"trail {sl_pct:.1%}"
+        elif style == "stop":
+            levels = f"SL ${sl_price}"
+        else:
+            levels = f"TP ${tp_price} / SL ${sl_price}"
 
         if dry_run:
             results.append(
@@ -218,6 +263,20 @@ def reconcile_position_exits(
             order_id, err = _submit_protective_oco(
                 trading_client, symbol=symbol, qty=int_qty, tp_price=tp_price, sl_price=sl_price
             )
+        elif style == "trailing":
+            order_id, err = _submit_trailing_stop(
+                trading_client, symbol=symbol, qty=int_qty, trail_pct=sl_pct
+            )
+            if order_id is None:
+                # Downside protection beats no protection: fall back to a fixed stop.
+                order_id, fallback_err = _submit_protective_stop(
+                    trading_client, symbol=symbol, qty=int_qty, sl_price=sl_price
+                )
+                err = (
+                    f"{err}; attached fixed GTC stop fallback"
+                    if order_id is not None
+                    else f"{err}; stop fallback failed ({fallback_err})"
+                )
         else:
             order_id, err = _submit_protective_stop(
                 trading_client, symbol=symbol, qty=int_qty, sl_price=sl_price

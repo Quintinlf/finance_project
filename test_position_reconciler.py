@@ -68,16 +68,38 @@ class ReconcileTests(unittest.TestCase):
         broker = _FakeBroker(client)
 
         results = reconcile_position_exits(
-            broker_client=broker, tp_pct=0.04, sl_pct=0.02, dry_run=True, verbose=False
+            broker_client=broker, tp_pct=0.04, sl_pct=0.02, dry_run=True, verbose=False,
+            exit_style="stop",
         )
 
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0].action, "dry_run")
-        # Default is stop-only: SL anchored to CURRENT price 61.25, no TP that
-        # would cap the upside or force-sell the winner.
+        # Stop-only: SL anchored to CURRENT price 61.25, not the stale 47.38
+        # entry, and no TP leg.
         self.assertIn("60.02", results[0].detail)   # 61.25 * 0.98
         self.assertNotIn("63.7", results[0].detail)  # no take-profit leg
         self.assertEqual(client.submitted, [])       # nothing submitted in dry-run
+
+    def test_default_style_is_trailing(self) -> None:
+        """A fixed stop never harvests a winner, so it pins portfolio exposure
+        forever — which is what deadlocked this account from March to August.
+        The default must trail."""
+        positions = [_Position(symbol="BAC", qty="2", avg_entry_price="47.38", current_price="61.25")]
+        client = _FakeTradingClient(positions=positions, open_orders=[])
+        broker = _FakeBroker(client)
+
+        results = reconcile_position_exits(
+            broker_client=broker, tp_pct=0.04, sl_pct=0.02, dry_run=True, verbose=False
+        )
+
+        self.assertEqual(results[0].action, "dry_run")
+        self.assertIn("trailing", results[0].detail)
+        self.assertIn("trail 2.0%", results[0].detail)
+
+    def test_existing_trailing_stop_counts_as_protection(self) -> None:
+        """Otherwise a fresh trailing stop is stacked on every single cycle."""
+        orders = [_Order(side="sell", type="trailing_stop", order_class="simple")]
+        self.assertTrue(_has_protective_sell(orders))
 
     def test_dry_run_oco_includes_take_profit(self) -> None:
         positions = [_Position(symbol="BAC", qty="2", avg_entry_price="47.38", current_price="61.25")]

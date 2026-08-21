@@ -10,11 +10,16 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import date, datetime
-from typing import Any, Dict, Iterable, Optional
+from typing import Any, Dict, Iterable, Optional, Tuple
 import logging
 import os
 
 from logic.data_structures import PositionState
+
+
+# Alpaca rejects a bracket leg that is not at least a cent clear of its
+# reference price (error 42210000).
+_MIN_BRACKET_TICK = 0.01
 
 
 @dataclass
@@ -270,6 +275,78 @@ class AlpacaBrokerClient(BrokerClient):
             submitted_at=datetime.utcnow(),
         )
 
+    def _latest_price(self, symbol: str) -> Optional[float]:
+        """Broker-side reference price, used to validate bracket legs.
+
+        Signals price off yfinance daily bars; Alpaca validates bracket legs
+        against its own live ``base_price``. When the two disagree the order is
+        rejected outright, so we need the broker's view before submitting.
+        """
+        try:
+            from alpaca.data.historical import StockHistoricalDataClient
+            from alpaca.data.requests import StockLatestTradeRequest
+
+            from logic.alpaca_exercises import load_alpaca_creds
+
+            creds = load_alpaca_creds()
+            client = StockHistoricalDataClient(creds.api_key, creds.secret_key)
+            trades = client.get_stock_latest_trade(
+                StockLatestTradeRequest(symbol_or_symbols=[symbol])
+            )
+            price = float(getattr(trades.get(symbol), "price", 0) or 0)
+            return price if price > 0 else None
+        except Exception as exc:
+            logging.debug("Could not fetch latest price for %s (%s).", symbol, exc)
+            return None
+
+    def _repair_bracket_prices(
+        self, *, symbol: str, side: str, take_profit_price: float, stop_loss_price: float
+    ) -> Tuple[float, float, Optional[str]]:
+        """Nudge bracket legs to the far side of the broker's base price.
+
+        Alpaca requires ``take_profit.limit_price >= base_price + 0.01`` (and the
+        mirror for the stop) on a long bracket. A signal priced off a stale daily
+        bar can easily land its 4% take-profit *below* the live price on a
+        fast-moving instrument — that is what killed the 2026-08-13 KOLD order,
+        rejected with base_price 29.805 against a lower TP. Rather than lose the
+        trade, re-anchor the offending leg to the live price, preserving the
+        intended distance.
+        """
+        base = self._latest_price(symbol)
+        if base is None:
+            return take_profit_price, stop_loss_price, None
+
+        tp = float(take_profit_price)
+        sl = float(stop_loss_price)
+        long_side = str(side).lower() == "buy"
+
+        # Distances the caller asked for, measured against their own anchor.
+        tp_distance = abs(tp - base)
+        sl_distance = abs(sl - base)
+        floor = max(_MIN_BRACKET_TICK, round(base * 0.001, 2))
+
+        new_tp, new_sl = tp, sl
+        if long_side:
+            if tp < base + _MIN_BRACKET_TICK:
+                new_tp = round(base + max(floor, tp_distance), 2)
+            if sl > base - _MIN_BRACKET_TICK:
+                new_sl = round(base - max(floor, sl_distance), 2)
+        else:
+            if tp > base - _MIN_BRACKET_TICK:
+                new_tp = round(base - max(floor, tp_distance), 2)
+            if sl < base + _MIN_BRACKET_TICK:
+                new_sl = round(base + max(floor, sl_distance), 2)
+
+        if (new_tp, new_sl) == (tp, sl):
+            return tp, sl, None
+
+        note = (
+            f"bracket legs re-anchored to live ${base:.2f}: "
+            f"TP ${tp:.2f}->${new_tp:.2f}, SL ${sl:.2f}->${new_sl:.2f}"
+        )
+        logging.info("BRACKET REPAIR | %s | %s", symbol, note)
+        return new_tp, new_sl, note
+
     def place_bracket_order(
         self,
         *,
@@ -285,6 +362,12 @@ class AlpacaBrokerClient(BrokerClient):
 
         tif = TimeInForce.DAY if str(time_in_force).lower() == "day" else TimeInForce.GTC
         self.last_order_error = None
+        take_profit_price, stop_loss_price, _ = self._repair_bracket_prices(
+            symbol=symbol,
+            side=side,
+            take_profit_price=take_profit_price,
+            stop_loss_price=stop_loss_price,
+        )
         try:
             result = place_bracket_order(
                 self._trading_client,

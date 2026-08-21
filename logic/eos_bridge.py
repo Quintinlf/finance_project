@@ -79,11 +79,19 @@ try:
     EOS_AVAILABLE = True
 except Exception as exc:  # pragma: no cover - depends on local checkout
     EOS_IMPORT_ERROR = f"{type(exc).__name__}: {exc}"
-    logger.info(
-        "eos finance domains unavailable (%s). Trading pipeline continues with "
-        "built-in logic only.",
+    # WARNING, not INFO. Backtests are normally run locally where the checkout
+    # exists, while CI has historically had no access to it -- so the same code
+    # was validated with these algorithms and traded without them, and the one
+    # INFO line announcing that went unread for months. A degraded run must be
+    # impossible to miss.
+    logger.warning(
+        "EOS FINANCE DOMAINS UNAVAILABLE (%s). Running on reduced built-in "
+        "logic only -- this is NOT the configuration backtests are validated "
+        "under. Set EOS_ROOT to the mcp_server directory to restore it.",
         EOS_IMPORT_ERROR,
     )
+else:
+    logger.info("EOS FINANCE DOMAINS AVAILABLE at %s", EOS_ROOT)
 
 
 class EosUnavailable(RuntimeError):

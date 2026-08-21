@@ -72,6 +72,30 @@ jobs:
           fi
           echo "Alpaca credentials present (key ends ...${APCA_API_KEY_ID: -4})."
 
+      # The finance algorithms live in a sibling repo. Without this step
+      # logic/eos_bridge.py cannot import them, EOS_AVAILABLE stays False, and
+      # the bot trades on reduced built-in logic while every local backtest runs
+      # WITH the algorithms -- a silent backtest/production mismatch that made
+      # months of validated results describe a strategy that never executed.
+      - name: Fetch eos finance algorithms
+        id: eos
+        env:
+          EOS_REPO_TOKEN: ${{ secrets.EOS_REPO_TOKEN }}
+        run: |
+          REPO="https://github.com/Quintinlf/My_folder.git"
+          if [ -n "${EOS_REPO_TOKEN}" ]; then
+            REPO="https://x-access-token:${EOS_REPO_TOKEN}@github.com/Quintinlf/My_folder.git"
+          fi
+          if git clone --depth 1 --filter=blob:none --sparse "$REPO" "${RUNNER_TEMP}/eos" 2>/dev/null; then
+            git -C "${RUNNER_TEMP}/eos" sparse-checkout set mcp_server
+            if [ -d "${RUNNER_TEMP}/eos/mcp_server" ]; then
+              echo "EOS_ROOT=${RUNNER_TEMP}/eos/mcp_server" >> "$GITHUB_ENV"
+              echo "eos algorithms available at ${RUNNER_TEMP}/eos/mcp_server"
+              exit 0
+            fi
+          fi
+          echo "::warning title=eos algorithms unavailable::Could not fetch the mcp_server checkout, so the run falls back to built-in logic only. This is NOT the configuration your backtests were validated under. Add an EOS_REPO_TOKEN secret with read access to Quintinlf/My_folder."
+
       - name: Execute daily trading entrypoint
         env:
           EXECUTION_MODE: "paper"
@@ -115,7 +139,7 @@ jobs:
               exit 0
             fi
             echo '```'
-            grep -E "ACCOUNT:|UNIVERSE SCREEN|TRADING UNIVERSE|SIGNALS GENERATED|INVERSE ROUTING|ORDERS ATTEMPTED|ORDERS SUBMITTED|Decision summary|ORDER REJECTED|ORDER NOT SUBMITTED|BROKER CONNECTION FAILED" "$LOG" | sed 's/^[0-9-]* [0-9:,]* | [A-Z]* | //' || echo "(no summary lines matched)"
+            grep -E "EOS FINANCE DOMAINS|ACCOUNT:|UNIVERSE SCREEN|TRADING UNIVERSE|SIGNALS GENERATED|INVERSE ROUTING|ORDERS ATTEMPTED|ORDERS SUBMITTED|Decision summary|ORDER REJECTED|ORDER NOT SUBMITTED|BROKER CONNECTION FAILED" "$LOG" | sed 's/^[0-9-]* [0-9:,]* | [A-Z]* | //' || echo "(no summary lines matched)"
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 

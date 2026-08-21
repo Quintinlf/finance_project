@@ -12,6 +12,7 @@ from logic.account_equity import resolve_account_equity
 from logic.broker_client import create_broker_client
 from logic.data_structures import ExecutionConfig
 from logic.execution_engine import run_trading_cycle
+from logic.exposure_manager import trim_to_exposure_cap
 from logic.fill_reconciler import reconcile_fills
 from logic.inverse_routing import format_routing_table, route_signals
 from logic.options_engine import (
@@ -234,6 +235,46 @@ def run_daily_trading_cycle(
         debug_force_strongest_signal=debug_force_strongest_signal,
     )
 
+    # Bring the book back inside its exposure cap BEFORE anything else touches
+    # orders. An over-cap book rejects every BUY for as long as it stays over,
+    # and nothing else in the cycle reduces exposure — so without this step a
+    # single appreciating position deadlocks the strategy indefinitely (BAC did
+    # exactly that from March to August). This runs before exit reconciliation
+    # on purpose: trimming cancels the resting protective sells that reserve the
+    # shares, and reconciliation then re-attaches a fresh exit to what's left.
+    try:
+        trim_results = trim_to_exposure_cap(
+            broker_client=broker_client,
+            equity=equity_ctx.equity,
+            exposure=equity_ctx.exposure_fraction,
+            max_exposure=risk_cfg.max_portfolio_exposure,
+            dry_run=dry_run,
+            verbose=True,
+        )
+        if trim_results:
+            freed = sum(r.qty for r in trim_results if r.action in {"trimmed", "dry_run"})
+            logging.info(
+                "EXPOSURE TRIM SUMMARY: %s position(s) acted on, %s share(s) sold",
+                len(trim_results),
+                freed,
+            )
+            # Exposure just changed; re-read it so sizing works off the new book.
+            equity_ctx = resolve_account_equity(
+                broker_client=broker_client,
+                db_path=DEFAULT_DB_PATH,
+                account_id=account_id,
+                fallback_cash=account_cash,
+            )
+            account_cash = equity_ctx.cash
+            logging.info(
+                "ACCOUNT (post-trim): equity=$%.2f | cash=$%.2f | exposure=%.1f%%",
+                equity_ctx.equity,
+                equity_ctx.cash,
+                equity_ctx.exposure_fraction * 100.0,
+            )
+    except Exception as exc:
+        logging.warning("Exposure trim failed (%s). Continuing with cycle.", exc)
+
     # Protect existing positions FIRST, every cycle, regardless of signals or
     # universe membership. This is the guardrail for the Mar-24 failure mode:
     # any open long lacking an active exit order gets a fresh GTC OCO exit so
@@ -245,7 +286,9 @@ def run_daily_trading_cycle(
             sl_pct=sl_pct,
             dry_run=dry_run,
             verbose=True,
-            exit_style="stop",  # downside-only: protect the floor, let winners run
+            # Trailing, not fixed: a fixed stop never harvests a winner, so the
+            # position keeps its share of the exposure budget forever.
+            exit_style="trailing",
         )
         attached = sum(1 for r in exit_results if r.action == "attached")
         logging.info(
