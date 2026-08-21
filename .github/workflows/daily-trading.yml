@@ -117,6 +117,27 @@ jobs:
           set -o pipefail
           python run_daily_bot.py 2>&1 | tee trade_logs/run-$(date -u +'%Y%m%d').log
 
+      # Refreshes docs/data.json, which the commit step below pushes. GitHub
+      # Pages serves docs/ straight off the branch (Settings > Pages > Deploy
+      # from a branch > main > /docs), so no separate deploy job is needed.
+      - name: Build dashboard data
+        if: always()
+        run: python scripts/build_dashboard.py
+
+      # A run that silently does nothing looks identical to a run with nothing
+      # to do. This is the step that tells them apart without opening a log.
+      # No-ops until the channel secrets exist, so it is safe to land now.
+      - name: Push run summary
+        if: always()
+        continue-on-error: true
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          PUSHOVER_TOKEN: ${{ secrets.PUSHOVER_TOKEN }}
+          PUSHOVER_USER: ${{ secrets.PUSHOVER_USER }}
+          DASHBOARD_URL: ${{ vars.DASHBOARD_URL }}
+        run: python scripts/notify_run.py
+
       - name: Upload run artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -154,7 +175,7 @@ jobs:
           # whole command, `|| true` swallowed it, and nothing was ever staged
           # - which is why the database never persisted between runs and every
           # run started from an empty history.
-          for path in trade_logs/*.csv trade_logs/*.db trade_logs/*.jsonl trade_logs/*.log learned_params.json; do
+          for path in trade_logs/*.csv trade_logs/*.db trade_logs/*.jsonl trade_logs/*.log docs/data.json learned_params.json; do
             if compgen -G "$path" > /dev/null; then
               git add -f $path && echo "staged: $path"
             fi
