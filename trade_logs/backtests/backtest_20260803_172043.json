@@ -1,0 +1,2908 @@
+{
+  "symbols": [
+    "WEAT",
+    "CORN"
+  ],
+  "start": "2026-05-01",
+  "end": "2026-08-01",
+  "initial_equity": 500.0,
+  "fractional": false,
+  "metrics": {
+    "n_trades": 10,
+    "n_wins": 3,
+    "n_losses": 7,
+    "win_rate": 30.0,
+    "gross_pnl": -0.8356477941512992,
+    "total_costs": 0.6385589026447036,
+    "net_pnl": -1.4742066967960028,
+    "total_return_pct": -0.2948413393592006,
+    "gross_return_pct": -0.16712955883025984,
+    "cost_drag_pct": 0.12771178052894072,
+    "profit_factor": 0.6196038996802345,
+    "avg_win": 0.8004149862925208,
+    "avg_loss": -0.5536359508105093,
+    "expectancy": -0.14742066967960027,
+    "max_drawdown_pct": 0.8371377477063803,
+    "sharpe": -0.9537267926472105,
+    "avg_holding_days": 4.5,
+    "buy_hold_return_pct": -3.6986540858581325,
+    "mean_trade_return_pct": -0.6011712057502618,
+    "trade_return_ci95": [
+      -2.3027647405658,
+      1.447828257613573
+    ],
+    "sample_warning": "Only 10 trades. This is far too few to distinguish skill from luck; treat every metric here as noise."
+  },
+  "trades": [
+    {
+      "symbol": "WEAT",
+      "quantity": 1.0,
+      "entry_date": "2026-05-06",
+      "entry_price": 23.254829312324524,
+      "exit_date": "2026-05-12",
+      "exit_price": 24.14879928588867,
+      "exit_reason": "take_profit",
+      "gross_pnl": 0.9650231714630131,
+      "total_cost": 0.07105319789886622,
+      "net_pnl": 0.8939699735641469,
+      "return_pct": 3.8442336495257066,
+      "holding_days": 6,
+      "confidence": 0.75
+    },
+    {
+      "symbol": "WEAT",
+      "quantity": 1.0,
+      "entry_date": "2026-05-28",
+      "entry_price": 23.88577538204193,
+      "exit_date": "2026-05-29",
+      "exit_price": 23.37300037384033,
+      "exit_reason": "stop_loss",
+      "gross_pnl": -0.4419405070686331,
+      "total_cost": 0.07083450113296763,
+      "net_pnl": -0.5127750082016007,
+      "return_pct": -2.1467798302546246,
+      "holding_days": 1,
+      "confidence": 0.75
+    },
+    {
+      "symbol": "CORN",
+      "quantity": 1.0,
+      "entry_date": "2026-06-03",
+      "entry_price": 17.816685916900635,
+      "exit_date": "2026-06-04",
+      "exit_price": 17.434200897216794,
+      "exit_reason": "stop_loss",
+      "gross_pnl": -0.32964871696472287,
+      "total_cost": 0.05283630271911832,
+      "net_pnl": -0.3824850196838412,
+      "return_pct": -2.1467798302546366,
+      "holding_days": 1,
+      "confidence": 1.0
+    },
+    {
+      "symbol": "WEAT",
+      "quantity": 1.0,
+      "entry_date": "2026-06-04",
+      "entry_price": 22.744064083099367,
+      "exit_date": "2026-06-05",
+      "exit_price": 22.255799102783204,
+      "exit_reason": "stop_loss",
+      "gross_pnl": -0.4208162830352755,
+      "total_cost": 0.06744869728088787,
+      "net_pnl": -0.4882649803161634,
+      "return_pct": -2.1467798302546233,
+      "holding_days": 1,
+      "confidence": 0.8624999999999999
+    },
+    {
+      "symbol": "CORN",
+      "quantity": 1.0,
+      "entry_date": "2026-06-08",
+      "entry_price": 17.0255,
+      "exit_date": "2026-06-15",
+      "exit_price": 16.659999999999997,
+      "exit_reason": "stop_loss",
+      "gross_pnl": -0.3150100000000009,
+      "total_cost": 0.05049000000000348,
+      "net_pnl": -0.3655000000000044,
+      "return_pct": -2.1467798302546437,
+      "holding_days": 7,
+      "confidence": 0.8624999999999999
+    },
+    {
+      "symbol": "WEAT",
+      "quantity": 1.0,
+      "entry_date": "2026-06-09",
+      "entry_price": 22.633900382041933,
+      "exit_date": "2026-06-15",
+      "exit_price": 22.148000373840333,
+      "exit_reason": "stop_loss",
+      "gross_pnl": -0.41877800706863155,
+      "total_cost": 0.06712200113296873,
+      "net_pnl": -0.4859000082016003,
+      "return_pct": -2.1467798302546233,
+      "holding_days": 6,
+      "confidence": 0.8624999999999999
+    },
+    {
+      "symbol": "WEAT",
+      "quantity": 1.0,
+      "entry_date": "2026-06-26",
+      "entry_price": 22.243314083099367,
+      "exit_date": "2026-06-29",
+      "exit_price": 21.765799102783205,
+      "exit_reason": "stop_loss",
+      "gross_pnl": -0.4115512830352763,
+      "total_cost": 0.06596369728088547,
+      "net_pnl": -0.4775149803161618,
+      "return_pct": -2.1467798302546166,
+      "holding_days": 3,
+      "confidence": 0.75
+    },
+    {
+      "symbol": "CORN",
+      "quantity": 1.0,
+      "entry_date": "2026-06-25",
+      "entry_price": 16.66495938873291,
+      "exit_date": "2026-07-06",
+      "exit_price": 17.305599365234375,
+      "exit_reason": "take_profit",
+      "gross_pnl": 0.6915583746337894,
+      "total_cost": 0.05091839813232468,
+      "net_pnl": 0.6406399765014648,
+      "return_pct": 3.8442336495257106,
+      "holding_days": 11,
+      "confidence": 0.75
+    },
+    {
+      "symbol": "WEAT",
+      "quantity": 1.0,
+      "entry_date": "2026-07-02",
+      "entry_price": 22.54376522922516,
+      "exit_date": "2026-07-10",
+      "exit_price": 23.41040023803711,
+      "exit_reason": "take_profit",
+      "gross_pnl": 0.9355156095123291,
+      "total_cost": 0.06888060070037838,
+      "net_pnl": 0.8666350088119508,
+      "return_pct": 3.844233649525712,
+      "holding_days": 8,
+      "confidence": 0.75
+    },
+    {
+      "symbol": "WEAT",
+      "quantity": 1.0,
+      "entry_date": "2026-07-30",
+      "entry_price": 24.93734961795807,
+      "exit_date": "2026-07-31",
+      "exit_price": 23.774337959003876,
+      "exit_reason": "end_of_backtest",
+      "gross_pnl": -1.0900001525878906,
+      "total_cost": 0.07301150636630283,
+      "net_pnl": -1.1630116589541935,
+      "return_pct": -4.663734024551979,
+      "holding_days": 1,
+      "confidence": 0.75
+    }
+  ],
+  "equity_curve": [
+    [
+      "2026-05-01",
+      500.0
+    ],
+    [
+      "2026-05-04",
+      500.0
+    ],
+    [
+      "2026-05-05",
+      500.0
+    ],
+    [
+      "2026-05-06",
+      500.0651703824997
+    ],
+    [
+      "2026-05-07",
+      499.87516984844206
+    ],
+    [
+      "2026-05-08",
+      500.15517053508756
+    ],
+    [
+      "2026-05-11",
+      500.7351704587936
+    ],
+    [
+      "2026-05-12",
+      502.2351704587936
+    ],
+    [
+      "2026-05-13",
+      500.89396997356414
+    ],
+    [
+      "2026-05-14",
+      500.89396997356414
+    ],
+    [
+      "2026-05-15",
+      500.89396997356414
+    ],
+    [
+      "2026-05-18",
+      500.89396997356414
+    ],
+    [
+      "2026-05-19",
+      500.89396997356414
+    ],
+    [
+      "2026-05-20",
+      500.89396997356414
+    ],
+    [
+      "2026-05-21",
+      500.89396997356414
+    ],
+    [
+      "2026-05-22",
+      500.89396997356414
+    ],
+    [
+      "2026-05-26",
+      500.89396997356414
+    ],
+    [
+      "2026-05-27",
+      500.89396997356414
+    ],
+    [
+      "2026-05-28",
+      500.8381945152283
+    ],
+    [
+      "2026-05-29",
+      500.3881937522888
+    ],
+    [
+      "2026-06-01",
+      500.38119496536257
+    ],
+    [
+      "2026-06-02",
+      500.38119496536257
+    ],
+    [
+      "2026-06-03",
+      500.03450836181645
+    ],
+    [
+      "2026-06-04",
+      499.5204438209534
+    ],
+    [
+      "2026-06-05",
+      499.5346465492249
+    ],
+    [
+      "2026-06-08",
+      499.50494542312623
+    ],
+    [
+      "2026-06-09",
+      499.2710446596146
+    ],
+    [
+      "2026-06-10",
+      499.4610451936722
+    ],
+    [
+      "2026-06-11",
+      499.0010442018509
+    ],
+    [
+      "2026-06-12",
+      498.99104397296907
+    ],
+    [
+      "2026-06-15",
+      499.25104610919954
+    ],
+    [
+      "2026-06-16",
+      498.659044957161
+    ],
+    [
+      "2026-06-17",
+      498.659044957161
+    ],
+    [
+      "2026-06-18",
+      498.659044957161
+    ],
+    [
+      "2026-06-22",
+      498.659044957161
+    ],
+    [
+      "2026-06-23",
+      498.659044957161
+    ],
+    [
+      "2026-06-24",
+      498.659044957161
+    ],
+    [
+      "2026-06-25",
+      498.94408633136754
+    ],
+    [
+      "2026-06-26",
+      498.7807721719742
+    ],
+    [
+      "2026-06-29",
+      498.0307702646256
+    ],
+    [
+      "2026-06-30",
+      498.2665705881119
+    ],
+    [
+      "2026-07-01",
+      498.46657135105136
+    ],
+    [
+      "2026-07-02",
+      498.2428058166504
+    ],
+    [
+      "2026-07-06",
+      499.35280642700195
+    ],
+    [
+      "2026-07-07",
+      499.368404876709
+    ],
+    [
+      "2026-07-08",
+      498.97840548706057
+    ],
+    [
+      "2026-07-09",
+      499.32840396118166
+    ],
+    [
+      "2026-07-10",
+      499.9984040374756
+    ],
+    [
+      "2026-07-13",
+      499.6888049621582
+    ],
+    [
+      "2026-07-14",
+      499.6888049621582
+    ],
+    [
+      "2026-07-15",
+      499.6888049621582
+    ],
+    [
+      "2026-07-16",
+      499.6888049621582
+    ],
+    [
+      "2026-07-17",
+      499.6888049621582
+    ],
+    [
+      "2026-07-20",
+      499.6888049621582
+    ],
+    [
+      "2026-07-21",
+      499.6888049621582
+    ],
+    [
+      "2026-07-22",
+      499.6888049621582
+    ],
+    [
+      "2026-07-23",
+      499.6888049621582
+    ],
+    [
+      "2026-07-24",
+      499.6888049621582
+    ],
+    [
+      "2026-07-27",
+      499.6888049621582
+    ],
+    [
+      "2026-07-28",
+      499.6888049621582
+    ],
+    [
+      "2026-07-29",
+      499.6888049621582
+    ],
+    [
+      "2026-07-30",
+      499.3714561834335
+    ],
+    [
+      "2026-07-31",
+      498.525793303204
+    ]
+  ],
+  "decisions": [
+    {
+      "date": "2026-05-01",
+      "symbol": "WEAT",
+      "close": 24.010000228881836,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.2540009068603003,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 500.0,
+      "rsi": 61.50681269833151,
+      "bb_z_score": 1.1684932492268783,
+      "market_regime": {
+        "prob_trend": 9.365939481841769e-08,
+        "prob_range": 0.9999999013798275,
+        "prob_high_vol": 4.960777602099481e-09
+      },
+      "belief_entropy": 1.1689636087907633
+    },
+    {
+      "date": "2026-05-01",
+      "symbol": "CORN",
+      "close": 18.889999389648438,
+      "signal_type": "hold",
+      "confidence": 0.425,
+      "prob_profit": 0.4324557383694534,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 500.0,
+      "rsi": 67.41060793094755,
+      "bb_z_score": 1.8903807291328998,
+      "market_regime": {
+        "prob_trend": 2.565261985133788e-17,
+        "prob_range": 1.0,
+        "prob_high_vol": 1.2745043602815652e-18
+      },
+      "belief_entropy": 1.1689635697733074
+    },
+    {
+      "date": "2026-05-04",
+      "symbol": "WEAT",
+      "close": 24.200000762939453,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.8419544874493179,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 500.0,
+      "rsi": 67.17075738611281,
+      "bb_z_score": 1.259336641610205,
+      "market_regime": {
+        "prob_trend": 9.458752700858856e-08,
+        "prob_range": 0.999999900394163,
+        "prob_high_vol": 5.018310002991053e-09
+      },
+      "belief_entropy": 1.1689636091830733
+    },
+    {
+      "date": "2026-05-04",
+      "symbol": "CORN",
+      "close": 19.1200008392334,
+      "signal_type": "sell",
+      "confidence": 0.8624999999999999,
+      "prob_profit": 0.7410089438185279,
+      "action": "rejected",
+      "reason": "Signal=SELL but position=flat and short selling disabled",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 500.0,
+      "rsi": 78.59947517837374,
+      "bb_z_score": 2.1015310224968182,
+      "market_regime": {
+        "prob_trend": 9.887228033768028e-17,
+        "prob_range": 1.0,
+        "prob_high_vol": 4.941161973506983e-18
+      },
+      "belief_entropy": 1.2371209036519482
+    },
+    {
+      "date": "2026-05-05",
+      "symbol": "WEAT",
+      "close": 23.75,
+      "signal_type": "buy",
+      "confidence": 0.75,
+      "prob_profit": 0.9957188590271767,
+      "action": "buy",
+      "reason": "Signal=BUY, position=flat \u2192 opening long position",
+      "quantity": 1.0,
+      "fill_price": 23.254829312324524,
+      "position_qty_before": 0.0,
+      "equity": 500.0,
+      "rsi": 59.816752698860384,
+      "bb_z_score": 0.6797781238748211,
+      "market_regime": {
+        "prob_trend": 1.75163188102885e-07,
+        "prob_range": 0.9999998154617004,
+        "prob_high_vol": 9.37511155738513e-09
+      },
+      "belief_entropy": 1.179784116122257
+    },
+    {
+      "date": "2026-05-05",
+      "symbol": "CORN",
+      "close": 18.920000076293945,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.7695223070561021,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 500.0,
+      "rsi": 70.34284605880589,
+      "bb_z_score": 1.4329201400186944,
+      "market_regime": {
+        "prob_trend": 9.549478618017185e-16,
+        "prob_range": 0.9999999999999991,
+        "prob_high_vol": 3.70136191127046e-17
+      },
+      "belief_entropy": 1.2107635565587562
+    },
+    {
+      "date": "2026-05-06",
+      "symbol": "WEAT",
+      "close": 23.31999969482422,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.35751883508825955,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 1.0,
+      "equity": 500.0651703824997,
+      "rsi": 62.09683882218098,
+      "bb_z_score": 0.13033798173112296,
+      "market_regime": {
+        "prob_trend": 3.790783554977473e-08,
+        "prob_range": 0.9999999598079933,
+        "prob_high_vol": 2.2841711572799524e-09
+      },
+      "belief_entropy": 1.0933299580044344
+    },
+    {
+      "date": "2026-05-06",
+      "symbol": "CORN",
+      "close": 18.440000534057617,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5903351704348487,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 500.0651703824997,
+      "rsi": 53.36402756032523,
+      "bb_z_score": 0.28318947094774466,
+      "market_regime": {
+        "prob_trend": 1.652171884572166e-18,
+        "prob_range": 1.0,
+        "prob_high_vol": 1.71701715501829e-19
+      },
+      "belief_entropy": 1.0933299414232938
+    },
+    {
+      "date": "2026-05-07",
+      "symbol": "WEAT",
+      "close": 23.1299991607666,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.233099628724311,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 1.0,
+      "equity": 499.87516984844206,
+      "rsi": 63.298279340256165,
+      "bb_z_score": -0.16936852205091524,
+      "market_regime": {
+        "prob_trend": 4.668741051629205e-08,
+        "prob_range": 0.9999999506085124,
+        "prob_high_vol": 2.7040770766943884e-09
+      },
+      "belief_entropy": 1.0933299617697632
+    },
+    {
+      "date": "2026-05-07",
+      "symbol": "CORN",
+      "close": 18.440000534057617,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.4668162955661396,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 499.87516984844206,
+      "rsi": 60.222163836506624,
+      "bb_z_score": 0.22529355309715804,
+      "market_regime": {
+        "prob_trend": 8.744839048608319e-18,
+        "prob_range": 1.0,
+        "prob_high_vol": 8.115691780833349e-19
+      },
+      "belief_entropy": 1.0933299414232938
+    },
+    {
+      "date": "2026-05-08",
+      "symbol": "WEAT",
+      "close": 23.40999984741211,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.7568556878723232,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 1.0,
+      "equity": 500.15517053508756,
+      "rsi": 69.16311222687415,
+      "bb_z_score": 0.08808670953965725,
+      "market_regime": {
+        "prob_trend": 2.986858821313836e-08,
+        "prob_range": 0.9999999683389421,
+        "prob_high_vol": 1.7924697458937448e-09
+      },
+      "belief_entropy": 1.0933299544830093
+    },
+    {
+      "date": "2026-05-08",
+      "symbol": "CORN",
+      "close": 18.610000610351562,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.9045092421203533,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 500.15517053508756,
+      "rsi": 68.45648495441544,
+      "bb_z_score": 0.5554660528892059,
+      "market_regime": {
+        "prob_trend": 5.4939347390483457e-17,
+        "prob_range": 1.0,
+        "prob_high_vol": 4.4723694340326304e-18
+      },
+      "belief_entropy": 1.093329941423294
+    },
+    {
+      "date": "2026-05-11",
+      "symbol": "WEAT",
+      "close": 23.989999771118164,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.9655301388418687,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 1.0,
+      "equity": 500.7351704587936,
+      "rsi": 75.29502908219047,
+      "bb_z_score": 0.8142726994407327,
+      "market_regime": {
+        "prob_trend": 2.1304446885407414e-08,
+        "prob_range": 0.99999997729554,
+        "prob_high_vol": 1.4000130272570714e-09
+      },
+      "belief_entropy": 1.2107635650142583
+    },
+    {
+      "date": "2026-05-11",
+      "symbol": "CORN",
+      "close": 18.760000228881836,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.960778461890422,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 500.7351704587936,
+      "rsi": 69.89467459558071,
+      "bb_z_score": 0.849831221311395,
+      "market_regime": {
+        "prob_trend": 3.594742826438163e-17,
+        "prob_range": 1.0,
+        "prob_high_vol": 3.0532247314518093e-18
+      },
+      "belief_entropy": 1.1689635697733074
+    },
+    {
+      "date": "2026-05-12",
+      "symbol": "CORN",
+      "close": 18.93000030517578,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.642390321951624,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 502.2351704587936,
+      "rsi": 70.66627283577394,
+      "bb_z_score": 1.2092711557482279,
+      "market_regime": {
+        "prob_trend": 2.0686511513233163e-16,
+        "prob_range": 0.9999999999999998,
+        "prob_high_vol": 1.60556421865055e-17
+      },
+      "belief_entropy": 1.210763556558756
+    },
+    {
+      "date": "2026-05-13",
+      "symbol": "CORN",
+      "close": 18.979999542236328,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.10722361481118586,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 500.89396997356414,
+      "rsi": 71.0936963146147,
+      "bb_z_score": 1.2192123056012358,
+      "market_regime": {
+        "prob_trend": 2.122873194680668e-17,
+        "prob_range": 1.0,
+        "prob_high_vol": 1.6413533581103188e-18
+      },
+      "belief_entropy": 1.210763556558756
+    },
+    {
+      "date": "2026-05-14",
+      "symbol": "WEAT",
+      "close": 24.81999969482422,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.08736886327654336,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 500.89396997356414,
+      "rsi": 78.57997561389098,
+      "bb_z_score": 1.1721066272124732,
+      "market_regime": {
+        "prob_trend": 1.557318117542799e-07,
+        "prob_range": 0.9999998300933468,
+        "prob_high_vol": 1.4174841529340418e-08
+      },
+      "belief_entropy": 1.2107636204529189
+    },
+    {
+      "date": "2026-05-14",
+      "symbol": "CORN",
+      "close": 18.530000686645508,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5010817929723484,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 500.89396997356414,
+      "rsi": 56.0235002948331,
+      "bb_z_score": -0.12004741309110505,
+      "market_regime": {
+        "prob_trend": 4.545312570338884e-18,
+        "prob_range": 1.0,
+        "prob_high_vol": 5.363594839986268e-19
+      },
+      "belief_entropy": 1.0933299414232938
+    },
+    {
+      "date": "2026-05-15",
+      "symbol": "WEAT",
+      "close": 24.110000610351562,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.4430067667444823,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 500.89396997356414,
+      "rsi": 65.50849537311345,
+      "bb_z_score": 0.2584948459331268,
+      "market_regime": {
+        "prob_trend": 4.941888612160466e-07,
+        "prob_range": 0.999999463592949,
+        "prob_high_vol": 4.2218189867002045e-08
+      },
+      "belief_entropy": 1.093330166125965
+    },
+    {
+      "date": "2026-05-15",
+      "symbol": "CORN",
+      "close": 18.139999389648438,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.8430562734480704,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 500.89396997356414,
+      "rsi": 41.44981680211323,
+      "bb_z_score": -1.3868719654135064,
+      "market_regime": {
+        "prob_trend": 3.3730646960216566e-17,
+        "prob_range": 1.0,
+        "prob_high_vol": 4.373030075374271e-18
+      },
+      "belief_entropy": 1.1689635697733074
+    },
+    {
+      "date": "2026-05-18",
+      "symbol": "WEAT",
+      "close": 25.0,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5593338625310968,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 500.89396997356414,
+      "rsi": 68.87813740450241,
+      "bb_z_score": 1.2648464260533285,
+      "market_regime": {
+        "prob_trend": 1.0129272109661835e-07,
+        "prob_range": 0.9999998872463868,
+        "prob_high_vol": 1.1460892268834519e-08
+      },
+      "belief_entropy": 1.1689636160919419
+    },
+    {
+      "date": "2026-05-18",
+      "symbol": "CORN",
+      "close": 18.739999771118164,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.6897260976979465,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 500.89396997356414,
+      "rsi": 53.56852698703757,
+      "bb_z_score": 0.4310174536685043,
+      "market_regime": {
+        "prob_trend": 1.355532668110364e-17,
+        "prob_range": 1.0,
+        "prob_high_vol": 2.4089179563462883e-18
+      },
+      "belief_entropy": 1.0933299414232938
+    },
+    {
+      "date": "2026-05-19",
+      "symbol": "WEAT",
+      "close": 25.200000762939453,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.9297659041916827,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 500.89396997356414,
+      "rsi": 71.09940399296327,
+      "bb_z_score": 1.3645132926504728,
+      "market_regime": {
+        "prob_trend": 9.883394493876886e-09,
+        "prob_range": 0.9999999887313907,
+        "prob_high_vol": 1.3852148401549575e-09
+      },
+      "belief_entropy": 1.210763560870781
+    },
+    {
+      "date": "2026-05-19",
+      "symbol": "CORN",
+      "close": 18.739999771118164,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5184889100189863,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 500.89396997356414,
+      "rsi": 55.17438088010028,
+      "bb_z_score": 0.3569775656483073,
+      "market_regime": {
+        "prob_trend": 5.158085295265238e-18,
+        "prob_range": 1.0,
+        "prob_high_vol": 9.513800229107073e-19
+      },
+      "belief_entropy": 1.0933299414232938
+    },
+    {
+      "date": "2026-05-20",
+      "symbol": "WEAT",
+      "close": 24.899999618530273,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.04884200650222944,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 500.89396997356414,
+      "rsi": 65.35815131499959,
+      "bb_z_score": 0.9027046066574177,
+      "market_regime": {
+        "prob_trend": 3.6547247119173795e-09,
+        "prob_range": 0.9999999957891337,
+        "prob_high_vol": 5.561415313167056e-10
+      },
+      "belief_entropy": 1.1689635715409459
+    },
+    {
+      "date": "2026-05-20",
+      "symbol": "CORN",
+      "close": 18.420000076293945,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.20746739775886935,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 500.89396997356414,
+      "rsi": 47.57959848049025,
+      "bb_z_score": -0.8707513452428375,
+      "market_regime": {
+        "prob_trend": 1.9636225718761416e-20,
+        "prob_range": 1.0,
+        "prob_high_vol": 4.686871453707434e-21
+      },
+      "belief_entropy": 1.1689635697733074
+    },
+    {
+      "date": "2026-05-21",
+      "symbol": "WEAT",
+      "close": 24.5,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.056794950056406036,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 500.89396997356414,
+      "rsi": 54.03111687286242,
+      "bb_z_score": 0.30646887992078786,
+      "market_regime": {
+        "prob_trend": 1.9965318314221383e-08,
+        "prob_range": 0.9999999774270966,
+        "prob_high_vol": 2.607585182248332e-09
+      },
+      "belief_entropy": 1.0933299511205914
+    },
+    {
+      "date": "2026-05-21",
+      "symbol": "CORN",
+      "close": 18.309999465942383,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.4864603518017737,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 500.89396997356414,
+      "rsi": 41.53277204009263,
+      "bb_z_score": -1.3015094977539163,
+      "market_regime": {
+        "prob_trend": 7.218006564896412e-22,
+        "prob_range": 1.0,
+        "prob_high_vol": 1.9002142534530756e-22
+      },
+      "belief_entropy": 1.1689635697733074
+    },
+    {
+      "date": "2026-05-22",
+      "symbol": "WEAT",
+      "close": 24.549999237060547,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5071913902484606,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 500.89396997356414,
+      "rsi": 53.732640981248956,
+      "bb_z_score": 0.3001958975063965,
+      "market_regime": {
+        "prob_trend": 2.279597778475904e-08,
+        "prob_range": 0.9999999743014305,
+        "prob_high_vol": 2.9025916708296255e-09
+      },
+      "belief_entropy": 1.0933299524441802
+    },
+    {
+      "date": "2026-05-22",
+      "symbol": "CORN",
+      "close": 18.360000610351562,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.6515380172382967,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 500.89396997356414,
+      "rsi": 40.98637418823243,
+      "bb_z_score": -1.1557832614779142,
+      "market_regime": {
+        "prob_trend": 9.759258427062228e-23,
+        "prob_range": 1.0,
+        "prob_high_vol": 2.704655309307023e-23
+      },
+      "belief_entropy": 1.1689635697733074
+    },
+    {
+      "date": "2026-05-26",
+      "symbol": "WEAT",
+      "close": 24.219999313354492,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.9663986361318201,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 500.89396997356414,
+      "rsi": 48.20238712007364,
+      "bb_z_score": -0.22554739080692382,
+      "market_regime": {
+        "prob_trend": 3.3615102875176345e-08,
+        "prob_range": 0.999999962320438,
+        "prob_high_vol": 4.064459145527241e-09
+      },
+      "belief_entropy": 1.0933299575266573
+    },
+    {
+      "date": "2026-05-26",
+      "symbol": "CORN",
+      "close": 18.18000030517578,
+      "signal_type": "hold",
+      "confidence": 0.425,
+      "prob_profit": 0.8725832826095543,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 500.89396997356414,
+      "rsi": 37.04963935459899,
+      "bb_z_score": -1.664027763821695,
+      "market_regime": {
+        "prob_trend": 1.4133259727998261e-27,
+        "prob_range": 1.0,
+        "prob_high_vol": 4.854979551760058e-28
+      },
+      "belief_entropy": 1.1689635697733074
+    },
+    {
+      "date": "2026-05-27",
+      "symbol": "WEAT",
+      "close": 23.760000228881836,
+      "signal_type": "buy",
+      "confidence": 0.75,
+      "prob_profit": 0.9818617239177917,
+      "action": "buy",
+      "reason": "Signal=BUY, position=flat \u2192 opening long position",
+      "quantity": 1.0,
+      "fill_price": 23.88577538204193,
+      "position_qty_before": 0.0,
+      "equity": 500.89396997356414,
+      "rsi": 46.07454806044269,
+      "bb_z_score": -0.8329817145812248,
+      "market_regime": {
+        "prob_trend": 7.553360624776985e-09,
+        "prob_range": 0.9999999915302323,
+        "prob_high_vol": 9.164070979253221e-10
+      },
+      "belief_entropy": 1.2092806247281023
+    },
+    {
+      "date": "2026-05-27",
+      "symbol": "CORN",
+      "close": 18.0,
+      "signal_type": "hold",
+      "confidence": 0.425,
+      "prob_profit": 0.7754116527228736,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 500.89396997356414,
+      "rsi": 31.55421862510906,
+      "bb_z_score": -1.94565813155974,
+      "market_regime": {
+        "prob_trend": 1.2128995954788676e-33,
+        "prob_range": 1.0,
+        "prob_high_vol": 4.971124665039429e-34
+      },
+      "belief_entropy": 1.1689635697733074
+    },
+    {
+      "date": "2026-05-28",
+      "symbol": "WEAT",
+      "close": 23.829999923706055,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.42574546030816884,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 1.0,
+      "equity": 500.8381945152283,
+      "rsi": 45.41362921408863,
+      "bb_z_score": -0.6666062190098606,
+      "market_regime": {
+        "prob_trend": 1.959953458558347e-11,
+        "prob_range": 0.9999999999766755,
+        "prob_high_vol": 3.7249231704508456e-12
+      },
+      "belief_entropy": 1.0933299414336133
+    },
+    {
+      "date": "2026-05-28",
+      "symbol": "CORN",
+      "close": 18.209999084472656,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5637255451587756,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 500.8381945152283,
+      "rsi": 38.27649691496126,
+      "bb_z_score": -1.1411772005727059,
+      "market_regime": {
+        "prob_trend": 5.13279254321078e-47,
+        "prob_range": 1.0,
+        "prob_high_vol": 2.7615509467680607e-47
+      },
+      "belief_entropy": 1.1689635697733074
+    },
+    {
+      "date": "2026-05-29",
+      "symbol": "WEAT",
+      "close": 23.3799991607666,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5822660361640418,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 500.3881937522888,
+      "rsi": 34.76788542019666,
+      "bb_z_score": -1.2227038190057165,
+      "market_regime": {
+        "prob_trend": 3.583947059626148e-10,
+        "prob_range": 0.9999999995857707,
+        "prob_high_vol": 5.583468374526407e-11
+      },
+      "belief_entropy": 1.1689635699475251
+    },
+    {
+      "date": "2026-06-01",
+      "symbol": "WEAT",
+      "close": 23.309999465942383,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.7058321665826874,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 500.38119496536257,
+      "rsi": 31.12711393068615,
+      "bb_z_score": -1.222087558971854,
+      "market_regime": {
+        "prob_trend": 1.308007415939464e-10,
+        "prob_range": 0.9999999998473041,
+        "prob_high_vol": 2.1895117603722173e-11
+      },
+      "belief_entropy": 1.1689635698379164
+    },
+    {
+      "date": "2026-06-02",
+      "symbol": "WEAT",
+      "close": 23.149999618530273,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.9471996178219017,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 500.38119496536257,
+      "rsi": 33.63298734747704,
+      "bb_z_score": -1.3019406588371398,
+      "market_regime": {
+        "prob_trend": 2.061426780530641e-11,
+        "prob_range": 0.9999999999755169,
+        "prob_high_vol": 3.868862394317172e-12
+      },
+      "belief_entropy": 1.1689635697837726
+    },
+    {
+      "date": "2026-06-02",
+      "symbol": "CORN",
+      "close": 17.709999084472656,
+      "signal_type": "buy",
+      "confidence": 1.0,
+      "prob_profit": 0.9577142071038087,
+      "action": "buy",
+      "reason": "Signal=BUY, position=flat \u2192 opening long position",
+      "quantity": 1.0,
+      "fill_price": 17.816685916900635,
+      "position_qty_before": 0.0,
+      "equity": 500.38119496536257,
+      "rsi": 22.29992442011796,
+      "bb_z_score": -1.9068510646100951,
+      "market_regime": {
+        "prob_trend": 4.0868851330996834e-111,
+        "prob_range": 1.0,
+        "prob_high_vol": 3.1608479150908585e-111
+      },
+      "belief_entropy": 1.2371209036519482
+    },
+    {
+      "date": "2026-06-03",
+      "symbol": "WEAT",
+      "close": 22.670000076293945,
+      "signal_type": "buy",
+      "confidence": 0.8624999999999999,
+      "prob_profit": 0.8125342708555843,
+      "action": "buy",
+      "reason": "Signal=BUY, position=flat \u2192 opening long position",
+      "quantity": 1.0,
+      "fill_price": 22.744064083099367,
+      "position_qty_before": 0.0,
+      "equity": 500.03450836181645,
+      "rsi": 22.74655410773056,
+      "bb_z_score": -1.7083357653019084,
+      "market_regime": {
+        "prob_trend": 2.1370559263602218e-16,
+        "prob_range": 0.9999999999999998,
+        "prob_high_vol": 6.657975585949222e-17
+      },
+      "belief_entropy": 1.2371209036519482
+    },
+    {
+      "date": "2026-06-04",
+      "symbol": "WEAT",
+      "close": 22.469999313354492,
+      "signal_type": "buy",
+      "confidence": 0.8624999999999999,
+      "prob_profit": 0.7508276744435447,
+      "action": "hold",
+      "reason": "Signal=BUY but already long 1.0 shares \u2192 hold",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 1.0,
+      "equity": 499.5204438209534,
+      "rsi": 19.65561211975654,
+      "bb_z_score": -1.767279513086849,
+      "market_regime": {
+        "prob_trend": 4.292688037994972e-71,
+        "prob_range": 1.0,
+        "prob_high_vol": 3.3569855079870074e-71
+      },
+      "belief_entropy": 1.2371209036519482
+    },
+    {
+      "date": "2026-06-05",
+      "symbol": "WEAT",
+      "close": 22.280000686645508,
+      "signal_type": "buy",
+      "confidence": 0.8624999999999999,
+      "prob_profit": 0.5412529415813329,
+      "action": "rejected",
+      "reason": "IC veto: All rational market types eliminated by IC",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 499.5346465492249,
+      "rsi": 17.485239214352106,
+      "bb_z_score": -1.802779420202381,
+      "market_regime": {
+        "prob_trend": 1.6113621842451104e-47,
+        "prob_range": 1.0,
+        "prob_high_vol": 1.0964680296419673e-47
+      },
+      "belief_entropy": 1.2371209036519482
+    },
+    {
+      "date": "2026-06-05",
+      "symbol": "CORN",
+      "close": 17.059999465942383,
+      "signal_type": "buy",
+      "confidence": 0.8624999999999999,
+      "prob_profit": 0.5661799210162399,
+      "action": "buy",
+      "reason": "Signal=BUY, position=flat \u2192 opening long position",
+      "quantity": 1.0,
+      "fill_price": 17.0255,
+      "position_qty_before": 0.0,
+      "equity": 499.5346465492249,
+      "rsi": 11.739259755461262,
+      "bb_z_score": -2.1155083140620694,
+      "market_regime": {
+        "prob_trend": 1.3033831284372662e-29,
+        "prob_range": 1.0,
+        "prob_high_vol": 4.4958536797523724e-30
+      },
+      "belief_entropy": 1.2371209036519482
+    },
+    {
+      "date": "2026-06-08",
+      "symbol": "WEAT",
+      "close": 22.350000381469727,
+      "signal_type": "buy",
+      "confidence": 0.8624999999999999,
+      "prob_profit": 0.8277427828999069,
+      "action": "buy",
+      "reason": "Signal=BUY, position=flat \u2192 opening long position",
+      "quantity": 1.0,
+      "fill_price": 22.633900382041933,
+      "position_qty_before": 0.0,
+      "equity": 499.50494542312623,
+      "rsi": 22.181695054480926,
+      "bb_z_score": -1.5737299757476693,
+      "market_regime": {
+        "prob_trend": 2.753569116357867e-54,
+        "prob_range": 1.0,
+        "prob_high_vol": 1.968003676483699e-54
+      },
+      "belief_entropy": 1.2371209036519482
+    },
+    {
+      "date": "2026-06-08",
+      "symbol": "CORN",
+      "close": 17.020000457763672,
+      "signal_type": "buy",
+      "confidence": 0.8624999999999999,
+      "prob_profit": 0.7614258336449224,
+      "action": "hold",
+      "reason": "Signal=BUY but already long 1.0 shares \u2192 hold",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 1.0,
+      "equity": 499.50494542312623,
+      "rsi": 13.76025335636487,
+      "bb_z_score": -1.8638611296010004,
+      "market_regime": {
+        "prob_trend": 1.018708628697782e-21,
+        "prob_range": 1.0,
+        "prob_high_vol": 2.3001457965822153e-22
+      },
+      "belief_entropy": 1.2371209036519482
+    },
+    {
+      "date": "2026-06-09",
+      "symbol": "WEAT",
+      "close": 22.3799991607666,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.6106390557334739,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 1.0,
+      "equity": 499.2710446596146,
+      "rsi": 19.113344124310956,
+      "bb_z_score": -1.3860205910058805,
+      "market_regime": {
+        "prob_trend": 7.916576421743941e-156,
+        "prob_range": 1.0,
+        "prob_high_vol": 7.156425501929552e-156
+      },
+      "belief_entropy": 1.210763556558756
+    },
+    {
+      "date": "2026-06-10",
+      "symbol": "WEAT",
+      "close": 22.540000915527344,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.18494957600993045,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 1.0,
+      "equity": 499.4610451936722,
+      "rsi": 17.23749687989175,
+      "bb_z_score": -1.1336518801768618,
+      "market_regime": {
+        "prob_trend": 0.0,
+        "prob_range": 1.0,
+        "prob_high_vol": 0.0
+      },
+      "belief_entropy": 1.210763556558756
+    },
+    {
+      "date": "2026-06-10",
+      "symbol": "CORN",
+      "close": 17.06999969482422,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.4788714481130035,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 1.0,
+      "equity": 499.4610451936722,
+      "rsi": 10.937284814679273,
+      "bb_z_score": -1.4140567614007697,
+      "market_regime": {
+        "prob_trend": 2.047224351619279e-13,
+        "prob_range": 0.9999999999997777,
+        "prob_high_vol": 1.7557282527032786e-14
+      },
+      "belief_entropy": 1.2107635565588393
+    },
+    {
+      "date": "2026-06-11",
+      "symbol": "WEAT",
+      "close": 22.43000030517578,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5319616883316909,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 1.0,
+      "equity": 499.0010442018509,
+      "rsi": 16.14079944007665,
+      "bb_z_score": -1.1360398643692482,
+      "market_regime": {
+        "prob_trend": 1.612031973610041e-43,
+        "prob_range": 1.0,
+        "prob_high_vol": 8.269791890476215e-44
+      },
+      "belief_entropy": 1.210763556558756
+    },
+    {
+      "date": "2026-06-12",
+      "symbol": "WEAT",
+      "close": 22.34000015258789,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.22691128255230386,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 1.0,
+      "equity": 498.99104397296907,
+      "rsi": 16.14079944007665,
+      "bb_z_score": -1.1096822140134914,
+      "market_regime": {
+        "prob_trend": 7.528818926868551e-80,
+        "prob_range": 1.0,
+        "prob_high_vol": 5.228738997012665e-80
+      },
+      "belief_entropy": 1.210763556558756
+    },
+    {
+      "date": "2026-06-12",
+      "symbol": "CORN",
+      "close": 16.799999237060547,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.09698835943418183,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 1.0,
+      "equity": 498.99104397296907,
+      "rsi": 11.39979771078498,
+      "bb_z_score": -1.4633382379905624,
+      "market_regime": {
+        "prob_trend": 1.8129244535053916e-12,
+        "prob_range": 0.9999999999980596,
+        "prob_high_vol": 1.2762159885593152e-13
+      },
+      "belief_entropy": 1.2107635565594799
+    },
+    {
+      "date": "2026-06-15",
+      "symbol": "WEAT",
+      "close": 22.540000915527344,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.6971221548926914,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 499.25104610919954,
+      "rsi": 46.40552518875981,
+      "bb_z_score": -0.8289493087975355,
+      "market_regime": {
+        "prob_trend": 2.3597198513712507e-103,
+        "prob_range": 1.0,
+        "prob_high_vol": 1.754872714186474e-103
+      },
+      "belief_entropy": 1.1689635697733074
+    },
+    {
+      "date": "2026-06-15",
+      "symbol": "CORN",
+      "close": 16.860000610351562,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5648338626740244,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 499.25104610919954,
+      "rsi": 34.353935843827,
+      "bb_z_score": -1.2304245547319095,
+      "market_regime": {
+        "prob_trend": 4.7419032694880156e-11,
+        "prob_range": 0.9999999999503473,
+        "prob_high_vol": 2.2336525842447997e-12
+      },
+      "belief_entropy": 1.1689635697928737
+    },
+    {
+      "date": "2026-06-16",
+      "symbol": "WEAT",
+      "close": 22.75,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.7682434141717553,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 498.659044957161,
+      "rsi": 50.840867693892534,
+      "bb_z_score": -0.5489907067128413,
+      "market_regime": {
+        "prob_trend": 8.706860533248358e-35,
+        "prob_range": 1.0,
+        "prob_high_vol": 2.479369356633635e-35
+      },
+      "belief_entropy": 1.0933299414232938
+    },
+    {
+      "date": "2026-06-16",
+      "symbol": "CORN",
+      "close": 16.93000030517578,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.15166900885554296,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 498.659044957161,
+      "rsi": 39.88341620435572,
+      "bb_z_score": -1.0346217613075612,
+      "market_regime": {
+        "prob_trend": 1.9376958360037064e-08,
+        "prob_range": 0.9999999804911434,
+        "prob_high_vol": 1.3189831453275782e-10
+      },
+      "belief_entropy": 1.1689635772408344
+    },
+    {
+      "date": "2026-06-17",
+      "symbol": "WEAT",
+      "close": 23.200000762939453,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.3763360811363643,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 498.659044957161,
+      "rsi": 55.12592767302548,
+      "bb_z_score": 0.02654504829067024,
+      "market_regime": {
+        "prob_trend": 2.0246274549442495e-33,
+        "prob_range": 1.0,
+        "prob_high_vol": 6.235809558292385e-34
+      },
+      "belief_entropy": 1.0933299414232938
+    },
+    {
+      "date": "2026-06-17",
+      "symbol": "CORN",
+      "close": 17.149999618530273,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.16842866850818966,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 498.659044957161,
+      "rsi": 47.532381545189345,
+      "bb_z_score": -0.6209930334183787,
+      "market_regime": {
+        "prob_trend": 8.211774941515127e-08,
+        "prob_range": 0.9999999172637668,
+        "prob_high_vol": 6.184837319065982e-10
+      },
+      "belief_entropy": 1.093329974369551
+    },
+    {
+      "date": "2026-06-18",
+      "symbol": "WEAT",
+      "close": 22.940000534057617,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.1510097515597823,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 498.659044957161,
+      "rsi": 49.393795018075686,
+      "bb_z_score": -0.18721731662512284,
+      "market_regime": {
+        "prob_trend": 4.596649461644914e-60,
+        "prob_range": 1.0,
+        "prob_high_vol": 2.3969744897619434e-60
+      },
+      "belief_entropy": 1.0933299414232938
+    },
+    {
+      "date": "2026-06-18",
+      "symbol": "CORN",
+      "close": 16.950000762939453,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.07607618582163499,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 498.659044957161,
+      "rsi": 42.351102102991725,
+      "bb_z_score": -0.8741163420316335,
+      "market_regime": {
+        "prob_trend": 1.8845468070692222e-07,
+        "prob_range": 0.9999998104872755,
+        "prob_high_vol": 1.0580437869755447e-09
+      },
+      "belief_entropy": 1.168963642248338
+    },
+    {
+      "date": "2026-06-22",
+      "symbol": "CORN",
+      "close": 16.770000457763672,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.13775427441529903,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 498.659044957161,
+      "rsi": 36.399452263899896,
+      "bb_z_score": -1.0935476839412859,
+      "market_regime": {
+        "prob_trend": 4.211682036712514e-08,
+        "prob_range": 0.9999999575536358,
+        "prob_high_vol": 3.2954378318925536e-10
+      },
+      "belief_entropy": 1.1689635860333365
+    },
+    {
+      "date": "2026-06-23",
+      "symbol": "WEAT",
+      "close": 22.420000076293945,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.846238008219932,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 498.659044957161,
+      "rsi": 37.77324125283766,
+      "bb_z_score": -0.8175683044197274,
+      "market_regime": {
+        "prob_trend": 3.1388541648857396e-53,
+        "prob_range": 1.0,
+        "prob_high_vol": 1.4838298648909815e-53
+      },
+      "belief_entropy": 1.1689635697733074
+    },
+    {
+      "date": "2026-06-23",
+      "symbol": "CORN",
+      "close": 16.739999771118164,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5214988071887189,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 498.659044957161,
+      "rsi": 32.725682223034724,
+      "bb_z_score": -1.0705022493175351,
+      "market_regime": {
+        "prob_trend": 1.2423047349232757e-07,
+        "prob_range": 0.999999875019706,
+        "prob_high_vol": 7.498205566600145e-10
+      },
+      "belief_entropy": 1.168963617584687
+    },
+    {
+      "date": "2026-06-24",
+      "symbol": "WEAT",
+      "close": 22.360000610351562,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.9052093043688079,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 498.659044957161,
+      "rsi": 34.15708571022114,
+      "bb_z_score": -0.8905073403176538,
+      "market_regime": {
+        "prob_trend": 2.0677324063710159e-32,
+        "prob_range": 1.0,
+        "prob_high_vol": 5.861279867451586e-33
+      },
+      "belief_entropy": 1.1689635697733074
+    },
+    {
+      "date": "2026-06-24",
+      "symbol": "CORN",
+      "close": 16.6200008392334,
+      "signal_type": "buy",
+      "confidence": 0.75,
+      "prob_profit": 0.9127915441976928,
+      "action": "buy",
+      "reason": "Signal=BUY, position=flat \u2192 opening long position",
+      "quantity": 1.0,
+      "fill_price": 16.66495938873291,
+      "position_qty_before": 0.0,
+      "equity": 498.659044957161,
+      "rsi": 27.11248101352693,
+      "bb_z_score": -1.2120873189503993,
+      "market_regime": {
+        "prob_trend": 3.1014991401956165e-06,
+        "prob_range": 0.9999968894454956,
+        "prob_high_vol": 9.055364212319184e-09
+      },
+      "belief_entropy": 1.2371219805399964
+    },
+    {
+      "date": "2026-06-25",
+      "symbol": "WEAT",
+      "close": 22.559999465942383,
+      "signal_type": "buy",
+      "confidence": 0.75,
+      "prob_profit": 0.9921130474829448,
+      "action": "buy",
+      "reason": "Signal=BUY, position=flat \u2192 opening long position",
+      "quantity": 1.0,
+      "fill_price": 22.243314083099367,
+      "position_qty_before": 0.0,
+      "equity": 498.94408633136754,
+      "rsi": 47.17415396580823,
+      "bb_z_score": -0.4003290855036367,
+      "market_regime": {
+        "prob_trend": 4.6369077067364714e-27,
+        "prob_range": 1.0,
+        "prob_high_vol": 9.89523063581523e-28
+      },
+      "belief_entropy": 1.130215990534298
+    },
+    {
+      "date": "2026-06-25",
+      "symbol": "CORN",
+      "close": 16.950000762939453,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.44364848769278625,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 1.0,
+      "equity": 498.94408633136754,
+      "rsi": 47.314842570530594,
+      "bb_z_score": -0.45738277227520896,
+      "market_regime": {
+        "prob_trend": 7.01183776580242e-07,
+        "prob_range": 0.9999992937247074,
+        "prob_high_vol": 5.091516024455337e-09
+      },
+      "belief_entropy": 1.093330222613141
+    },
+    {
+      "date": "2026-06-26",
+      "symbol": "WEAT",
+      "close": 22.170000076293945,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.22231257465605198,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 1.0,
+      "equity": 498.7807721719742,
+      "rsi": 45.73517290126277,
+      "bb_z_score": -1.3213901271566317,
+      "market_regime": {
+        "prob_trend": 8.868606930286631e-23,
+        "prob_range": 1.0,
+        "prob_high_vol": 1.5282303235564667e-23
+      },
+      "belief_entropy": 1.1689635697733074
+    },
+    {
+      "date": "2026-06-26",
+      "symbol": "CORN",
+      "close": 16.860000610351562,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.34835623546794076,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 1.0,
+      "equity": 498.7807721719742,
+      "rsi": 44.993971743865636,
+      "bb_z_score": -0.600861242784752,
+      "market_regime": {
+        "prob_trend": 4.537865573858813e-07,
+        "prob_range": 0.9999995433203425,
+        "prob_high_vol": 2.893100221011403e-09
+      },
+      "belief_entropy": 1.0933301231255652
+    },
+    {
+      "date": "2026-06-29",
+      "symbol": "WEAT",
+      "close": 21.809999465942383,
+      "signal_type": "hold",
+      "confidence": 0.425,
+      "prob_profit": 0.1196216693201726,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 498.0307702646256,
+      "rsi": 35.20317825302851,
+      "bb_z_score": -2.0773536196583855,
+      "market_regime": {
+        "prob_trend": 3.2855678681429404e-18,
+        "prob_range": 1.0,
+        "prob_high_vol": 3.581159193760437e-19
+      },
+      "belief_entropy": 1.1689635697733074
+    },
+    {
+      "date": "2026-06-29",
+      "symbol": "CORN",
+      "close": 16.469999313354492,
+      "signal_type": "hold",
+      "confidence": 0.425,
+      "prob_profit": 0.19918869021468671,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 1.0,
+      "equity": 498.0307702646256,
+      "rsi": 36.02294080690779,
+      "bb_z_score": -1.5594735885878268,
+      "market_regime": {
+        "prob_trend": 1.486489790853696e-07,
+        "prob_range": 0.999999849870637,
+        "prob_high_vol": 1.4803838912432857e-09
+      },
+      "belief_entropy": 1.1689636273766721
+    },
+    {
+      "date": "2026-06-30",
+      "symbol": "WEAT",
+      "close": 22.030000686645508,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5348734199513353,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 498.2665705881119,
+      "rsi": 40.33252277447758,
+      "bb_z_score": -1.3972194461802268,
+      "market_regime": {
+        "prob_trend": 1.7075522458913483e-14,
+        "prob_range": 0.9999999999999818,
+        "prob_high_vol": 1.2218020439658486e-15
+      },
+      "belief_entropy": 1.1689635697733147
+    },
+    {
+      "date": "2026-06-30",
+      "symbol": "CORN",
+      "close": 16.75,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.4579925931905802,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 1.0,
+      "equity": 498.2665705881119,
+      "rsi": 47.988467387393484,
+      "bb_z_score": -0.7294602254962329,
+      "market_regime": {
+        "prob_trend": 2.1503196533929956e-07,
+        "prob_range": 0.9999997821766918,
+        "prob_high_vol": 2.791342757774905e-09
+      },
+      "belief_entropy": 1.1689636535402648
+    },
+    {
+      "date": "2026-07-01",
+      "symbol": "WEAT",
+      "close": 22.399999618530273,
+      "signal_type": "buy",
+      "confidence": 0.75,
+      "prob_profit": 0.9873267087985033,
+      "action": "buy",
+      "reason": "Signal=BUY, position=flat \u2192 opening long position",
+      "quantity": 1.0,
+      "fill_price": 22.54376522922516,
+      "position_qty_before": 0.0,
+      "equity": 498.46657135105136,
+      "rsi": 41.30725502292466,
+      "bb_z_score": -0.2267939487676793,
+      "market_regime": {
+        "prob_trend": 3.2922988776557383e-22,
+        "prob_range": 1.0,
+        "prob_high_vol": 6.335874058558258e-23
+      },
+      "belief_entropy": 1.130215990534298
+    },
+    {
+      "date": "2026-07-01",
+      "symbol": "CORN",
+      "close": 16.950000762939453,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.8175573674384913,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 1.0,
+      "equity": 498.46657135105136,
+      "rsi": 49.4753232265942,
+      "bb_z_score": 0.13133142276749588,
+      "market_regime": {
+        "prob_trend": 1.6309547417480196e-08,
+        "prob_range": 0.9999999833330603,
+        "prob_high_vol": 3.5739231400767083e-10
+      },
+      "belief_entropy": 1.093329948127846
+    },
+    {
+      "date": "2026-07-02",
+      "symbol": "WEAT",
+      "close": 22.40999984741211,
+      "signal_type": "buy",
+      "confidence": 0.75,
+      "prob_profit": 0.9901199095316546,
+      "action": "hold",
+      "reason": "Signal=BUY but already long 1.0 shares \u2192 hold",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 1.0,
+      "equity": 498.2428058166504,
+      "rsi": 37.749556525661056,
+      "bb_z_score": -0.1534713697207014,
+      "market_regime": {
+        "prob_trend": 3.0162639701190634e-21,
+        "prob_range": 1.0,
+        "prob_high_vol": 4.699271819325763e-22
+      },
+      "belief_entropy": 1.130215990534298
+    },
+    {
+      "date": "2026-07-02",
+      "symbol": "CORN",
+      "close": 16.860000610351562,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.4545218715717829,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 1.0,
+      "equity": 498.2428058166504,
+      "rsi": 43.28810983179666,
+      "bb_z_score": -0.16322680086131264,
+      "market_regime": {
+        "prob_trend": 2.1261119832924005e-08,
+        "prob_range": 0.999999978324535,
+        "prob_high_vol": 4.1434520025122467e-10
+      },
+      "belief_entropy": 1.0933299501279519
+    },
+    {
+      "date": "2026-07-06",
+      "symbol": "WEAT",
+      "close": 22.93000030517578,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.030893864956690303,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 1.0,
+      "equity": 499.35280642700195,
+      "rsi": 48.070806262911134,
+      "bb_z_score": 1.4034565791979583,
+      "market_regime": {
+        "prob_trend": 5.53049280485363e-24,
+        "prob_range": 1.0,
+        "prob_high_vol": 1.2198048542889702e-24
+      },
+      "belief_entropy": 1.1689635697733074
+    },
+    {
+      "date": "2026-07-06",
+      "symbol": "CORN",
+      "close": 17.450000762939453,
+      "signal_type": "hold",
+      "confidence": 0.425,
+      "prob_profit": 0.17330623460552946,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 499.35280642700195,
+      "rsi": 50.43958547178834,
+      "bb_z_score": 2.615097755311656,
+      "market_regime": {
+        "prob_trend": 2.480117928542493e-09,
+        "prob_range": 0.9999999974094116,
+        "prob_high_vol": 1.1047048941784625e-10
+      },
+      "belief_entropy": 1.2589684368103984
+    },
+    {
+      "date": "2026-07-07",
+      "symbol": "WEAT",
+      "close": 23.09000015258789,
+      "signal_type": "hold",
+      "confidence": 0.425,
+      "prob_profit": 0.2638311063843959,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 1.0,
+      "equity": 499.368404876709,
+      "rsi": 54.2036649469437,
+      "bb_z_score": 1.6535171875780983,
+      "market_regime": {
+        "prob_trend": 5.3330117706546565e-27,
+        "prob_range": 1.0,
+        "prob_high_vol": 1.3664303648592927e-27
+      },
+      "belief_entropy": 1.2589684359803912
+    },
+    {
+      "date": "2026-07-07",
+      "symbol": "CORN",
+      "close": 17.6299991607666,
+      "signal_type": "hold",
+      "confidence": 0.425,
+      "prob_profit": 0.2660030253483063,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 499.368404876709,
+      "rsi": 57.5639710966463,
+      "bb_z_score": 2.6503336265897666,
+      "market_regime": {
+        "prob_trend": 1.1950780152267035e-11,
+        "prob_range": 0.9999999999871472,
+        "prob_high_vol": 9.020911626973839e-13
+      },
+      "belief_entropy": 1.2589684359844895
+    },
+    {
+      "date": "2026-07-08",
+      "symbol": "WEAT",
+      "close": 22.700000762939453,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.4296531379021754,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 1.0,
+      "equity": 498.97840548706057,
+      "rsi": 36.94330871788405,
+      "bb_z_score": 0.47167336297443896,
+      "market_regime": {
+        "prob_trend": 4.258333143150798e-51,
+        "prob_range": 1.0,
+        "prob_high_vol": 2.1744207805713255e-51
+      },
+      "belief_entropy": 1.0933299414232938
+    },
+    {
+      "date": "2026-07-08",
+      "symbol": "CORN",
+      "close": 17.329999923706055,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.05344680851815535,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 498.97840548706057,
+      "rsi": 43.22481644875779,
+      "bb_z_score": 1.3819280352764427,
+      "market_regime": {
+        "prob_trend": 1.8343889171049666e-12,
+        "prob_range": 0.9999999999979883,
+        "prob_high_vol": 1.773056540173187e-13
+      },
+      "belief_entropy": 1.1689635697741259
+    },
+    {
+      "date": "2026-07-09",
+      "symbol": "WEAT",
+      "close": 23.049999237060547,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.4585872284016527,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 1.0,
+      "equity": 499.32840396118166,
+      "rsi": 51.15208952525038,
+      "bb_z_score": 1.3283480991251828,
+      "market_regime": {
+        "prob_trend": 2.392400294255554e-106,
+        "prob_range": 1.0,
+        "prob_high_vol": 1.7681454647205314e-106
+      },
+      "belief_entropy": 1.1689635697733074
+    },
+    {
+      "date": "2026-07-09",
+      "symbol": "CORN",
+      "close": 17.25,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.6837924508272661,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 499.32840396118166,
+      "rsi": 42.814609992861136,
+      "bb_z_score": 1.0289353703749144,
+      "market_regime": {
+        "prob_trend": 1.2841750806920523e-13,
+        "prob_range": 0.9999999999998566,
+        "prob_high_vol": 1.5021476121480826e-14
+      },
+      "belief_entropy": 1.1689635697733665
+    },
+    {
+      "date": "2026-07-10",
+      "symbol": "WEAT",
+      "close": 23.719999313354492,
+      "signal_type": "hold",
+      "confidence": 0.425,
+      "prob_profit": 0.8781313369704508,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 499.9984040374756,
+      "rsi": 62.05602162984657,
+      "bb_z_score": 2.4633145967858114,
+      "market_regime": {
+        "prob_trend": 8.756858275293754e-227,
+        "prob_range": 1.0,
+        "prob_high_vol": 7.791383107549562e-227
+      },
+      "belief_entropy": 1.1689635697733074
+    },
+    {
+      "date": "2026-07-10",
+      "symbol": "CORN",
+      "close": 17.479999542236328,
+      "signal_type": "hold",
+      "confidence": 0.425,
+      "prob_profit": 0.857402241396984,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 499.9984040374756,
+      "rsi": 50.88208099750882,
+      "bb_z_score": 1.6328942378033202,
+      "market_regime": {
+        "prob_trend": 3.2487873694961204e-16,
+        "prob_range": 0.9999999999999996,
+        "prob_high_vol": 5.440616101801647e-17
+      },
+      "belief_entropy": 1.2589684359803912
+    },
+    {
+      "date": "2026-07-13",
+      "symbol": "WEAT",
+      "close": 23.65999984741211,
+      "signal_type": "hold",
+      "confidence": 0.425,
+      "prob_profit": 0.4477842554769949,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 499.6888049621582,
+      "rsi": 58.470330394432175,
+      "bb_z_score": 1.9544716183506863,
+      "market_regime": {
+        "prob_trend": 0.0,
+        "prob_range": 1.0,
+        "prob_high_vol": 0.0
+      },
+      "belief_entropy": 1.2589684359803912
+    },
+    {
+      "date": "2026-07-13",
+      "symbol": "CORN",
+      "close": 17.549999237060547,
+      "signal_type": "hold",
+      "confidence": 0.425,
+      "prob_profit": 0.49339431419660834,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 499.6888049621582,
+      "rsi": 45.900893656922094,
+      "bb_z_score": 1.6252721616095558,
+      "market_regime": {
+        "prob_trend": 1.8083581941484807e-17,
+        "prob_range": 1.0,
+        "prob_high_vol": 3.0797437340981096e-18
+      },
+      "belief_entropy": 1.2589684359803912
+    },
+    {
+      "date": "2026-07-14",
+      "symbol": "CORN",
+      "close": 17.489999771118164,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.43271796562863324,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 499.6888049621582,
+      "rsi": 51.39158893949808,
+      "bb_z_score": 1.2896097409201515,
+      "market_regime": {
+        "prob_trend": 7.38423389865713e-19,
+        "prob_range": 1.0,
+        "prob_high_vol": 1.4355356302337926e-19
+      },
+      "belief_entropy": 1.1689635697733074
+    },
+    {
+      "date": "2026-07-15",
+      "symbol": "CORN",
+      "close": 17.790000915527344,
+      "signal_type": "hold",
+      "confidence": 0.425,
+      "prob_profit": 0.745033846012366,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 499.6888049621582,
+      "rsi": 60.23865699260235,
+      "bb_z_score": 1.8494164518927547,
+      "market_regime": {
+        "prob_trend": 1.7060714991104004e-17,
+        "prob_range": 1.0,
+        "prob_high_vol": 3.0757250495131674e-18
+      },
+      "belief_entropy": 1.1689635697733074
+    },
+    {
+      "date": "2026-07-16",
+      "symbol": "WEAT",
+      "close": 24.920000076293945,
+      "signal_type": "sell",
+      "confidence": 0.8624999999999999,
+      "prob_profit": 0.7637751128351777,
+      "action": "rejected",
+      "reason": "Signal=SELL but position=flat and short selling disabled",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 499.6888049621582,
+      "rsi": 73.87903018563038,
+      "bb_z_score": 2.2348629503998283,
+      "market_regime": {
+        "prob_trend": 2.896819221516938e-61,
+        "prob_range": 1.0,
+        "prob_high_vol": 1.921201763300118e-61
+      },
+      "belief_entropy": 1.2371209036519482
+    },
+    {
+      "date": "2026-07-16",
+      "symbol": "CORN",
+      "close": 17.6200008392334,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.3649833467233553,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 499.6888049621582,
+      "rsi": 52.670516981075004,
+      "bb_z_score": 1.251729442562204,
+      "market_regime": {
+        "prob_trend": 3.018044640482004e-20,
+        "prob_range": 1.0,
+        "prob_high_vol": 7.012320956654772e-21
+      },
+      "belief_entropy": 1.1689635697733074
+    },
+    {
+      "date": "2026-07-17",
+      "symbol": "CORN",
+      "close": 17.780000686645508,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.2677436586396338,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 499.6888049621582,
+      "rsi": 53.70307233419248,
+      "bb_z_score": 1.482630847788104,
+      "market_regime": {
+        "prob_trend": 2.0430708219452832e-23,
+        "prob_range": 1.0,
+        "prob_high_vol": 5.711413422275021e-24
+      },
+      "belief_entropy": 1.1689635697733074
+    },
+    {
+      "date": "2026-07-20",
+      "symbol": "WEAT",
+      "close": 24.989999771118164,
+      "signal_type": "hold",
+      "confidence": 0.425,
+      "prob_profit": 0.8266354537740614,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 499.6888049621582,
+      "rsi": 62.60250457125472,
+      "bb_z_score": 1.652954160023457,
+      "market_regime": {
+        "prob_trend": 3.743634090829384e-25,
+        "prob_range": 1.0,
+        "prob_high_vol": 1.3108162015456453e-25
+      },
+      "belief_entropy": 1.1689635697733074
+    },
+    {
+      "date": "2026-07-20",
+      "symbol": "CORN",
+      "close": 17.90999984741211,
+      "signal_type": "hold",
+      "confidence": 0.425,
+      "prob_profit": 0.9734166816580283,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 499.6888049621582,
+      "rsi": 49.35481509476684,
+      "bb_z_score": 1.5725013200699416,
+      "market_regime": {
+        "prob_trend": 2.2150476025202657e-24,
+        "prob_range": 1.0,
+        "prob_high_vol": 6.333770146960948e-25
+      },
+      "belief_entropy": 1.1689635697733074
+    },
+    {
+      "date": "2026-07-21",
+      "symbol": "WEAT",
+      "close": 25.200000762939453,
+      "signal_type": "hold",
+      "confidence": 0.425,
+      "prob_profit": 0.3718140205483264,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 499.6888049621582,
+      "rsi": 69.46987849926576,
+      "bb_z_score": 1.6120445343415943,
+      "market_regime": {
+        "prob_trend": 7.860387754853851e-26,
+        "prob_range": 1.0,
+        "prob_high_vol": 2.7834305855851087e-26
+      },
+      "belief_entropy": 1.1689635697733074
+    },
+    {
+      "date": "2026-07-21",
+      "symbol": "CORN",
+      "close": 18.010000228881836,
+      "signal_type": "hold",
+      "confidence": 0.425,
+      "prob_profit": 0.24875895612561483,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 499.6888049621582,
+      "rsi": 58.26670986239978,
+      "bb_z_score": 1.5830273829550785,
+      "market_regime": {
+        "prob_trend": 2.167583301640469e-26,
+        "prob_range": 1.0,
+        "prob_high_vol": 6.618702393611076e-27
+      },
+      "belief_entropy": 1.1689635697733074
+    },
+    {
+      "date": "2026-07-22",
+      "symbol": "WEAT",
+      "close": 26.0,
+      "signal_type": "sell",
+      "confidence": 0.8624999999999999,
+      "prob_profit": 0.8594624204485564,
+      "action": "rejected",
+      "reason": "Signal=SELL but position=flat and short selling disabled",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 499.6888049621582,
+      "rsi": 73.62177786195403,
+      "bb_z_score": 1.9415893274242944,
+      "market_regime": {
+        "prob_trend": 6.617067832258514e-17,
+        "prob_range": 1.0,
+        "prob_high_vol": 1.4028416678247664e-17
+      },
+      "belief_entropy": 1.2371209036519482
+    },
+    {
+      "date": "2026-07-22",
+      "symbol": "CORN",
+      "close": 18.280000686645508,
+      "signal_type": "hold",
+      "confidence": 0.425,
+      "prob_profit": 0.26783659745289623,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 499.6888049621582,
+      "rsi": 62.11298372939743,
+      "bb_z_score": 1.865215119580866,
+      "market_regime": {
+        "prob_trend": 2.6270912120530597e-33,
+        "prob_range": 1.0,
+        "prob_high_vol": 1.039959738160614e-33
+      },
+      "belief_entropy": 1.1689635697733074
+    },
+    {
+      "date": "2026-07-23",
+      "symbol": "WEAT",
+      "close": 25.6299991607666,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.7052361560696442,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 499.6888049621582,
+      "rsi": 61.39435944171998,
+      "bb_z_score": 1.4654115229459177,
+      "market_regime": {
+        "prob_trend": 5.797835038457772e-18,
+        "prob_range": 1.0,
+        "prob_high_vol": 1.4117233797150608e-18
+      },
+      "belief_entropy": 1.1689635697733074
+    },
+    {
+      "date": "2026-07-23",
+      "symbol": "CORN",
+      "close": 18.309999465942383,
+      "signal_type": "hold",
+      "confidence": 0.425,
+      "prob_profit": 0.385981608570664,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 499.6888049621582,
+      "rsi": 58.97703619058498,
+      "bb_z_score": 1.7124805926047912,
+      "market_regime": {
+        "prob_trend": 1.949019676693886e-40,
+        "prob_range": 1.0,
+        "prob_high_vol": 8.986258797143716e-41
+      },
+      "belief_entropy": 1.2589684359803912
+    },
+    {
+      "date": "2026-07-24",
+      "symbol": "WEAT",
+      "close": 25.219999313354492,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.2569343156876255,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 499.6888049621582,
+      "rsi": 65.76775935681636,
+      "bb_z_score": 1.047273593131042,
+      "market_regime": {
+        "prob_trend": 1.4767472447215913e-14,
+        "prob_range": 0.9999999999999825,
+        "prob_high_vol": 2.8011312481721126e-15
+      },
+      "belief_entropy": 1.168963569773315
+    },
+    {
+      "date": "2026-07-24",
+      "symbol": "CORN",
+      "close": 18.299999237060547,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5936937899219248,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 499.6888049621582,
+      "rsi": 61.235178869980736,
+      "bb_z_score": 1.498461499773074,
+      "market_regime": {
+        "prob_trend": 7.051349888745077e-57,
+        "prob_range": 1.0,
+        "prob_high_vol": 4.0188061317688356e-57
+      },
+      "belief_entropy": 1.1689635697733074
+    },
+    {
+      "date": "2026-07-27",
+      "symbol": "WEAT",
+      "close": 24.520000457763672,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.3696495556847057,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 499.6888049621582,
+      "rsi": 50.4734904760218,
+      "bb_z_score": 0.46036613461336207,
+      "market_regime": {
+        "prob_trend": 1.3016099709218883e-17,
+        "prob_range": 1.0,
+        "prob_high_vol": 3.4869029398149685e-18
+      },
+      "belief_entropy": 1.0933299414232938
+    },
+    {
+      "date": "2026-07-27",
+      "symbol": "CORN",
+      "close": 17.90999984741211,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5135093462750997,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 499.6888049621582,
+      "rsi": 57.57797359931741,
+      "bb_z_score": 0.6856792130892376,
+      "market_regime": {
+        "prob_trend": 1.5732097442453926e-41,
+        "prob_range": 1.0,
+        "prob_high_vol": 7.660767662088152e-42
+      },
+      "belief_entropy": 1.0933299414232938
+    },
+    {
+      "date": "2026-07-28",
+      "symbol": "WEAT",
+      "close": 24.6200008392334,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.715197749268922,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 499.6888049621582,
+      "rsi": 56.02616062457052,
+      "bb_z_score": 0.4613568563211831,
+      "market_regime": {
+        "prob_trend": 4.532150020430742e-32,
+        "prob_range": 1.0,
+        "prob_high_vol": 2.1499700152090442e-32
+      },
+      "belief_entropy": 1.0933299414232938
+    },
+    {
+      "date": "2026-07-28",
+      "symbol": "CORN",
+      "close": 18.079999923706055,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.8134245121183037,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 499.6888049621582,
+      "rsi": 66.289299368958,
+      "bb_z_score": 0.9629986665084247,
+      "market_regime": {
+        "prob_trend": 2.59823328189851e-34,
+        "prob_range": 1.0,
+        "prob_high_vol": 9.85854995605975e-35
+      },
+      "belief_entropy": 1.1689635697733074
+    },
+    {
+      "date": "2026-07-29",
+      "symbol": "WEAT",
+      "close": 24.5,
+      "signal_type": "buy",
+      "confidence": 0.75,
+      "prob_profit": 0.9914545491174293,
+      "action": "buy",
+      "reason": "Signal=BUY, position=flat \u2192 opening long position",
+      "quantity": 1.0,
+      "fill_price": 24.93734961795807,
+      "position_qty_before": 0.0,
+      "equity": 499.6888049621582,
+      "rsi": 52.09500692438188,
+      "bb_z_score": 0.2834229363654864,
+      "market_regime": {
+        "prob_trend": 9.748048633467494e-29,
+        "prob_range": 1.0,
+        "prob_high_vol": 4.2597959693463207e-29
+      },
+      "belief_entropy": 1.130215990534298
+    },
+    {
+      "date": "2026-07-29",
+      "symbol": "CORN",
+      "close": 17.829999923706055,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.9550643998803401,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 499.6888049621582,
+      "rsi": 52.25660912082457,
+      "bb_z_score": 0.33869919368311713,
+      "market_regime": {
+        "prob_trend": 1.381062160560685e-32,
+        "prob_range": 1.0,
+        "prob_high_vol": 5.0913148761406355e-33
+      },
+      "belief_entropy": 1.0933299414232938
+    },
+    {
+      "date": "2026-07-30",
+      "symbol": "WEAT",
+      "close": 24.6200008392334,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.1900729959693221,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 1.0,
+      "equity": 499.3714561834335,
+      "rsi": 44.835184099339486,
+      "bb_z_score": 0.31337177125301635,
+      "market_regime": {
+        "prob_trend": 2.1018491343455246e-20,
+        "prob_range": 1.0,
+        "prob_high_vol": 6.425820081172927e-21
+      },
+      "belief_entropy": 1.0933299414232938
+    },
+    {
+      "date": "2026-07-30",
+      "symbol": "CORN",
+      "close": 17.760000228881836,
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.3002427074412499,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "quantity": 0.0,
+      "fill_price": null,
+      "position_qty_before": 0.0,
+      "equity": 499.3714561834335,
+      "rsi": 45.69161335531708,
+      "bb_z_score": 0.07769959959305323,
+      "market_regime": {
+        "prob_trend": 1.788296719484312e-40,
+        "prob_range": 1.0,
+        "prob_high_vol": 7.994423618078764e-41
+      },
+      "belief_entropy": 1.0933299414232938
+    }
+  ]
+}

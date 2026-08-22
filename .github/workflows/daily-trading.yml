@@ -175,7 +175,17 @@ jobs:
           # whole command, `|| true` swallowed it, and nothing was ever staged
           # - which is why the database never persisted between runs and every
           # run started from an empty history.
-          for path in trade_logs/*.csv trade_logs/*.db trade_logs/*.jsonl trade_logs/*.log docs/data.json learned_params.json; do
+          #
+          # trade_logs/*.json, trade_logs/backtests/*.json, and
+          # trade_logs/theses/*.jsonl were missing from this list entirely:
+          # calibration.json (refit every run by logic/calibration.py) was
+          # never re-staged after the one time it was committed by hand, and
+          # backtests/ + theses/ - 17 and 6 files respectively - had NEVER been
+          # committed at all. A fresh clone of this repo would be missing all
+          # of it; only the machine that generated them locally had them.
+          for path in trade_logs/*.csv trade_logs/*.db trade_logs/*.jsonl trade_logs/*.json \
+                      trade_logs/backtests/*.json trade_logs/theses/*.jsonl \
+                      trade_logs/*.log docs/data.json learned_params.json; do
             if compgen -G "$path" > /dev/null; then
               git add -f $path && echo "staged: $path"
             fi
