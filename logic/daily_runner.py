@@ -10,6 +10,7 @@ from zoneinfo import ZoneInfo
 
 from logic.account_equity import resolve_account_equity
 from logic.broker_client import create_broker_client
+from logic.calibration import apply_probability_calibration, fit_calibration
 from logic.data_structures import ExecutionConfig
 from logic.edge_gate import apply_edge_gate
 from logic.execution_engine import run_trading_cycle
@@ -316,11 +317,20 @@ def run_daily_trading_cycle(
         report = summarize_component_accuracy(db_path=DEFAULT_DB_PATH)
         if report:
             logging.info("COMPONENT ACCURACY (all history):\n%s", report)
+        # Refit the probability calibration on the same freshly-scored history.
+        # Measured 2026-08-21: claims of >=90% confidence were right 68% of the
+        # time -- BELOW the period base rate. Refitting daily means the curve
+        # tracks the model's actual behaviour rather than a one-time snapshot.
+        fit_calibration(db_path=DEFAULT_DB_PATH)
     except Exception as exc:
         logging.warning("Model scoring failed (%s). Continuing with cycle.", exc)
 
     logging.info("Generating signals...")
     all_signals = generate_signals(universe, config)
+    # Every downstream consumer (threshold filter, edge gate, position sizing)
+    # reads signal.prob_profit and should see the corrected number, not the
+    # model's raw and demonstrably overconfident claim.
+    apply_probability_calibration(all_signals, verbose=True)
     decision_signals = filter_signals_by_thresholds(
         all_signals,
         min_confidence=config.min_confidence,

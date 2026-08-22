@@ -156,6 +156,11 @@
   </section>
 
   <section>
+    <h2>Probability calibration <span class="note" id="calibration-note"></span></h2>
+    <div class="body" id="calibration"></div>
+  </section>
+
+  <section>
     <h2>Backtest reality check <span class="note">every window, not the best one</span></h2>
     <div class="scroll" id="backtests"></div>
   </section>
@@ -353,6 +358,55 @@ function renderAccuracy(d){
   ], rows, '');
 }
 
+/* Whether the claimed prob_profit has been corrected against reality yet, and
+   — the direct answer to "when should I check back on this" — a projected
+   date for a sample large enough to trust, based on the pace predictions have
+   actually accrued so far. Not a promise, a projection from observed pace. */
+function renderCalibration(d){
+  const c = d.calibration || {};
+  const el = $('calibration');
+
+  if(!c.fitted){
+    const need = c.min_sample ?? 30, have = c.scored_n ?? 0;
+    const pct = Math.min(100, (have/need*100)).toFixed(0);
+    el.innerHTML = `
+      <p class="muted" style="margin:0 0 10px">Not enough scored predictions yet to correct the model's claimed
+      probabilities — using raw values until then.</p>
+      <div class="gauge" style="height:6px"><i style="width:${pct}%"></i></div>
+      <p class="muted" style="margin:8px 0 0;font-size:12px">${have} of ${need} needed</p>`;
+    $('calibration-note').textContent = `${have}/${need} to activate`;
+    return;
+  }
+
+  $('calibration-note').textContent = `fit on n=${c.n} · ${(c.fitted_at||'').slice(0,10)}`;
+
+  const readyBlock = c.target_ready_date ? `
+    <div class="stat" style="margin-top:12px">
+      <div class="k">Meaningful sample (n=${c.target_sample ?? 300}) expected</div>
+      <div class="v" style="font-size:17px">${esc(c.target_ready_date)}</div>
+      <div class="sub">at ${c.predictions_per_run_day ?? '?'} scored predictions per run-day — check back around then</div>
+    </div>` : '';
+
+  // A curve that stays flat near the base rate regardless of the claim is
+  // itself the finding: the model's confidence carries no information beyond
+  // "the market usually goes up." Flag that in plain language rather than
+  // just plotting it and hoping it's noticed.
+  const ys = (c.curve||[]).map(p=>p[1]);
+  const spread = ys.length ? Math.max(...ys)-Math.min(...ys) : 0;
+  const flatWarning = (c.curve||[]).length && spread < 0.08 ? `
+    <div class="alert" style="margin-top:12px"><div>&#9432;</div><div>
+      <h3>The curve is nearly flat</h3>
+      <p>Calibrated output stays within ${(spread*100).toFixed(1)} points regardless of what the model claims —
+      its confidence currently carries almost no information beyond the base rate itself.</p>
+    </div></div>` : '';
+
+  el.innerHTML = `
+    <div class="scroll"><table><thead><tr><th>Model claims</th><th style="text-align:right">Empirically becomes</th></tr></thead><tbody>
+      ${(c.curve||[]).map(([x,y])=>`<tr><td class="num">${(x*100).toFixed(1)}%</td><td class="num">${(y*100).toFixed(1)}%</td></tr>`).join('')}
+    </tbody></table></div>
+    ${readyBlock}${flatWarning}`;
+}
+
 /* Real market charts, straight from TradingView, for whatever the bot holds
    or flagged today. */
 function renderTV(d){
@@ -399,7 +453,7 @@ fetch('data.json?t='+Date.now())
     $('stamp').textContent = 'built ' + (d.generated_at||'').replace('T',' ').replace('+00:00',' UTC');
     renderAlerts(d); renderStats(d); renderEquity(d);
     renderPositions(d); renderSignals(d); renderTrades(d);
-    renderAccuracy(d); renderBacktests(d); renderTV(d);
+    renderAccuracy(d); renderCalibration(d); renderBacktests(d); renderTV(d);
   })
   .catch(e=>{
     $('alerts').innerHTML = `<div class="alert crit"><div>&#9888;</div><div>

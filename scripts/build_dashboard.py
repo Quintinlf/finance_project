@@ -20,11 +20,17 @@ import csv
 import json
 import re
 import sqlite3
-from datetime import datetime, timezone
+import sys
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 ROOT = Path(__file__).resolve().parent.parent
+# Run as `python scripts/build_dashboard.py`, so sys.path[0] is scripts/, not
+# the repo root -- without this, `from logic...` inside load_calibration_status
+# fails to find the `logic` package.
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 TRADE_LOGS = ROOT / "trade_logs"
 DB_PATH = TRADE_LOGS / "trading.db"
 SNAPSHOTS = TRADE_LOGS / "run_snapshots.csv"
@@ -301,6 +307,64 @@ def load_component_accuracy() -> Dict[str, Any]:
     }
 
 
+def load_calibration_status(min_sample: int = 30, target_sample: int = 300) -> Dict[str, Any]:
+    """Calibration curve state, plus when there will be enough data to trust it.
+
+    Answers the question "when should I check back on this?" directly, instead
+    of leaving it to guesswork: measures how fast predictions have actually
+    accrued (run-days observed so far, at ~14/day on weekdays) and projects
+    forward to a sample size worth trusting.
+    """
+    from logic.calibration import CALIBRATION_PATH
+
+    status: Dict[str, Any] = {"fitted": False}
+    if CALIBRATION_PATH.exists():
+        try:
+            payload = json.loads(CALIBRATION_PATH.read_text(encoding="utf-8"))
+            status = {
+                "fitted": True,
+                "fitted_at": payload.get("fitted_at"),
+                "n": payload.get("n"),
+                "curve": list(zip(payload.get("x", []), payload.get("y", []))),
+            }
+        except Exception:
+            pass
+
+    if not DB_PATH.exists():
+        return status
+
+    conn = sqlite3.connect(DB_PATH)
+    try:
+        rows = conn.execute(
+            "SELECT DISTINCT substr(timestamp, 1, 10) FROM model_component_performance"
+        ).fetchall()
+        total = conn.execute(
+            "SELECT COUNT(*) FROM model_component_performance"
+        ).fetchone()[0]
+    finally:
+        conn.close()
+
+    run_days = len(rows)
+    total = int(total or 0)
+    status["scored_n"] = total
+    status["min_sample"] = min_sample
+    status["target_sample"] = target_sample
+    status["min_sample_met"] = total >= min_sample
+
+    if run_days and total:
+        per_day = total / run_days
+        remaining = max(0, target_sample - total)
+        # ~5 trading days/week; this is a projection from observed pace, not a promise.
+        weekdays_needed = remaining / per_day if per_day > 0 else None
+        if weekdays_needed is not None:
+            calendar_days_needed = weekdays_needed * 7 / 5
+            ready_date = datetime.now(timezone.utc) + timedelta(days=calendar_days_needed)
+            status["predictions_per_run_day"] = round(per_day, 1)
+            status["target_ready_date"] = ready_date.date().isoformat()
+
+    return status
+
+
 def summarise(trades: List[Dict[str, Any]]) -> Dict[str, Any]:
     closed = [t for t in trades if t["pnl"] is not None]
     wins = [t for t in closed if t["pnl"] > 0]
@@ -326,6 +390,7 @@ def main() -> None:
         "latest_run": _safe(parse_latest_run, {}),
         "backtests": _safe(load_backtests, []),
         "component_accuracy": _safe(load_component_accuracy, {}),
+        "calibration": _safe(load_calibration_status, {}),
     }
 
     OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -337,6 +402,9 @@ def main() -> None:
     print(f"  signals today : {len(payload['latest_run'].get('signals', []))}")
     print(f"  backtests     : {len(payload['backtests'])}")
     print(f"  scored preds  : {payload['component_accuracy'].get('base_n', 0)}")
+    cal = payload["calibration"]
+    if cal.get("target_ready_date"):
+        print(f"  calibration   : {cal.get('scored_n', 0)} scored, meaningful sample ~{cal['target_ready_date']}")
     print(f"  -> {OUT_PATH.relative_to(ROOT)}")
 
 
