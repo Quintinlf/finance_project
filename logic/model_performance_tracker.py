@@ -7,12 +7,19 @@ generates summary reports from SQLite.
 
 from __future__ import annotations
 
+import logging
 import math
 from collections import deque
 from datetime import datetime, timedelta, timezone
 from typing import Any, Deque, Dict, Iterable, List, Optional, Sequence, Tuple, Union
 
 from logic.sqlite_store import DEFAULT_DB_PATH, connect
+
+
+# Above this, a one-session move is a split or other corporate action the
+# price adjustment did not catch, not something the model could have
+# predicted. Leveraged inverse ETFs in this universe reverse-split often.
+_MAX_PLAUSIBLE_DAILY_RETURN = 0.50
 
 ComponentSnapshot = Dict[str, Any]
 
@@ -424,18 +431,38 @@ def _compute_realized_return_from_row(symbol: str, timestamp_iso: str, price_at_
         if not closes:
             return None
 
+        # Both legs of the ratio MUST come from the same fetched series.
+        # price_at_signal is the raw price recorded at decision time, while
+        # yfinance back-adjusts history for splits and dividends. Dividing one
+        # by the other silently fabricates returns across any corporate action:
+        # KOLD reverse-split, and this function reported +205% and +199% for it,
+        # numbers that then dominated every accuracy average computed from them.
+        base_close: Optional[float] = None
         next_close: Optional[float] = None
-        seen_signal_or_after = False
         for i, d in enumerate(index_dates):
-            if d >= signal_date:
-                if not seen_signal_or_after:
-                    seen_signal_or_after = True
-                    continue
+            if d <= signal_date:
+                base_close = float(closes[i])
+            elif base_close is not None:
                 next_close = float(closes[i])
                 break
-        if next_close is None or price_at_signal <= 0.0:
+
+        if base_close is None or next_close is None or base_close <= 0.0:
             return None
-        return (next_close / float(price_at_signal)) - 1.0
+
+        ret = (next_close / base_close) - 1.0
+
+        # A single-session move this large is a corporate action the adjustment
+        # missed, not a tradeable return. Discarding it loses one sample;
+        # keeping it corrupts every statistic downstream.
+        if abs(ret) > _MAX_PLAUSIBLE_DAILY_RETURN:
+            logging.warning(
+                "Discarding implausible %s return of %.1f%% on %s — likely an "
+                "unadjusted corporate action.",
+                symbol, ret * 100.0, signal_date,
+            )
+            return None
+
+        return ret
     except Exception:
         return None
 
@@ -592,3 +619,87 @@ def generate_performance_report(
             "ensemble_avg_strategy_return": (sum(ens_strategy_returns) / len(ens_strategy_returns)) if ens_strategy_returns else None,
         },
     }
+
+
+def summarize_component_accuracy(
+    *,
+    db_path: Union[str, "PathLike[str]"] = DEFAULT_DB_PATH,
+    min_sample: int = 10,
+) -> str:
+    """One-glance table of how each model component has actually performed.
+
+    Directional accuracy with a 95% confidence interval, so a component whose
+    interval spans 50% is visibly indistinguishable from a coin flip rather
+    than quietly reported as "58% accurate". Returns an empty string when
+    nothing has been scored yet.
+    """
+    components = [
+        ("Bollinger", "bb"),
+        ("Bayesian", "bayesian"),
+        ("GaussianProc", "gp"),
+        ("RSI", "rsi"),
+        ("ENSEMBLE", "ensemble"),
+    ]
+
+    lines: List[str] = []
+    any_rows = False
+
+    with connect(db_path) as conn:
+        # The base rate is the number every accuracy figure has to be read
+        # against. "58% correct" sounds like skill until you notice the market
+        # rose on 76% of the sampled days, at which point 58% is worse than
+        # always guessing up.
+        base = conn.execute(
+            """
+            SELECT COUNT(*), SUM(CASE WHEN next_day_return > 0 THEN 1 ELSE 0 END)
+            FROM model_component_performance
+            WHERE next_day_return IS NOT NULL
+            """.strip()
+        ).fetchone()
+        base_n = int(base[0] or 0)
+        base_up = (int(base[1] or 0) / base_n) if base_n else 0.0
+        if base_n:
+            lines.append(
+                f"  base rate: the market rose on {base_up * 100:.1f}% of {base_n} "
+                f"scored observations — beat this, not 50%"
+            )
+
+    lines += [
+        f"  {'component':<14}{'n':>5}{'acc':>8}{'95% CI':>18}  verdict",
+        "  " + "-" * 62,
+    ]
+
+    with connect(db_path) as conn:
+        for label, prefix in components:
+            row = conn.execute(
+                f"""
+                SELECT COUNT({prefix}_correct), SUM({prefix}_correct)
+                FROM model_component_performance
+                WHERE {prefix}_correct IS NOT NULL
+                """.strip()
+            ).fetchone()
+            n = int(row[0] or 0)
+            if n == 0:
+                lines.append(f"  {label:<14}{0:>5}{'--':>8}{'':>18}  not yet scored")
+                continue
+
+            any_rows = True
+            k = int(row[1] or 0)
+            p = k / n
+            se = math.sqrt(max(p * (1.0 - p), 0.0) / n)
+            lo, hi = max(0.0, p - 1.96 * se), min(1.0, p + 1.96 * se)
+
+            if n < min_sample:
+                verdict = f"sample too small (n<{min_sample})"
+            elif lo > 0.5:
+                verdict = "better than chance"
+            elif hi < 0.5:
+                verdict = "WORSE than chance"
+            else:
+                verdict = "indistinguishable from a coin flip"
+
+            lines.append(
+                f"  {label:<14}{n:>5}{p * 100:>7.1f}%   [{lo * 100:5.1f}%, {hi * 100:5.1f}%]  {verdict}"
+            )
+
+    return "\n".join(lines) if any_rows else ""

@@ -249,6 +249,58 @@ def load_backtests() -> List[Dict[str, Any]]:
     return out
 
 
+def load_component_accuracy() -> Dict[str, Any]:
+    """Measured directional accuracy per model component, with the base rate.
+
+    An accuracy figure alone is misleading: 58% correct looks like skill until
+    you notice the market rose on 76% of the sampled days, at which point it is
+    worse than always guessing up. The base rate travels with the numbers.
+    """
+    if not DB_PATH.exists():
+        return {}
+    import math
+
+    conn = sqlite3.connect(DB_PATH)
+    try:
+        base_n, base_up = conn.execute(
+            """
+            SELECT COUNT(*), SUM(CASE WHEN next_day_return > 0 THEN 1 ELSE 0 END)
+            FROM model_component_performance WHERE next_day_return IS NOT NULL
+            """
+        ).fetchone()
+        base_n = int(base_n or 0)
+        if not base_n:
+            return {}
+
+        components = []
+        for label, prefix in [
+            ("Bollinger", "bb"), ("Bayesian", "bayesian"), ("Gaussian Process", "gp"),
+            ("RSI", "rsi"), ("Ensemble", "ensemble"),
+        ]:
+            n, k = conn.execute(
+                f"SELECT COUNT({prefix}_correct), SUM({prefix}_correct) "
+                f"FROM model_component_performance WHERE {prefix}_correct IS NOT NULL"
+            ).fetchone()
+            n = int(n or 0)
+            if not n:
+                continue
+            p_hat = int(k or 0) / n
+            se = math.sqrt(max(p_hat * (1 - p_hat), 0.0) / n)
+            components.append({
+                "name": label, "n": n, "accuracy": round(p_hat * 100, 1),
+                "ci_low": round(max(0.0, p_hat - 1.96 * se) * 100, 1),
+                "ci_high": round(min(1.0, p_hat + 1.96 * se) * 100, 1),
+            })
+    finally:
+        conn.close()
+
+    return {
+        "base_rate": round(int(base_up or 0) / base_n * 100, 1),
+        "base_n": base_n,
+        "components": components,
+    }
+
+
 def summarise(trades: List[Dict[str, Any]]) -> Dict[str, Any]:
     closed = [t for t in trades if t["pnl"] is not None]
     wins = [t for t in closed if t["pnl"] > 0]
@@ -273,6 +325,7 @@ def main() -> None:
         "decisions": _safe(load_decisions, []),
         "latest_run": _safe(parse_latest_run, {}),
         "backtests": _safe(load_backtests, []),
+        "component_accuracy": _safe(load_component_accuracy, {}),
     }
 
     OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -283,6 +336,7 @@ def main() -> None:
     print(f"  decisions     : {len(payload['decisions'])}")
     print(f"  signals today : {len(payload['latest_run'].get('signals', []))}")
     print(f"  backtests     : {len(payload['backtests'])}")
+    print(f"  scored preds  : {payload['component_accuracy'].get('base_n', 0)}")
     print(f"  -> {OUT_PATH.relative_to(ROOT)}")
 
 

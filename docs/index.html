@@ -151,6 +151,11 @@
   </section>
 
   <section>
+    <h2>Model accuracy <span class="note" id="accuracy-note"></span></h2>
+    <div class="scroll" id="accuracy"></div>
+  </section>
+
+  <section>
     <h2>Backtest reality check <span class="note">every window, not the best one</span></h2>
     <div class="scroll" id="backtests"></div>
   </section>
@@ -315,6 +320,39 @@ function renderBacktests(d){
   ], rows, 'No backtests found.');
 }
 
+/* Measured directional accuracy per component, judged against the base rate
+   rather than against 50%. In a tape that rose 76% of the time, a component
+   scoring 58% is not skilled — it is worse than always guessing up. */
+function renderAccuracy(d){
+  const a = d.component_accuracy || {};
+  const rows = a.components || [];
+  if(!rows.length){
+    $('accuracy').innerHTML = '<div class="empty">Nothing scored yet — predictions are graded the day after they are made.</div>';
+    return;
+  }
+  const base = a.base_rate;
+  $('accuracy-note').textContent = `${a.base_n} scored · market rose ${base}% of the time`;
+
+  const verdict = r => {
+    if(r.ci_high < 50) return ['down','worse than chance'];
+    if(r.ci_low > base) return ['up','beats the base rate'];
+    if(r.ci_low > 50)   return ['warn','beats 50% but not the base rate'];
+    return ['muted','indistinguishable from chance'];
+  };
+
+  $('accuracy').innerHTML = table([
+    {label:'Component', get:r=>`<span class="sym">${esc(r.name)}</span>`},
+    {label:'N', num:true, get:r=>r.n},
+    {label:'Accuracy', num:true, get:r=>{const [c]=verdict(r); return `<span class="${c}">${r.accuracy}%</span>`;}},
+    {label:'95% CI', num:true, get:r=>`<span class="muted">[${r.ci_low}%, ${r.ci_high}%]</span>`},
+    {label:'vs base rate', num:true, get:r=>{
+      const diff = (r.accuracy - base).toFixed(1);
+      return `<span class="${r.accuracy>base?'up':'down'}">${diff>0?'+':''}${diff}pp</span>`;
+    }},
+    {label:'Verdict', cls:'reason', get:r=>{const [c,t]=verdict(r); return `<span class="${c}">${t}</span>`;}},
+  ], rows, '');
+}
+
 /* Real market charts, straight from TradingView, for whatever the bot holds
    or flagged today. */
 function renderTV(d){
@@ -361,7 +399,7 @@ fetch('data.json?t='+Date.now())
     $('stamp').textContent = 'built ' + (d.generated_at||'').replace('T',' ').replace('+00:00',' UTC');
     renderAlerts(d); renderStats(d); renderEquity(d);
     renderPositions(d); renderSignals(d); renderTrades(d);
-    renderBacktests(d); renderTV(d);
+    renderAccuracy(d); renderBacktests(d); renderTV(d);
   })
   .catch(e=>{
     $('alerts').innerHTML = `<div class="alert crit"><div>&#9888;</div><div>

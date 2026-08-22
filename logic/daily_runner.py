@@ -11,10 +11,15 @@ from zoneinfo import ZoneInfo
 from logic.account_equity import resolve_account_equity
 from logic.broker_client import create_broker_client
 from logic.data_structures import ExecutionConfig
+from logic.edge_gate import apply_edge_gate
 from logic.execution_engine import run_trading_cycle
 from logic.exposure_manager import trim_to_exposure_cap
 from logic.fill_reconciler import reconcile_fills
 from logic.inverse_routing import format_routing_table, route_signals
+from logic.model_performance_tracker import (
+    backfill_next_day_returns,
+    summarize_component_accuracy,
+)
 from logic.options_engine import (
     filter_expirations_by_dte,
     get_option_chain,
@@ -119,6 +124,8 @@ def run_daily_trading_cycle(
     universe_scope: str = "all",
     screen_affordability: bool = True,
     enable_inverse_routing: bool = True,
+    enforce_edge_gate: bool = False,
+    edge_margin: float = 1.5,
 ) -> None:
     logging.info("START DAILY TRADING RUN")
 
@@ -299,12 +306,35 @@ def run_daily_trading_cycle(
     except Exception as exc:
         logging.warning("Exit reconciliation failed (%s). Continuing with cycle.", exc)
 
+    # Grade the previous run's predictions before making new ones. This loop
+    # existed but nothing called it, so 82 logged predictions sat unscored and
+    # the question "do these models actually work?" had no answer for months.
+    try:
+        scored = backfill_next_day_returns(db_path=DEFAULT_DB_PATH)
+        if scored:
+            logging.info("MODEL SCORING: %s prediction(s) graded against realized returns", scored)
+        report = summarize_component_accuracy(db_path=DEFAULT_DB_PATH)
+        if report:
+            logging.info("COMPONENT ACCURACY (all history):\n%s", report)
+    except Exception as exc:
+        logging.warning("Model scoring failed (%s). Continuing with cycle.", exc)
+
     logging.info("Generating signals...")
     all_signals = generate_signals(universe, config)
     decision_signals = filter_signals_by_thresholds(
         all_signals,
         min_confidence=config.min_confidence,
         min_prob_up=config.min_prob_up,
+    )
+    # Ask the question the confidence/probability thresholds never ask: is the
+    # predicted move even bigger than the cost of trading it? Shadow by default
+    # -- on current signals this gate rejects nearly everything, and that is a
+    # finding to watch before it is wired to the order path.
+    decision_signals = apply_edge_gate(
+        decision_signals,
+        margin=edge_margin,
+        enforce=enforce_edge_gate,
+        verbose=True,
     )
     directional_candidates = [
         sig for sig in decision_signals if sig.signal_type in {"buy", "sell"}

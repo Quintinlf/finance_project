@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-21T03:10:32+00:00",
+  "generated_at": "2026-08-22T00:54:52+00:00",
   "equity_curve": [
     {
       "time": "2026-08-13",
@@ -24,9 +24,60 @@
       "value": 493.09,
       "exposure": 0.3655,
       "daily_return": 0.000954
+    },
+    {
+      "time": "2026-08-21",
+      "value": 100000.0,
+      "exposure": 0.0,
+      "daily_return": 0.0
+    },
+    {
+      "time": "2026-08-22",
+      "value": 100000.0,
+      "exposure": 0.0,
+      "daily_return": 0.0
     }
   ],
   "trades": [
+    {
+      "symbol": "KOLD",
+      "side": "buy",
+      "qty": 1.0,
+      "entry": null,
+      "exit": null,
+      "status": "FAILED",
+      "pnl": null,
+      "opened_at": null,
+      "closed_at": null,
+      "attempted_at": "2026-08-22T00:54:36+00:00",
+      "error": "Dry run mode - order not executed"
+    },
+    {
+      "symbol": "USO",
+      "side": "buy",
+      "qty": 10.0,
+      "entry": null,
+      "exit": null,
+      "status": "FAILED",
+      "pnl": null,
+      "opened_at": null,
+      "closed_at": null,
+      "attempted_at": "2026-08-22T00:54:36+00:00",
+      "error": "Dry run mode - order not executed"
+    },
+    {
+      "symbol": "KOLD",
+      "side": "buy",
+      "qty": 1.0,
+      "entry": null,
+      "exit": null,
+      "status": "FAILED",
+      "pnl": null,
+      "opened_at": null,
+      "closed_at": null,
+      "attempted_at": "2026-08-21T03:17:28+00:00",
+      "error": "Dry run mode - order not executed"
+    },
     {
       "symbol": "UNG",
       "side": "buy",
@@ -186,12 +237,116 @@
   ],
   "summary": {
     "filled": 2,
-    "failed": 10,
+    "failed": 13,
     "closed": 1,
     "realized_pnl": -42.74,
     "win_rate": 0.0
   },
   "decisions": [
+    {
+      "timestamp": "2026-08-21T17:54:36.522021",
+      "symbol": "XLE",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.523548071164918,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-08-21T17:54:36.487638",
+      "symbol": "UGA",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.2431999230469603,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-08-21T17:54:36.428687",
+      "symbol": "USO",
+      "signal_type": "buy",
+      "confidence": 0.6375,
+      "prob_profit": 0.9790623662737666,
+      "action": "buy",
+      "reason": "Signal=BUY, position=flat \u2192 opening long position",
+      "executed": 0,
+      "planned_quantity": 10.0,
+      "planned_entry_price": 134.63999938964844,
+      "error_message": "Dry run mode - order not executed"
+    },
+    {
+      "timestamp": "2026-08-21T17:54:36.365572",
+      "symbol": "KOLD",
+      "signal_type": "buy",
+      "confidence": 0.75,
+      "prob_profit": 0.9999526589536935,
+      "action": "buy",
+      "reason": "Signal=BUY, position=flat \u2192 opening long position",
+      "executed": 0,
+      "planned_quantity": 1.0,
+      "planned_entry_price": 30.770000457763672,
+      "error_message": "Dry run mode - order not executed"
+    },
+    {
+      "timestamp": "2026-08-20T20:17:28.507693",
+      "symbol": "XLE",
+      "signal_type": "hold",
+      "confidence": 0.425,
+      "prob_profit": 0.8602196439154313,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-08-20T20:17:28.440642",
+      "symbol": "UGA",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.4416817814288115,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-08-20T20:17:28.383533",
+      "symbol": "USO",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.41816152458843503,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-08-20T20:17:28.311939",
+      "symbol": "KOLD",
+      "signal_type": "buy",
+      "confidence": 0.75,
+      "prob_profit": 0.9999999427741473,
+      "action": "buy",
+      "reason": "Signal=BUY, position=flat \u2192 opening long position",
+      "executed": 0,
+      "planned_quantity": 1.0,
+      "planned_entry_price": 30.93000030517578,
+      "error_message": "Dry run mode - order not executed"
+    },
     {
       "timestamp": "2026-08-18T14:26:23.636507",
       "symbol": "BAC",
@@ -1732,5 +1887,46 @@
       ],
       "warning": "The 95% CI on mean trade return spans zero ([-0.31%, 0.84%]) \u2014 no detectable edge."
     }
-  ]
+  ],
+  "component_accuracy": {
+    "base_rate": 75.6,
+    "base_n": 78,
+    "components": [
+      {
+        "name": "Bollinger",
+        "n": 14,
+        "accuracy": 21.4,
+        "ci_low": 0.0,
+        "ci_high": 42.9
+      },
+      {
+        "name": "Bayesian",
+        "n": 78,
+        "accuracy": 59.0,
+        "ci_low": 48.1,
+        "ci_high": 69.9
+      },
+      {
+        "name": "Gaussian Process",
+        "n": 78,
+        "accuracy": 48.7,
+        "ci_low": 37.6,
+        "ci_high": 59.8
+      },
+      {
+        "name": "RSI",
+        "n": 19,
+        "accuracy": 31.6,
+        "ci_low": 10.7,
+        "ci_high": 52.5
+      },
+      {
+        "name": "Ensemble",
+        "n": 12,
+        "accuracy": 58.3,
+        "ci_low": 30.4,
+        "ci_high": 86.2
+      }
+    ]
+  }
 }
