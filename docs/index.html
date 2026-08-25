@@ -161,6 +161,12 @@
   </section>
 
   <section>
+    <h2>News diffusion <span class="tag t-hold" style="margin-left:2px">SHADOW ONLY</span> <span class="note" id="news-note"></span></h2>
+    <div class="body" id="news-accuracy"></div>
+    <div class="scroll" id="news-events"></div>
+  </section>
+
+  <section>
     <h2>Backtest reality check <span class="note">every window, not the best one</span></h2>
     <div class="scroll" id="backtests"></div>
   </section>
@@ -407,6 +413,45 @@ function renderCalibration(d){
     ${readyBlock}${flatWarning}`;
 }
 
+/* The information-diffusion signal: a headline explicitly tagging one symbol
+   (e.g. WEAT) also reaches every other universe symbol sharing its theme
+   (CORN, SOYB, DBA via geopolitical_supply_shock) even though they're never
+   named. Shadow-only — annotates, scores, never trades — same as everything
+   else that hasn't earned its way onto the order path yet. */
+function renderNews(d){
+  const n = d.news || {};
+  const events = n.events || [];
+  $('news-note').textContent = events.length ? `${events.length} recent · ${n.scored_n || 0} scored` : '';
+
+  const acc = n.accuracy_by_match_type || [];
+  if(acc.length){
+    const base = n.base_rate;
+    $('news-accuracy').innerHTML = `
+      <p class="muted" style="margin:0 0 10px;font-size:12px">market rose ${base}% of ${n.scored_n} scored, news-linked observations</p>
+      ${table([
+        {label:'Match type', get:r=>`<span class="sym">${esc(r.match_type)}</span>`},
+        {label:'N', num:true, get:r=>r.n},
+        {label:'Accuracy', num:true, get:r=>`${r.accuracy}%`},
+        {label:'95% CI', num:true, get:r=>`<span class="muted">[${r.ci_low}%, ${r.ci_high}%]</span>`},
+        {label:'vs base rate', num:true, get:r=>{
+          const diff=(r.accuracy-base).toFixed(1);
+          return `<span class="${r.accuracy>base?'up':'down'}">${diff>0?'+':''}${diff}pp</span>`;
+        }},
+      ], acc, '')}`;
+  } else {
+    $('news-accuracy').innerHTML = '<p class="muted" style="margin:0;font-size:13px">Not enough matured events yet to grade accuracy — events are scored the day after they\'re logged.</p>';
+  }
+
+  const polClass = p => p==='bullish' ? 'up' : p==='bearish' ? 'down' : 'muted';
+  $('news-events').innerHTML = table([
+    {label:'Symbol', get:r=>`<span class="sym">${esc(r.symbol)}</span>`},
+    {label:'Match', get:r=>`<span class="tag ${r.match_type==='explicit'?'t-pass':'t-hold'}">${esc(r.match_type)}</span>`},
+    {label:'Polarity', get:r=>`<span class="${polClass(r.polarity)}">${esc(r.polarity)}</span>`},
+    {label:'Theme', cls:'reason', get:r=>esc((r.matched_themes||'').split(',').filter(Boolean).join(', ') || '—')},
+    {label:'Headline', cls:'reason', get:r=>esc(r.headline)},
+  ], events, 'No news matched the universe in the last lookback window.');
+}
+
 /* Real market charts, straight from TradingView, for whatever the bot holds
    or flagged today. */
 function renderTV(d){
@@ -453,7 +498,7 @@ fetch('data.json?t='+Date.now())
     $('stamp').textContent = 'built ' + (d.generated_at||'').replace('T',' ').replace('+00:00',' UTC');
     renderAlerts(d); renderStats(d); renderEquity(d);
     renderPositions(d); renderSignals(d); renderTrades(d);
-    renderAccuracy(d); renderCalibration(d); renderBacktests(d); renderTV(d);
+    renderAccuracy(d); renderCalibration(d); renderNews(d); renderBacktests(d); renderTV(d);
   })
   .catch(e=>{
     $('alerts').innerHTML = `<div class="alert crit"><div>&#9888;</div><div>

@@ -21,6 +21,14 @@ from logic.model_performance_tracker import (
     backfill_next_day_returns,
     summarize_component_accuracy,
 )
+from logic.news_engine import (
+    apply_news_context,
+    build_news_events,
+    log_news_events,
+    persist_news_events,
+    score_news_events,
+    summarize_news_accuracy,
+)
 from logic.options_engine import (
     filter_expirations_by_dte,
     get_option_chain,
@@ -325,12 +333,43 @@ def run_daily_trading_cycle(
     except Exception as exc:
         logging.warning("Model scoring failed (%s). Continuing with cycle.", exc)
 
+    # Same discipline for news: grade yesterday's matured events before
+    # fetching today's. A keyword lexicon has even less claim to being trusted
+    # than the price-history models, so it gets the same scoring loop, not a
+    # pass.
+    try:
+        news_scored = score_news_events(db_path=DEFAULT_DB_PATH)
+        if news_scored:
+            logging.info("NEWS SCORING: %s event(s) graded against realized returns", news_scored)
+        news_report = summarize_news_accuracy(db_path=DEFAULT_DB_PATH)
+        if news_report:
+            logging.info("NEWS DIFFUSION ACCURACY (all history):\n%s", news_report)
+    except Exception as exc:
+        logging.warning("News scoring failed (%s). Continuing with cycle.", exc)
+
+    # Information diffusion: fetch recent news, diffuse it across the universe
+    # through the shared theme tags in logic/universe.py (the "war disrupts
+    # grain exports" case), and persist every event for tomorrow's scoring
+    # pass. Shadow only -- annotates signal.meta below, never changes
+    # signal_type/confidence/prob_profit. Nothing here has been shown to work
+    # yet, so nothing here gets to trade yet either.
+    news_events = []
+    try:
+        news_events = build_news_events(universe, lookback_hours=48)
+        log_news_events(news_events)
+        written = persist_news_events(news_events, db_path=DEFAULT_DB_PATH)
+        if written:
+            logging.info("NEWS DIFFUSION: %s new event(s) persisted for scoring", written)
+    except Exception as exc:
+        logging.warning("News diffusion failed (%s). Continuing with cycle.", exc)
+
     logging.info("Generating signals...")
     all_signals = generate_signals(universe, config)
     # Every downstream consumer (threshold filter, edge gate, position sizing)
     # reads signal.prob_profit and should see the corrected number, not the
     # model's raw and demonstrably overconfident claim.
     apply_probability_calibration(all_signals, verbose=True)
+    apply_news_context(all_signals, news_events)
     decision_signals = filter_signals_by_thresholds(
         all_signals,
         min_confidence=config.min_confidence,

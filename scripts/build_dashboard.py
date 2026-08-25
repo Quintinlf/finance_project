@@ -307,6 +307,63 @@ def load_component_accuracy() -> Dict[str, Any]:
     }
 
 
+def load_news_events(limit: int = 30) -> Dict[str, Any]:
+    """Recent news-diffusion events, plus scored accuracy vs the base rate.
+
+    Shadow-only signal (see logic/news_engine.py): shown here for visibility,
+    not because it has earned a place trading yet.
+    """
+    if not DB_PATH.exists():
+        return {}
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    try:
+        recent = conn.execute(
+            """
+            SELECT published_at, headline, source, symbol, match_type,
+                   matched_themes, polarity, polarity_score
+            FROM news_events ORDER BY published_at DESC LIMIT ?
+            """,
+            (limit,),
+        ).fetchall()
+
+        base = conn.execute(
+            "SELECT COUNT(*), SUM(CASE WHEN next_day_return > 0 THEN 1 ELSE 0 END) "
+            "FROM news_events WHERE next_day_return IS NOT NULL"
+        ).fetchone()
+        base_n = int(base[0] or 0)
+
+        by_match_type = []
+        if base_n:
+            import math
+
+            for match_type in ("explicit", "theme"):
+                row = conn.execute(
+                    "SELECT COUNT(*), SUM(correct) FROM news_events "
+                    "WHERE correct IS NOT NULL AND match_type = ?",
+                    (match_type,),
+                ).fetchone()
+                n = int(row[0] or 0)
+                if not n:
+                    continue
+                p = int(row[1] or 0) / n
+                se = math.sqrt(max(p * (1 - p), 0.0) / n)
+                by_match_type.append({
+                    "match_type": match_type, "n": n, "accuracy": round(p * 100, 1),
+                    "ci_low": round(max(0.0, p - 1.96 * se) * 100, 1),
+                    "ci_high": round(min(1.0, p + 1.96 * se) * 100, 1),
+                })
+    finally:
+        conn.close()
+
+    return {
+        "events": [dict(r) for r in recent],
+        "scored_n": base_n,
+        "base_rate": round(int(base[1] or 0) / base_n * 100, 1) if base_n else None,
+        "accuracy_by_match_type": by_match_type,
+    }
+
+
 def load_calibration_status(min_sample: int = 30, target_sample: int = 300) -> Dict[str, Any]:
     """Calibration curve state, plus when there will be enough data to trust it.
 
@@ -391,6 +448,7 @@ def main() -> None:
         "backtests": _safe(load_backtests, []),
         "component_accuracy": _safe(load_component_accuracy, {}),
         "calibration": _safe(load_calibration_status, {}),
+        "news": _safe(load_news_events, {}),
     }
 
     OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -402,6 +460,7 @@ def main() -> None:
     print(f"  signals today : {len(payload['latest_run'].get('signals', []))}")
     print(f"  backtests     : {len(payload['backtests'])}")
     print(f"  scored preds  : {payload['component_accuracy'].get('base_n', 0)}")
+    print(f"  news events   : {len(payload['news'].get('events', []))}")
     cal = payload["calibration"]
     if cal.get("target_ready_date"):
         print(f"  calibration   : {cal.get('scored_n', 0)} scored, meaningful sample ~{cal['target_ready_date']}")
