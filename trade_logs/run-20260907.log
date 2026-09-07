@@ -1,0 +1,6 @@
+2026-09-07 18:31:47,792 | INFO | eos finance domains unavailable (ImportError: eos checkout not found at /home/runner/work/finance_project/mcp_server. Set EOS_ROOT to the mcp_server directory to enable the finance domains.). Trading pipeline continues with built-in logic only.
+2026-09-07 18:31:48,092 | INFO | Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Non-scalable fonts are not supported
+2026-09-07 18:31:48,127 | INFO | generated new fontManager
+2026-09-07 18:31:48,340 | INFO | START DAILY TRADING RUN
+2026-09-07 18:31:48,341 | INFO | DATE/TIME: 2026-09-07T14:31:48.341369-04:00
+2026-09-07 18:31:48,842 | INFO | Not a US market day. Skipping run.
