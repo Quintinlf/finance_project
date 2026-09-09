@@ -18,7 +18,7 @@ from logic.exposure_manager import trim_to_exposure_cap
 from logic.fill_reconciler import reconcile_fills
 from logic.inverse_routing import format_routing_table, route_signals
 from logic.model_performance_tracker import (
-    backfill_next_day_returns,
+    backfill_next_day_returns_batched,
     summarize_component_accuracy,
 )
 from logic.news_engine import (
@@ -319,7 +319,10 @@ def run_daily_trading_cycle(
     # existed but nothing called it, so 82 logged predictions sat unscored and
     # the question "do these models actually work?" had no answer for months.
     try:
-        scored = backfill_next_day_returns(db_path=DEFAULT_DB_PATH)
+        # Batched: one price fetch per symbol rather than per row. With a
+        # backfilled sample of ~20k rows the per-row path would need hours
+        # of network I/O and could never catch up at 250 rows a day.
+        scored = backfill_next_day_returns_batched(db_path=DEFAULT_DB_PATH)
         if scored:
             logging.info("MODEL SCORING: %s prediction(s) graded against realized returns", scored)
         report = summarize_component_accuracy(db_path=DEFAULT_DB_PATH)

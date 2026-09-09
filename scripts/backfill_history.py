@@ -39,7 +39,7 @@ if str(ROOT) not in sys.path:
 
 from logic.data_structures import ExecutionConfig  # noqa: E402
 from logic.model_performance_tracker import (  # noqa: E402
-    backfill_next_day_returns,
+    backfill_next_day_returns_batched,
     init_model_performance_tracker,
     log_model_decision,
     summarize_component_accuracy,
@@ -176,13 +176,7 @@ def main() -> None:
     logging.info("BACKFILL COMPLETE: %s prediction(s) logged", written)
 
     if not args.no_score and written:
-        total = 0
-        while True:
-            n = backfill_next_day_returns(db_path=DEFAULT_DB_PATH, max_rows=500)
-            total += n
-            logging.info("  scored %s (running total %s)", n, total)
-            if n == 0:
-                break
+        total = backfill_next_day_returns_batched(db_path=DEFAULT_DB_PATH)
         logging.info("SCORING COMPLETE: %s newly scored", total)
         report = summarize_component_accuracy(db_path=DEFAULT_DB_PATH)
         if report:

@@ -398,19 +398,29 @@ def load_calibration_status(min_sample: int = 30, target_sample: int = 300) -> D
         total = conn.execute(
             "SELECT COUNT(*) FROM model_component_performance"
         ).fetchone()[0]
+        # Only SCORED rows can train a calibration curve. Reporting the total
+        # logged count as "scored" overstated readiness badly -- 12,074 logged
+        # against 247 actually graded -- and would have declared the sample
+        # ready while the curve had almost nothing to fit.
+        scored = conn.execute(
+            "SELECT COUNT(*) FROM model_component_performance "
+            "WHERE next_day_return IS NOT NULL"
+        ).fetchone()[0]
     finally:
         conn.close()
 
     run_days = len(rows)
     total = int(total or 0)
-    status["scored_n"] = total
+    scored = int(scored or 0)
+    status["scored_n"] = scored
+    status["logged_n"] = total
     status["min_sample"] = min_sample
     status["target_sample"] = target_sample
-    status["min_sample_met"] = total >= min_sample
+    status["min_sample_met"] = scored >= min_sample
 
-    if run_days and total:
-        per_day = total / run_days
-        remaining = max(0, target_sample - total)
+    if run_days and scored:
+        per_day = scored / run_days
+        remaining = max(0, target_sample - scored)
         # ~5 trading days/week; this is a projection from observed pace, not a promise.
         weekdays_needed = remaining / per_day if per_day > 0 else None
         if weekdays_needed is not None:

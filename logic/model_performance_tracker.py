@@ -710,3 +710,142 @@ def summarize_component_accuracy(
             )
 
     return "\n".join(lines) if any_rows else ""
+
+
+def _returns_for_symbol(
+    symbol: str, signal_dates: Sequence[Any]
+) -> Dict[Any, float]:
+    """Next-session return for every requested date, from ONE price fetch.
+
+    ``backfill_next_day_returns`` originally called yfinance once per row. That
+    is fine for a handful of live predictions and hopeless for a backfilled
+    sample: 11,683 rows meant 11,683 network round trips, 1.5-3 hours of pure
+    I/O, and a daily CI job that could only chew through 250 rows a run. One
+    fetch per symbol turns that into ~24 calls total.
+
+    The return convention is identical to the per-row path, deliberately:
+    base close is the last session at or before the signal date, next close is
+    the first session after it, and BOTH come from the same adjusted series so
+    a split cannot fabricate a return (see _compute_realized_return_from_row).
+    """
+    import yfinance as yf
+
+    if not signal_dates:
+        return {}
+
+    lo, hi = min(signal_dates), max(signal_dates)
+    try:
+        hist = yf.Ticker(symbol).history(
+            start=(lo - timedelta(days=7)).isoformat(),
+            end=(hi + timedelta(days=14)).isoformat(),
+            interval="1d",
+        )
+    except Exception as exc:  # noqa: BLE001
+        logging.warning("Batch history fetch failed for %s (%s).", symbol, exc)
+        return {}
+
+    closes = list(hist.get("Close", []))
+    bar_dates = [idx.date() for idx in hist.index]
+    if not closes:
+        return {}
+
+    out: Dict[Any, float] = {}
+    for signal_date in set(signal_dates):
+        base_close = None
+        next_close = None
+        for i, d in enumerate(bar_dates):
+            if d <= signal_date:
+                base_close = float(closes[i])
+            elif base_close is not None:
+                next_close = float(closes[i])
+                break
+        if base_close is None or next_close is None or base_close <= 0.0:
+            continue
+        ret = (next_close / base_close) - 1.0
+        if abs(ret) > _MAX_PLAUSIBLE_DAILY_RETURN:
+            logging.warning(
+                "Discarding implausible %s return of %.1f%% on %s — likely an "
+                "unadjusted corporate action.",
+                symbol, ret * 100.0, signal_date,
+            )
+            continue
+        out[signal_date] = ret
+    return out
+
+
+def backfill_next_day_returns_batched(
+    *,
+    db_path: Union[str, "PathLike[str]"] = DEFAULT_DB_PATH,
+    max_rows: int = 100_000,
+) -> int:
+    """Score matured predictions with one price fetch per symbol.
+
+    Same contract and same return convention as ``backfill_next_day_returns``,
+    but grouped by symbol so a large backlog is minutes of work instead of
+    hours. Prefer this whenever more than a few dozen rows are pending.
+    """
+    init_model_performance_tracker(db_path)
+    with connect(db_path) as conn:
+        rows = conn.execute(
+            """
+            SELECT id, symbol, timestamp,
+                   bb_direction, bayesian_direction, gp_direction,
+                   rsi_direction, ensemble_direction
+            FROM model_component_performance
+            WHERE next_day_return IS NULL
+            ORDER BY timestamp ASC, id ASC
+            LIMIT ?
+            """.strip(),
+            (int(max_rows),),
+        ).fetchall()
+
+    if not rows:
+        return 0
+
+    now_utc = datetime.now(timezone.utc)
+    by_symbol: Dict[str, List[Tuple[Any, Any]]] = {}
+    for row in rows:
+        ts = datetime.fromisoformat(str(row["timestamp"]).replace("Z", "+00:00"))
+        if ts.tzinfo is None:
+            ts = ts.replace(tzinfo=timezone.utc)
+        # A prediction is only scoreable once the next session has closed.
+        if now_utc - ts < timedelta(hours=24):
+            continue
+        by_symbol.setdefault(str(row["symbol"]), []).append((row, ts.date()))
+
+    updates: List[Tuple[Any, ...]] = []
+    for symbol, entries in by_symbol.items():
+        returns = _returns_for_symbol(symbol, [d for _, d in entries])
+        if not returns:
+            continue
+        for row, signal_date in entries:
+            ret = returns.get(signal_date)
+            if ret is None:
+                continue
+            updates.append(
+                (
+                    float(ret),
+                    _component_correct(str(row["bb_direction"]), ret),
+                    _component_correct(str(row["bayesian_direction"]), ret),
+                    _component_correct(str(row["gp_direction"]), ret),
+                    _component_correct(str(row["rsi_direction"]), ret),
+                    _component_correct(str(row["ensemble_direction"]), ret),
+                    int(row["id"]),
+                )
+            )
+        logging.info("scored %s: %s row(s)", symbol, len(entries))
+
+    if not updates:
+        return 0
+
+    with connect(db_path) as conn:
+        conn.executemany(
+            """
+            UPDATE model_component_performance
+            SET next_day_return = ?, bb_correct = ?, bayesian_correct = ?,
+                gp_correct = ?, rsi_correct = ?, ensemble_correct = ?
+            WHERE id = ?
+            """.strip(),
+            updates,
+        )
+    return len(updates)
