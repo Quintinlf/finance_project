@@ -74,15 +74,29 @@ def _matched_history(db_path: Union[str, Path]) -> List[tuple]:
     regardless of what the models actually said. COALESCE covers rows written
     before the raw column existed.
 
-    Joined on symbol + minute-truncated timestamp, the same key the signal
-    filter and model_component_performance already share -- decisions.timestamp
-    and model_component_performance.timestamp are written from the same
-    generation pass, so truncating to the minute is enough to line them up
-    without needing a shared surrogate key that does not exist yet.
+    Two sources, unioned:
+
+    1. ``model_component_performance.raw_prob_profit`` -- the direct path, and
+       the only one that covers backfilled history. Replayed predictions have
+       no ``decisions`` row (nothing was traded), so a decisions-only query saw
+       247 rows while ~12,000 scored predictions sat unused.
+    2. The decisions join, for live rows written before that column existed.
+
+    Joined on symbol + minute-truncated timestamp: decisions.timestamp and
+    model_component_performance.timestamp are written from the same generation
+    pass, so truncating to the minute lines them up without a shared surrogate
+    key that does not exist yet.
     """
     with connect(db_path) as conn:
         rows = conn.execute(
             """
+            SELECT raw_prob_profit, next_day_return
+            FROM model_component_performance
+            WHERE next_day_return IS NOT NULL
+              AND raw_prob_profit IS NOT NULL
+
+            UNION ALL
+
             SELECT COALESCE(d.raw_prob_profit, d.prob_profit), m.next_day_return
             FROM decisions d
             JOIN model_component_performance m
@@ -90,6 +104,7 @@ def _matched_history(db_path: Union[str, Path]) -> List[tuple]:
              AND substr(d.timestamp, 1, 16) = substr(m.timestamp, 1, 16)
             WHERE m.next_day_return IS NOT NULL
               AND d.prob_profit IS NOT NULL
+              AND m.raw_prob_profit IS NULL
             """.strip()
         ).fetchall()
     return [(float(p), float(r)) for p, r in rows]

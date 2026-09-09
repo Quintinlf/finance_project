@@ -143,6 +143,12 @@ def replay(
                 action=sig.signal_type,
                 price_at_signal=float(sig.meta.get("current_price") or 0.0) or None,
                 component_snapshot=snapshot,
+                # The raw claimed P(up). Replayed predictions never produce a
+                # `decisions` row, so without storing it here the calibration
+                # curve cannot see any of this history at all.
+                raw_prob_profit=float(sig.prob_profit)
+                if sig.prob_profit is not None
+                else None,
                 db_path=db_path,
             )
             written += 1

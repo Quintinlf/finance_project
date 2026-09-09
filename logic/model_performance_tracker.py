@@ -233,6 +233,21 @@ def init_model_performance_tracker(db_path: Union[str, "PathLike[str]"] = DEFAUL
             )
             """.strip()
         )
+        # Backward-compatible migration. Calibration needs the model's raw
+        # claimed P(up) alongside the outcome; without it here, the curve could
+        # only train on rows that also have a `decisions` entry -- i.e. live
+        # trading days only (247), ignoring ~12,000 backfilled predictions.
+        perf_cols = {
+            row["name"]
+            for row in conn.execute(
+                "PRAGMA table_info(model_component_performance)"
+            ).fetchall()
+        }
+        if "raw_prob_profit" not in perf_cols:
+            conn.execute(
+                "ALTER TABLE model_component_performance ADD COLUMN raw_prob_profit REAL"
+            )
+
         conn.execute(
             "CREATE INDEX IF NOT EXISTS idx_model_component_perf_symbol_time "
             "ON model_component_performance(symbol, timestamp)"
@@ -252,6 +267,7 @@ def log_model_decision(
     price_at_signal: Optional[float],
     component_snapshot: Optional[ComponentSnapshot],
     next_day_return: Optional[float] = None,
+    raw_prob_profit: Optional[float] = None,
     db_path: Union[str, "PathLike[str]"] = DEFAULT_DB_PATH,
 ) -> None:
     """Insert one component-level decision row.
@@ -296,6 +312,7 @@ def log_model_decision(
         float(component_snapshot.get("agreement_score_raw", 1.0) or 1.0),
         float(component_snapshot.get("agreement_score_weighted", 1.0) or 1.0),
         1 if (bb_direction in ACTIONABLE_DIRECTIONS and ens_direction in ACTIONABLE_DIRECTIONS and bb_direction != ens_direction) else 0,
+        float(raw_prob_profit) if raw_prob_profit is not None else None,
     )
 
     try:
@@ -310,8 +327,9 @@ def log_model_decision(
                   gp_direction, gp_confidence, gp_correct,
                   rsi_direction, rsi_confidence, rsi_value, rsi_correct,
                   ensemble_direction, ensemble_confidence, ensemble_correct,
-                  agreement_score_raw, agreement_score_weighted, bb_disagrees_with_ensemble
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                  agreement_score_raw, agreement_score_weighted, bb_disagrees_with_ensemble,
+                  raw_prob_profit
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """.strip(),
                 payload,
             )
