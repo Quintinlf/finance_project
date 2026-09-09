@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-09T05:19:05+00:00",
+  "generated_at": "2026-09-09T08:15:49+00:00",
   "equity_curve": [
     {
       "time": "2026-08-13",
@@ -108,6 +108,12 @@
       "value": 495.05,
       "exposure": 0.368,
       "daily_return": 0.001436
+    },
+    {
+      "time": "2026-09-09",
+      "value": 495.76,
+      "exposure": 0.3689,
+      "daily_return": 0.002873
     }
   ],
   "trades": [
@@ -627,6 +633,32 @@
     "win_rate": 0.0
   },
   "decisions": [
+    {
+      "timestamp": "2026-09-08T22:21:58.988583",
+      "symbol": "WEAT",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.6504065040650407,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-09-08T22:21:58.935333",
+      "symbol": "UNG",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.6504065040650407,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
     {
       "timestamp": "2026-09-08T17:42:22.310725",
       "symbol": "BAC",
@@ -3200,32 +3232,6 @@
       "planned_quantity": null,
       "planned_entry_price": null,
       "error_message": null
-    },
-    {
-      "timestamp": "2026-08-18T14:26:23.592542",
-      "symbol": "SOYB",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.3751215596255648,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-08-18T14:26:23.589072",
-      "symbol": "CORN",
-      "signal_type": "hold",
-      "confidence": 0.425,
-      "prob_profit": 0.9034215627012702,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
     }
   ],
   "latest_run": {
@@ -3755,75 +3761,71 @@
     }
   ],
   "component_accuracy": {
-    "base_rate": 64.8,
-    "base_n": 247,
+    "base_rate": 51.9,
+    "base_n": 22663,
     "components": [
       {
         "name": "Bollinger",
-        "n": 45,
-        "accuracy": 35.6,
-        "ci_low": 21.6,
-        "ci_high": 49.5
+        "n": 6361,
+        "accuracy": 49.7,
+        "ci_low": 48.5,
+        "ci_high": 50.9
       },
       {
         "name": "Bayesian",
-        "n": 247,
-        "accuracy": 56.7,
-        "ci_low": 50.5,
-        "ci_high": 62.9
+        "n": 22663,
+        "accuracy": 49.2,
+        "ci_low": 48.6,
+        "ci_high": 49.9
       },
       {
         "name": "Gaussian Process",
-        "n": 247,
-        "accuracy": 51.8,
-        "ci_low": 45.6,
-        "ci_high": 58.1
+        "n": 22663,
+        "accuracy": 50.8,
+        "ci_low": 50.2,
+        "ci_high": 51.5
       },
       {
         "name": "RSI",
-        "n": 70,
-        "accuracy": 38.6,
-        "ci_low": 27.2,
-        "ci_high": 50.0
+        "n": 5499,
+        "accuracy": 51.0,
+        "ci_low": 49.6,
+        "ci_high": 52.3
       },
       {
         "name": "Ensemble",
-        "n": 40,
-        "accuracy": 57.5,
-        "ci_low": 42.2,
-        "ci_high": 72.8
+        "n": 4274,
+        "accuracy": 50.7,
+        "ci_low": 49.2,
+        "ci_high": 52.2
       }
     ]
   },
   "calibration": {
     "fitted": true,
-    "fitted_at": "2026-08-25T22:00:34+00:00",
-    "n": 78,
+    "fitted_at": "2026-09-09T05:21:46+00:00",
+    "n": 247,
     "curve": [
       [
-        0.023268061007885005,
-        0.75
+        0.0002864583865482338,
+        0.0
       ],
       [
-        0.24512887050617443,
-        0.75
+        0.0027675274929044105,
+        0.6504065040650407
       ],
       [
-        0.26337337911018477,
-        0.7575757575757576
-      ],
-      [
-        0.9999994110705679,
-        0.7575757575757576
+        0.9999999521390279,
+        0.6504065040650407
       ]
     ],
-    "scored_n": 247,
-    "logged_n": 12098,
+    "scored_n": 22663,
+    "logged_n": 22706,
     "min_sample": 30,
     "target_sample": 300,
     "min_sample_met": true,
-    "predictions_per_run_day": 0.5,
-    "target_ready_date": "2027-02-09"
+    "predictions_per_run_day": 24.2,
+    "target_ready_date": "2026-09-09"
   },
   "news": {
     "events": [],

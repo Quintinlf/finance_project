@@ -13,6 +13,7 @@ from collections import deque
 from datetime import datetime, timedelta, timezone
 from typing import Any, Deque, Dict, Iterable, List, Optional, Sequence, Tuple, Union
 
+from logic.price_cache import RateLimited
 from logic.sqlite_store import DEFAULT_DB_PATH, connect
 
 
@@ -746,20 +747,25 @@ def _returns_for_symbol(
     the first session after it, and BOTH come from the same adjusted series so
     a split cannot fabricate a return (see _compute_realized_return_from_row).
     """
-    import yfinance as yf
+    from logic.price_cache import RateLimited, get_history
 
     if not signal_dates:
         return {}
 
     lo, hi = min(signal_dates), max(signal_dates)
+    # Served from the on-disk cache when possible. Scoring re-reads the same
+    # history the backfill already downloaded; without a cache that duplicate
+    # traffic is what triggered the rate limit that left 8,269 rows ungraded.
     try:
-        hist = yf.Ticker(symbol).history(
-            start=(lo - timedelta(days=7)).isoformat(),
-            end=(hi + timedelta(days=14)).isoformat(),
-            interval="1d",
-        )
+        hist = get_history(symbol, start=lo - timedelta(days=7), end=hi + timedelta(days=14))
+    except RateLimited:
+        # Propagate: the caller counts throttled symbols and reports the pass
+        # as incomplete. Swallowing this is what made a blocked pipeline look
+        # like a successful run that simply had nothing to score.
+        raise
     except Exception as exc:  # noqa: BLE001
-        logging.warning("Batch history fetch failed for %s (%s).", symbol, exc)
+        # One unusable symbol must not abort scoring for the other 23.
+        logging.warning("History fetch failed for %s (%s).", symbol, exc)
         return {}
 
     closes = list(hist.get("Close", []))
@@ -791,7 +797,7 @@ def _returns_for_symbol(
     return out
 
 
-def backfill_next_day_returns_batched(
+def backfill_next_day_returns_batched(  # noqa: C901
     *,
     db_path: Union[str, "PathLike[str]"] = DEFAULT_DB_PATH,
     max_rows: int = 100_000,
@@ -832,8 +838,17 @@ def backfill_next_day_returns_batched(
         by_symbol.setdefault(str(row["symbol"]), []).append((row, ts.date()))
 
     updates: List[Tuple[Any, ...]] = []
+    throttled: List[str] = []
     for symbol, entries in by_symbol.items():
-        returns = _returns_for_symbol(symbol, [d for _, d in entries])
+        try:
+            returns = _returns_for_symbol(symbol, [d for _, d in entries])
+        except RateLimited as exc:
+            # Distinct from "no data": the pipeline is blocked, not the symbol
+            # empty. Silently returning 0 here is how 8,269 rows went ungraded
+            # while the daily job kept reporting success.
+            logging.warning("Scoring throttled for %s (%s)", symbol, exc)
+            throttled.append(symbol)
+            continue
         if not returns:
             continue
         for row, signal_date in entries:
@@ -852,6 +867,14 @@ def backfill_next_day_returns_batched(
                 )
             )
         logging.info("scored %s: %s row(s)", symbol, len(entries))
+
+    if throttled:
+        logging.error(
+            "MODEL SCORING INCOMPLETE: %s of %s symbol(s) rate limited (%s). "
+            "%s row(s) remain unscored and will be retried next run.",
+            len(throttled), len(by_symbol), ", ".join(sorted(throttled)),
+            sum(len(by_symbol[s]) for s in throttled),
+        )
 
     if not updates:
         return 0

@@ -24,6 +24,26 @@ from logic.model_performance_tracker import (
 )
 from logic.sqlite_store import connect
 
+import logic.price_cache as pc
+
+
+def setUpModule():
+    """Point the price cache at a temp dir.
+
+    _returns_for_symbol reads the on-disk cache before touching the network,
+    so without isolation these tests read real cached CSVs and never exercise
+    their yfinance mocks -- passing alone and failing in the full suite.
+    """
+    global _CACHE_TMP, _CACHE_ORIG
+    _CACHE_TMP = TemporaryDirectory()
+    _CACHE_ORIG = pc.CACHE_DIR
+    pc.CACHE_DIR = Path(_CACHE_TMP.name) / "price_cache"
+
+
+def tearDownModule():
+    pc.CACHE_DIR = _CACHE_ORIG
+    _CACHE_TMP.cleanup()
+
 
 def _hist(dates, closes):
     return pd.DataFrame({"Close": closes}, index=pd.DatetimeIndex(dates))
@@ -70,9 +90,22 @@ class TestReturnsForSymbol(unittest.TestCase):
             out = _returns_for_symbol("X", [date(2026, 8, 3)])
         self.assertEqual(out, {})
 
-    def test_fetch_failure_returns_empty_not_raises(self):
+    def test_ordinary_fetch_failure_is_contained_to_one_symbol(self):
+        """A bad symbol must not abort scoring for the other 23."""
         with patch("yfinance.Ticker", side_effect=RuntimeError("network down")):
             self.assertEqual(_returns_for_symbol("X", [date(2026, 8, 3)]), {})
+
+    def test_rate_limit_propagates_so_the_caller_can_report_it(self):
+        """The opposite case: a throttle means the pipeline is blocked, and
+        reporting 0-scored-and-fine is how 8,269 rows went silently ungraded."""
+        from logic.price_cache import RateLimited
+
+        with patch(
+            "logic.price_cache.get_history",
+            side_effect=RateLimited("X: rate limited after 4 attempts"),
+        ):
+            with self.assertRaises(RateLimited):
+                _returns_for_symbol("X", [date(2026, 8, 3)])
 
 
 class TestBatchedMatchesPerRow(unittest.TestCase):

@@ -184,7 +184,7 @@ jobs:
           # committed at all. A fresh clone of this repo would be missing all
           # of it; only the machine that generated them locally had them.
           for path in trade_logs/*.csv trade_logs/*.db trade_logs/*.jsonl trade_logs/*.json \
-                      trade_logs/backtests/*.json trade_logs/theses/*.jsonl \
+                      trade_logs/backtests/*.json trade_logs/theses/*.jsonl \n                      trade_logs/price_cache/*.csv \
                       trade_logs/*.log docs/data.json learned_params.json; do
             if compgen -G "$path" > /dev/null; then
               git add -f $path && echo "staged: $path"
