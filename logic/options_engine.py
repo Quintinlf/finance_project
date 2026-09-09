@@ -9,6 +9,36 @@ def _log_stub(symbol: str, reason: str) -> None:
     logging.warning("Options data unavailable for %s (%s). Using placeholder candidates.", symbol, reason)
 
 
+def _parse_occ_symbol(contract_symbol: str) -> Optional[Dict[str, Any]]:
+    """Decode strike, expiration, and type from an OCC option symbol.
+
+    Alpaca keys the chain by OCC symbol, e.g. ``UNG260916P00017000``:
+
+        UNG      underlying, variable length
+        260916   expiration, YYMMDD
+        P        C(all) or P(ut)
+        00017000 strike x 1000, zero-padded to 8 digits -> $17.00
+
+    Everything the selectors need is in the key; the snapshot object itself
+    carries only quotes and (on OPRA) greeks.
+    """
+    import re
+
+    match = re.fullmatch(r"([A-Z]+)(\d{6})([CP])(\d{8})", contract_symbol.strip().upper())
+    if not match:
+        return None
+    _underlying, yymmdd, kind, strike_raw = match.groups()
+    try:
+        expiration = datetime.strptime(yymmdd, "%y%m%d").date()
+    except ValueError:
+        return None
+    return {
+        "expiration": expiration.isoformat(),
+        "strike": int(strike_raw) / 1000.0,
+        "type": "call" if kind == "C" else "put",
+    }
+
+
 def get_option_chain(symbol: str) -> List[Dict[str, Any]]:
     """
     Fetch option chain data for a symbol using Alpaca options data client.
@@ -32,20 +62,58 @@ def get_option_chain(symbol: str) -> List[Dict[str, Any]]:
             client = OptionHistoricalDataClient(creds.api_key, creds.secret_key)
         except Exception:
             client = OptionHistoricalDataClient()
-        req = OptionChainRequest(
-            underlying_symbol=symbol,
-            feed=OptionsFeed.OPRA,
-        )
-        chain = client.get_option_chain(req)
+        # OPRA is the real-time feed and requires a signed OPRA agreement on
+        # the Alpaca account. This account does not have one, so every chain
+        # request failed with "OPRA agreement is not signed" and the engine
+        # silently fell back to placeholder contracts with strike=None and
+        # delta=None -- decorative data that could never price a trade.
+        #
+        # INDICATIVE is the free, delayed feed and returns real strikes and
+        # greeks. Delayed data is unsuitable for intraday options execution,
+        # but this bot decides once a day off daily bars, so a delayed chain is
+        # consistent with everything else it does. Try OPRA first so the code
+        # upgrades itself the day an agreement is signed.
+        chain = None
+        last_error = None
+        for feed in (OptionsFeed.OPRA, OptionsFeed.INDICATIVE):
+            try:
+                chain = client.get_option_chain(
+                    OptionChainRequest(underlying_symbol=symbol, feed=feed)
+                )
+                if feed is OptionsFeed.INDICATIVE:
+                    logging.info(
+                        "Options chain for %s served from the INDICATIVE (delayed) "
+                        "feed; OPRA unavailable (%s).",
+                        symbol, last_error,
+                    )
+                break
+            except Exception as exc:  # noqa: BLE001
+                last_error = " ".join(str(exc).split())
+                continue
+        if chain is None:
+            raise RuntimeError(f"no options feed available ({last_error})")
+        # get_option_chain returns a dict keyed by OCC contract symbol, so
+        # iterating it yields *strings*, not objects. The previous code called
+        # getattr(str, "strike_price") on each key, which silently produced
+        # strike=None and expiration="" for every contract -- a chain that
+        # looked populated but could not price anything.
         rows: List[Dict[str, Any]] = []
-        for opt in chain:
+        for contract_symbol, snapshot in chain.items():
+            parsed = _parse_occ_symbol(str(contract_symbol))
+            if parsed is None:
+                continue
+            greeks = getattr(snapshot, "greeks", None)
             rows.append(
                 {
-                    "symbol": symbol,
-                    "expiration": str(getattr(opt, "expiration_date", "")),
-                    "strike": float(getattr(opt, "strike_price", 0.0) or 0.0),
-                    "type": str(getattr(opt, "type", "")).lower(),
-                    "delta": getattr(opt, "delta", None),
+                    "symbol": str(contract_symbol),
+                    "underlying": symbol,
+                    "expiration": parsed["expiration"],
+                    "strike": parsed["strike"],
+                    "type": parsed["type"],
+                    # Greeks are None on the INDICATIVE feed; selection falls
+                    # back to moneyness when that happens.
+                    "delta": getattr(greeks, "delta", None) if greeks else None,
+                    "implied_volatility": getattr(snapshot, "implied_volatility", None),
                 }
             )
         return rows
@@ -107,7 +175,13 @@ def _select_by_delta(
         if delta is None:
             continue
         try:
-            distance = abs(float(delta) - float(target_delta))
+            # Put deltas are NEGATIVE. Comparing them to a positive target
+            # directly made "closest to 0.30" resolve to the delta nearest
+            # +0.30 on the number line -- which for puts is the one closest to
+            # zero, i.e. the furthest out-of-the-money, nearly worthless
+            # contract. A real 0.30-delta put (-0.30) scored as the *worst*
+            # match. Compare magnitudes so both sides mean the same thing.
+            distance = abs(abs(float(delta)) - abs(float(target_delta)))
         except Exception:
             continue
         if best_distance is None or distance < best_distance:
@@ -116,9 +190,60 @@ def _select_by_delta(
     return best
 
 
+# Roughly where a 0.30-delta contract sits for typical equity/ETF vol at ~30
+# DTE. A crude stand-in for the real thing, and labeled as such wherever the
+# selection is reported.
+_DELTA_TO_MONEYNESS = {0.30: 0.06, 0.25: 0.08, 0.40: 0.03, 0.50: 0.0}
+
+
+def _select_by_moneyness(
+    chain: List[Dict[str, Any]],
+    target_delta: float,
+    option_type: str,
+    spot: float,
+) -> Optional[Dict[str, Any]]:
+    """Pick a contract by distance out-of-the-money when greeks are missing.
+
+    The INDICATIVE (free) feed returns no greeks, so delta-based selection
+    silently fell through to ``chain[0]`` -- an arbitrary strike. Approximating
+    the target delta by moneyness is far from exact, but it selects a contract
+    in the right region of the chain instead of an arbitrary one.
+    """
+    if spot <= 0:
+        return None
+    offset = _DELTA_TO_MONEYNESS.get(round(float(target_delta), 2), 0.06)
+    # OTM is above spot for calls, below for puts.
+    target_strike = spot * (1.0 + offset) if option_type == "call" else spot * (1.0 - offset)
+
+    best = None
+    best_distance = None
+    for row in chain:
+        if row.get("type") != option_type:
+            continue
+        strike = row.get("strike")
+        if not strike:
+            continue
+        distance = abs(float(strike) - target_strike)
+        if best_distance is None or distance < best_distance:
+            best = dict(row)
+            best["selection_basis"] = (
+                f"moneyness proxy for {target_delta:.2f} delta "
+                f"(no greeks on the delayed feed); spot ${spot:.2f}, "
+                f"target strike ${target_strike:.2f}"
+            )
+            best_distance = distance
+    return best
+
+
 def select_put_contract(chain: List[Dict[str, Any]], target_delta: float = 0.30) -> Dict[str, Any]:
     """Select a put contract closest to target delta (placeholder if needed)."""
     selected = _select_by_delta(chain, target_delta, "put")
+    if selected is None and chain:
+        # No greeks (delayed feed): approximate the target delta by moneyness
+        # rather than falling through to an arbitrary chain[0].
+        underlying = chain[0].get("underlying") or chain[0].get("symbol") or ""
+        spot = _get_spot_price(underlying) or 0.0
+        selected = _select_by_moneyness(chain, target_delta, "put", spot)
     if selected is None:
         return {
             "symbol": chain[0].get("symbol") if chain else "",
@@ -133,6 +258,12 @@ def select_put_contract(chain: List[Dict[str, Any]], target_delta: float = 0.30)
 def select_call_contract(chain: List[Dict[str, Any]], target_delta: float = 0.30) -> Dict[str, Any]:
     """Select a call contract closest to target delta (placeholder if needed)."""
     selected = _select_by_delta(chain, target_delta, "call")
+    if selected is None and chain:
+        # No greeks (delayed feed): approximate the target delta by moneyness
+        # rather than falling through to an arbitrary chain[0].
+        underlying = chain[0].get("underlying") or chain[0].get("symbol") or ""
+        spot = _get_spot_price(underlying) or 0.0
+        selected = _select_by_moneyness(chain, target_delta, "call", spot)
     if selected is None:
         return {
             "symbol": chain[0].get("symbol") if chain else "",
