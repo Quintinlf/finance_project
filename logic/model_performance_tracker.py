@@ -689,12 +689,19 @@ def summarize_component_accuracy(
             se = math.sqrt(max(p * (1.0 - p), 0.0) / n)
             lo, hi = max(0.0, p - 1.96 * se), min(1.0, p + 1.96 * se)
 
+            # Judged against the base rate, not 50%. A component scoring 56.7%
+            # in a tape that rose 64.8% of the time is not "better than
+            # chance" in any way that matters -- always guessing up beat it.
+            # The header line already says to beat the base rate; the verdict
+            # has to agree with it.
             if n < min_sample:
                 verdict = f"sample too small (n<{min_sample})"
-            elif lo > 0.5:
-                verdict = "better than chance"
+            elif lo > base_up:
+                verdict = "beats the base rate"
             elif hi < 0.5:
                 verdict = "WORSE than chance"
+            elif lo > 0.5:
+                verdict = f"beats 50% but NOT the {base_up * 100:.1f}% base rate"
             else:
                 verdict = "indistinguishable from a coin flip"
 
