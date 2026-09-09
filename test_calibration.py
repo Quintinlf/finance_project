@@ -46,6 +46,50 @@ def _seed_db(db_path: Path, pairs):
             )
 
 
+class TestCalibrationTrainsOnRawClaims(unittest.TestCase):
+    """Guards the feedback loop that would have collapsed the curve.
+
+    apply_probability_calibration overwrites signal.prob_profit, which is what
+    gets persisted to decisions.prob_profit. If the fit trained on that column,
+    each day's curve would train on the previous day's output -- flattening
+    toward a constant within days, regardless of what the models claimed.
+    """
+
+    def test_fit_uses_raw_column_not_the_calibrated_one(self):
+        with TemporaryDirectory() as d:
+            db = Path(d) / "t.db"
+            out = Path(d) / "calibration.json"
+            init_db(db)
+            from logic.model_performance_tracker import init_model_performance_tracker
+
+            init_model_performance_tracker(db)
+            # prob_profit is a CONSTANT 0.5 (as if already calibrated flat),
+            # while raw_prob_profit carries the real, informative spread.
+            with connect(db) as conn:
+                for i in range(40):
+                    ts = f"2026-08-{(i % 27) + 1:02d}T10:00:00+00:00"
+                    raw = 0.95 if i < 20 else 0.05
+                    up = 1 if i < 20 else 0
+                    conn.execute(
+                        "INSERT INTO decisions (account_id, timestamp, symbol, "
+                        "prob_profit, raw_prob_profit) VALUES ('t', ?, ?, 0.5, ?)",
+                        (ts, f"S{i}", raw),
+                    )
+                    conn.execute(
+                        "INSERT INTO model_component_performance (decision_key, timestamp, "
+                        "symbol, action, price_at_signal, next_day_return) "
+                        "VALUES (?, ?, ?, 'buy', 100.0, ?)",
+                        (f"k{i}", ts, f"S{i}", 0.01 if up else -0.01),
+                    )
+
+            curve = fit_calibration(db_path=db, out_path=out, min_sample=MIN_SAMPLE)
+
+        self.assertIsNotNone(curve)
+        # Trained on raw: the curve must separate 0.05 from 0.95. Had it
+        # trained on the constant prob_profit column, it could not.
+        self.assertGreater(curve.apply(0.95) - curve.apply(0.05), 0.5)
+
+
 def _signal(prob_profit=0.7, side="buy"):
     return SimpleNamespace(symbol="UNG", signal_type=side, prob_profit=prob_profit, meta={})
 

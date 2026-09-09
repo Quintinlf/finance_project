@@ -235,6 +235,10 @@ class DecisionLogEntry:
     reason: str
     
     # Order details (if action was buy/sell)
+    # The model's claim BEFORE probability calibration. Kept separately because
+    # the calibration curve must train on raw claims -- training on the
+    # calibrated value feeds the curve its own output and collapses it.
+    raw_prob_profit: Optional[float] = None
     planned_quantity: Optional[int] = None
     planned_entry_price: Optional[float] = None
     planned_tp_price: Optional[float] = None

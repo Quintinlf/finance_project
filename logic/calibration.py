@@ -65,7 +65,14 @@ class CalibrationCurve:
 
 
 def _matched_history(db_path: Union[str, Path]) -> List[tuple]:
-    """(claimed prob_profit, realized outcome) pairs from scored history.
+    """(RAW claimed prob_profit, realized outcome) pairs from scored history.
+
+    Trains on ``raw_prob_profit``, never ``prob_profit``. Once calibration is
+    live, ``prob_profit`` holds the *calibrated* value, so fitting on it would
+    feed the curve its own output: the fit flattens, that flatter value gets
+    persisted tomorrow, and within days the curve collapses to a constant
+    regardless of what the models actually said. COALESCE covers rows written
+    before the raw column existed.
 
     Joined on symbol + minute-truncated timestamp, the same key the signal
     filter and model_component_performance already share -- decisions.timestamp
@@ -76,7 +83,7 @@ def _matched_history(db_path: Union[str, Path]) -> List[tuple]:
     with connect(db_path) as conn:
         rows = conn.execute(
             """
-            SELECT d.prob_profit, m.next_day_return
+            SELECT COALESCE(d.raw_prob_profit, d.prob_profit), m.next_day_return
             FROM decisions d
             JOIN model_component_performance m
               ON d.symbol = m.symbol

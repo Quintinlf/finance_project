@@ -1089,6 +1089,7 @@ def run_trading_cycle(
             signal_type=signal.signal_type,
             confidence=signal.confidence,
             prob_profit=signal.prob_profit,
+            raw_prob_profit=signal.meta.get('raw_prob_profit', signal.prob_profit),
             position_quantity_before=position_state.quantity,
             position_side_before=position_state.side,
             execution_mode=config.execution_mode,

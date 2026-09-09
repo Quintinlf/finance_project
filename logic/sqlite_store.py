@@ -152,6 +152,7 @@ def init_db(db_path: Union[str, Path] = DEFAULT_DB_PATH) -> None:
                 signal_type TEXT,
                 confidence REAL,
                 prob_profit REAL,
+                raw_prob_profit REAL,
                 position_quantity_before REAL,
                 position_side_before TEXT,
                 execution_mode TEXT,
@@ -168,6 +169,17 @@ def init_db(db_path: Union[str, Path] = DEFAULT_DB_PATH) -> None:
             )
             """.strip()
         )
+
+        # Backward-compatible migration for DBs created before raw_prob_profit.
+        # This column is what the calibration curve MUST train on: prob_profit
+        # holds the post-calibration value, so fitting on it would train the
+        # curve on its own output and collapse to a constant within days.
+        decision_cols = {
+            row["name"]
+            for row in conn.execute("PRAGMA table_info(decisions)").fetchall()
+        }
+        if "raw_prob_profit" not in decision_cols:
+            conn.execute("ALTER TABLE decisions ADD COLUMN raw_prob_profit REAL")
 
         conn.execute(
             """
@@ -592,6 +604,9 @@ def insert_decisions(
                 data.get("signal_type"),
                 data.get("confidence"),
                 data.get("prob_profit"),
+                # Falls back to prob_profit for pre-calibration rows so the
+                # column is never NULL for a decision that simply predates it.
+                data.get("raw_prob_profit", data.get("prob_profit")),
                 data.get("position_quantity_before"),
                 data.get("position_side_before"),
                 data.get("execution_mode"),
@@ -616,12 +631,12 @@ def insert_decisions(
             """
             INSERT INTO decisions(
               account_id, timestamp, symbol, signal_type,
-              confidence, prob_profit, position_quantity_before,
+              confidence, prob_profit, raw_prob_profit, position_quantity_before,
               position_side_before, execution_mode, action, reason,
               planned_quantity, planned_entry_price, planned_tp_price,
               planned_sl_price, executed, broker_order_id,
               execution_timestamp, error_message
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """.strip(),
             rows,
         )
