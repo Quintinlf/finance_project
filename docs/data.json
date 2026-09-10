@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-09T17:28:23+00:00",
+  "generated_at": "2026-09-10T17:26:17+00:00",
   "equity_curve": [
     {
       "time": "2026-08-13",
@@ -114,6 +114,12 @@
       "value": 497.24,
       "exposure": 0.2445,
       "daily_return": 0.003755
+    },
+    {
+      "time": "2026-09-10",
+      "value": 500.58,
+      "exposure": 0.2894,
+      "daily_return": 0.00611
     }
   ],
   "trades": [
@@ -625,6 +631,19 @@
       "error": "Dry run mode - order not executed"
     },
     {
+      "symbol": "BAC",
+      "side": "buy",
+      "qty": 1.0,
+      "entry": 47.38,
+      "exit": 62.79,
+      "status": "CLOSED",
+      "pnl": 15.409999999999997,
+      "opened_at": "2026-03-24T13:32:22.115817+00:00",
+      "closed_at": "2026-09-09T17:28:11.511426+00:00",
+      "attempted_at": "2026-03-24T13:32:22.115817+00:00",
+      "error": null
+    },
+    {
       "symbol": "TSLA",
       "side": "buy",
       "qty": 1.0,
@@ -639,13 +658,182 @@
     }
   ],
   "summary": {
-    "filled": 3,
+    "filled": 4,
     "failed": 37,
-    "closed": 1,
-    "realized_pnl": -42.74,
-    "win_rate": 0.0
+    "closed": 2,
+    "realized_pnl": -27.33,
+    "win_rate": 50.0
   },
   "decisions": [
+    {
+      "timestamp": "2026-09-10T17:26:17.588719",
+      "symbol": "BAC",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.6518218623481782,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-09-10T17:26:17.584233",
+      "symbol": "DBB",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.6518218623481782,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-09-10T17:26:17.579858",
+      "symbol": "CPER",
+      "signal_type": "buy",
+      "confidence": 0.8624999999999999,
+      "prob_profit": 0.6518218623481782,
+      "action": "skipped",
+      "reason": "position_below_minimum: exposure headroom allows only $5.31 (max_position_size $100.12, exposure headroom $5.31 at 28.9% of a 30% cap) but 1 share costs $39.04",
+      "executed": 0,
+      "planned_quantity": 1.0,
+      "planned_entry_price": 39.04499816894531,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-09-10T17:26:17.575479",
+      "symbol": "PALL",
+      "signal_type": "buy",
+      "confidence": 0.8624999999999999,
+      "prob_profit": 0.6518218623481782,
+      "action": "skipped",
+      "reason": "position_below_minimum: exposure headroom allows only $5.31 (max_position_size $100.12, exposure headroom $5.31 at 28.9% of a 30% cap) but 1 share costs $23.32",
+      "executed": 0,
+      "planned_quantity": 1.0,
+      "planned_entry_price": 23.315000534057617,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-09-10T17:26:17.571146",
+      "symbol": "PPLT",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.6518218623481782,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-09-10T17:26:17.567311",
+      "symbol": "IAU",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.6518218623481782,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-09-10T17:26:17.562881",
+      "symbol": "SLV",
+      "signal_type": "buy",
+      "confidence": 0.75,
+      "prob_profit": 0.6518218623481782,
+      "action": "skipped",
+      "reason": "position_below_minimum: exposure headroom allows only $5.31 (max_position_size $100.12, exposure headroom $5.31 at 28.9% of a 30% cap) but 1 share costs $58.17",
+      "executed": 0,
+      "planned_quantity": 1.0,
+      "planned_entry_price": 58.16999816894531,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-09-10T17:26:17.558835",
+      "symbol": "XLE",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.6518218623481782,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-09-10T17:26:17.554809",
+      "symbol": "UNG",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.6518218623481782,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-09-10T17:26:17.550830",
+      "symbol": "DBA",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.6518218623481782,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-09-10T17:26:17.546975",
+      "symbol": "SOYB",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.6518218623481782,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-09-10T17:26:17.542947",
+      "symbol": "CORN",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.6518218623481782,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-09-10T17:26:17.538770",
+      "symbol": "WEAT",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.6518218623481782,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
     {
       "timestamp": "2026-09-09T17:28:23.410740",
       "symbol": "BAC",
@@ -3076,184 +3264,15 @@
       "planned_quantity": null,
       "planned_entry_price": null,
       "error_message": null
-    },
-    {
-      "timestamp": "2026-08-19T14:26:13.336376",
-      "symbol": "GSG",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.13988494350609298,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-08-19T14:26:13.330776",
-      "symbol": "DBB",
-      "signal_type": "buy",
-      "confidence": 0.75,
-      "prob_profit": 0.9368684075777379,
-      "action": "rejected",
-      "reason": "Blocked: portfolio exposure limit reached",
-      "executed": 0,
-      "planned_quantity": 1.0,
-      "planned_entry_price": 25.190000534057617,
-      "error_message": "Blocked: portfolio exposure limit reached"
-    },
-    {
-      "timestamp": "2026-08-19T14:26:13.325678",
-      "symbol": "CPER",
-      "signal_type": "buy",
-      "confidence": 0.75,
-      "prob_profit": 0.9968709369073513,
-      "action": "rejected",
-      "reason": "Blocked: portfolio exposure limit reached",
-      "executed": 0,
-      "planned_quantity": 1.0,
-      "planned_entry_price": 39.224998474121094,
-      "error_message": "Blocked: portfolio exposure limit reached"
-    },
-    {
-      "timestamp": "2026-08-19T14:26:13.321660",
-      "symbol": "PALL",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.5474895971852325,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-08-19T14:26:13.317260",
-      "symbol": "PPLT",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.6433212381720095,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-08-19T14:26:13.313446",
-      "symbol": "IAU",
-      "signal_type": "hold",
-      "confidence": 0.425,
-      "prob_profit": 0.7009534124995406,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-08-19T14:26:13.308272",
-      "symbol": "SLV",
-      "signal_type": "buy",
-      "confidence": 0.75,
-      "prob_profit": 0.9884368445243891,
-      "action": "rejected",
-      "reason": "Blocked: portfolio exposure limit reached",
-      "executed": 0,
-      "planned_quantity": 1.0,
-      "planned_entry_price": 59.04899978637695,
-      "error_message": "Blocked: portfolio exposure limit reached"
-    },
-    {
-      "timestamp": "2026-08-19T14:26:13.302310",
-      "symbol": "DUG",
-      "signal_type": "buy",
-      "confidence": 0.8624999999999999,
-      "prob_profit": 0.6591521561605113,
-      "action": "rejected",
-      "reason": "Blocked: portfolio exposure limit reached",
-      "executed": 0,
-      "planned_quantity": 1.0,
-      "planned_entry_price": 14.542200088500977,
-      "error_message": "Blocked: portfolio exposure limit reached"
-    },
-    {
-      "timestamp": "2026-08-19T14:26:13.068340",
-      "symbol": "BNO",
-      "signal_type": "sell",
-      "confidence": 0.9,
-      "prob_profit": 0.0027675274929044105,
-      "action": "sell",
-      "reason": "Signal=SELL, position=long (1.0 shares) \u2192 closing position",
-      "executed": 0,
-      "planned_quantity": 1.0,
-      "planned_entry_price": 52.47999954223633,
-      "error_message": "Order rejected by broker: {\"available\":\"0\",\"code\":40310000,\"existing_qty\":\"1\",\"held_for_orders\":\"1\",\"message\":\"insufficient qty available for order (requested: 1, available: 0)\",\"related_orders\":[\"c7ae47f7-2c0d-431a-8e1e-5b6096dd078c\"],\"symbol\":\"BNO\"}"
-    },
-    {
-      "timestamp": "2026-08-19T14:26:13.060629",
-      "symbol": "UNG",
-      "signal_type": "buy",
-      "confidence": 0.75,
-      "prob_profit": 0.9982995103486526,
-      "action": "rejected",
-      "reason": "Blocked: portfolio exposure limit reached",
-      "executed": 0,
-      "planned_quantity": 1.0,
-      "planned_entry_price": 10.190099716186523,
-      "error_message": "Blocked: portfolio exposure limit reached"
-    },
-    {
-      "timestamp": "2026-08-19T14:26:13.057057",
-      "symbol": "DBA",
-      "signal_type": "hold",
-      "confidence": 0.425,
-      "prob_profit": 0.2748209332534983,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-08-19T14:26:13.053246",
-      "symbol": "CANE",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.9100565889058025,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-08-19T14:26:13.049549",
-      "symbol": "SOYB",
-      "signal_type": "hold",
-      "confidence": 0.425,
-      "prob_profit": 0.4249596409791664,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
     }
   ],
   "latest_run": {
-    "date": "20260909",
+    "date": "20260910",
     "account": {
-      "equity": 497.24,
+      "equity": 500.58,
       "equity_source": "broker_live",
-      "cash": 312.87,
-      "exposure": 0.371
+      "cash": 355.72,
+      "exposure": 0.289
     },
     "signals": [
       {
@@ -3261,88 +3280,88 @@
         "signal": "HOLD",
         "original": "HOLD",
         "confidence": 0.5,
-        "prob_profit": 0.6504,
+        "prob_profit": 0.6518,
         "decision": "HOLD",
         "reason": "explicit HOLD decision retained for logging"
       },
       {
         "symbol": "CORN",
-        "signal": "BUY",
-        "original": "BUY",
-        "confidence": 0.75,
-        "prob_profit": 0.6504,
-        "decision": "PASS",
-        "reason": "meets confidence and probability thresholds"
+        "signal": "HOLD",
+        "original": "HOLD",
+        "confidence": 0.5,
+        "prob_profit": 0.6518,
+        "decision": "HOLD",
+        "reason": "explicit HOLD decision retained for logging"
       },
       {
         "symbol": "SOYB",
         "signal": "HOLD",
         "original": "HOLD",
         "confidence": 0.5,
-        "prob_profit": 0.6504,
+        "prob_profit": 0.6518,
         "decision": "HOLD",
         "reason": "explicit HOLD decision retained for logging"
       },
       {
         "symbol": "CANE",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.5,
-        "prob_profit": 0.6504,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
+        "signal": "SELL",
+        "original": "SELL",
+        "confidence": 0.8625,
+        "prob_profit": 0.6518,
+        "decision": "REJECT",
+        "reason": "P(down) 0.3482 < 0.5000"
       },
       {
         "symbol": "DBA",
         "signal": "HOLD",
         "original": "HOLD",
         "confidence": 0.5,
-        "prob_profit": 0.6504,
+        "prob_profit": 0.6518,
         "decision": "HOLD",
         "reason": "explicit HOLD decision retained for logging"
       },
       {
         "symbol": "UNG",
-        "signal": "SELL",
-        "original": "SELL",
-        "confidence": 0.75,
-        "prob_profit": 0.068,
-        "decision": "PASS",
-        "reason": "meets confidence and probability thresholds"
+        "signal": "HOLD",
+        "original": "HOLD",
+        "confidence": 0.5,
+        "prob_profit": 0.6518,
+        "decision": "HOLD",
+        "reason": "explicit HOLD decision retained for logging"
       },
       {
         "symbol": "BNO",
         "signal": "SELL",
         "original": "SELL",
         "confidence": 0.8625,
-        "prob_profit": 0.6504,
+        "prob_profit": 0.6518,
         "decision": "REJECT",
-        "reason": "P(down) 0.3496 < 0.5000"
+        "reason": "P(down) 0.3482 < 0.5000"
       },
       {
         "symbol": "XLE",
         "signal": "HOLD",
         "original": "HOLD",
-        "confidence": 0.425,
-        "prob_profit": 0.6504,
+        "confidence": 0.5,
+        "prob_profit": 0.6518,
         "decision": "HOLD",
         "reason": "explicit HOLD decision retained for logging"
       },
       {
         "symbol": "SLV",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.5,
-        "prob_profit": 0.6504,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
+        "signal": "BUY",
+        "original": "BUY",
+        "confidence": 0.75,
+        "prob_profit": 0.6518,
+        "decision": "PASS",
+        "reason": "meets confidence and probability thresholds"
       },
       {
         "symbol": "IAU",
         "signal": "HOLD",
         "original": "HOLD",
         "confidence": 0.5,
-        "prob_profit": 0.6504,
+        "prob_profit": 0.6518,
         "decision": "HOLD",
         "reason": "explicit HOLD decision retained for logging"
       },
@@ -3350,35 +3369,35 @@
         "symbol": "PPLT",
         "signal": "HOLD",
         "original": "HOLD",
-        "confidence": 0.425,
-        "prob_profit": 0.6504,
+        "confidence": 0.5,
+        "prob_profit": 0.6518,
         "decision": "HOLD",
         "reason": "explicit HOLD decision retained for logging"
       },
       {
         "symbol": "PALL",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.5,
-        "prob_profit": 0.6504,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
+        "signal": "BUY",
+        "original": "BUY",
+        "confidence": 0.8625,
+        "prob_profit": 0.6518,
+        "decision": "PASS",
+        "reason": "meets confidence and probability thresholds"
       },
       {
         "symbol": "CPER",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.425,
-        "prob_profit": 0.6504,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
+        "signal": "BUY",
+        "original": "BUY",
+        "confidence": 0.8625,
+        "prob_profit": 0.6518,
+        "decision": "PASS",
+        "reason": "meets confidence and probability thresholds"
       },
       {
         "symbol": "DBB",
         "signal": "HOLD",
         "original": "HOLD",
-        "confidence": 0.425,
-        "prob_profit": 0.6504,
+        "confidence": 0.5,
+        "prob_profit": 0.6518,
         "decision": "HOLD",
         "reason": "explicit HOLD decision retained for logging"
       },
@@ -3387,25 +3406,25 @@
         "signal": "SELL",
         "original": "SELL",
         "confidence": 0.8625,
-        "prob_profit": 0.6504,
+        "prob_profit": 0.6518,
         "decision": "REJECT",
-        "reason": "P(down) 0.3496 < 0.5000"
+        "reason": "P(down) 0.3482 < 0.5000"
       },
       {
         "symbol": "GSG",
         "signal": "SELL",
         "original": "SELL",
         "confidence": 0.8625,
-        "prob_profit": 0.6504,
+        "prob_profit": 0.6518,
         "decision": "REJECT",
-        "reason": "P(down) 0.3496 < 0.5000"
+        "reason": "P(down) 0.3482 < 0.5000"
       },
       {
         "symbol": "BAC",
         "signal": "HOLD",
         "original": "HOLD",
         "confidence": 0.5,
-        "prob_profit": 0.6504,
+        "prob_profit": 0.6518,
         "decision": "HOLD",
         "reason": "explicit HOLD decision retained for logging"
       }
@@ -3413,7 +3432,7 @@
     "positions": [
       {
         "symbol": "BAC",
-        "qty": 2.0,
+        "qty": 1.0,
         "entry": 47.38,
         "since": "2026-03-24"
       },
@@ -3422,15 +3441,22 @@
         "qty": 1.0,
         "entry": 49.6,
         "since": "2026-08-13"
+      },
+      {
+        "symbol": "CORN",
+        "qty": 1.0,
+        "entry": 19.91,
+        "since": "2026-09-09"
       }
     ],
     "blockers": [
-      "rejection_reason:",
-      "rejection_reason: position_below_minimum: exposure headroom allows only $27.59 (max_position_size $99.45, exposure headroom $27.59 at 24.5% of a 30% cap) but 1 share costs $30.53"
+      "rejection_reason: position_below_minimum: exposure headroom allows only $5.31 (max_position_size $100.12, exposure headroom $5.31 at 28.9% of a 30% cap) but 1 share costs $23.32",
+      "rejection_reason: position_below_minimum: exposure headroom allows only $5.31 (max_position_size $100.12, exposure headroom $5.31 at 28.9% of a 30% cap) but 1 share costs $39.04",
+      "rejection_reason: position_below_minimum: exposure headroom allows only $5.31 (max_position_size $100.12, exposure headroom $5.31 at 28.9% of a 30% cap) but 1 share costs $58.17"
     ],
     "eos_available": false,
-    "orders_submitted": 1,
-    "orders_attempted": 1
+    "orders_submitted": 0,
+    "orders_attempted": 0
   },
   "backtests": [
     {
@@ -3776,7 +3802,7 @@
   ],
   "component_accuracy": {
     "base_rate": 51.9,
-    "base_n": 22665,
+    "base_n": 22666,
     "components": [
       {
         "name": "Bollinger",
@@ -3787,14 +3813,14 @@
       },
       {
         "name": "Bayesian",
-        "n": 22665,
+        "n": 22666,
         "accuracy": 49.2,
         "ci_low": 48.6,
         "ci_high": 49.9
       },
       {
         "name": "Gaussian Process",
-        "n": 22665,
+        "n": 22666,
         "accuracy": 50.8,
         "ci_low": 50.2,
         "ci_high": 51.5
@@ -3817,8 +3843,8 @@
   },
   "calibration": {
     "fitted": true,
-    "fitted_at": "2026-09-09T17:28:12+00:00",
-    "n": 247,
+    "fitted_at": "2026-09-10T17:26:02+00:00",
+    "n": 248,
     "curve": [
       [
         0.0002864583865482338,
@@ -3826,326 +3852,341 @@
       ],
       [
         0.0027675274929044105,
-        0.6504065040650407
+        0.6518218623481782
       ],
       [
         0.9999999521390279,
-        0.6504065040650407
+        0.6518218623481782
       ]
     ],
-    "scored_n": 22665,
-    "logged_n": 22720,
+    "scored_n": 22666,
+    "logged_n": 22733,
     "min_sample": 30,
     "target_sample": 300,
     "min_sample_met": true,
     "predictions_per_run_day": 24.2,
-    "target_ready_date": "2026-09-09"
+    "target_ready_date": "2026-09-10"
   },
   "news": {
     "events": [
       {
-        "published_at": "2026-09-09T17:04:58+00:00",
-        "headline": "Oil Tops $100, Meta and Cloudflare Jump On AI Breakthroughs: Stock Market Today",
-        "source": "benzinga",
-        "symbol": "XLE",
-        "match_type": "explicit",
-        "matched_themes": "geopolitical_supply_shock,crude",
-        "polarity": "bullish",
-        "polarity_score": 1.0
-      },
-      {
-        "published_at": "2026-09-09T17:04:58+00:00",
-        "headline": "Oil Tops $100, Meta and Cloudflare Jump On AI Breakthroughs: Stock Market Today",
-        "source": "benzinga",
-        "symbol": "WEAT",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock,crude",
-        "polarity": "bullish",
-        "polarity_score": 1.0
-      },
-      {
-        "published_at": "2026-09-09T17:04:58+00:00",
-        "headline": "Oil Tops $100, Meta and Cloudflare Jump On AI Breakthroughs: Stock Market Today",
-        "source": "benzinga",
-        "symbol": "CORN",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock,crude",
-        "polarity": "bullish",
-        "polarity_score": 1.0
-      },
-      {
-        "published_at": "2026-09-09T17:04:58+00:00",
-        "headline": "Oil Tops $100, Meta and Cloudflare Jump On AI Breakthroughs: Stock Market Today",
-        "source": "benzinga",
-        "symbol": "UNG",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock,crude",
-        "polarity": "bullish",
-        "polarity_score": 1.0
-      },
-      {
-        "published_at": "2026-09-09T17:04:58+00:00",
-        "headline": "Oil Tops $100, Meta and Cloudflare Jump On AI Breakthroughs: Stock Market Today",
-        "source": "benzinga",
-        "symbol": "BNO",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock,crude",
-        "polarity": "bullish",
-        "polarity_score": 1.0
-      },
-      {
-        "published_at": "2026-09-09T17:04:58+00:00",
-        "headline": "Oil Tops $100, Meta and Cloudflare Jump On AI Breakthroughs: Stock Market Today",
-        "source": "benzinga",
-        "symbol": "IAU",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock,crude",
-        "polarity": "bullish",
-        "polarity_score": 1.0
-      },
-      {
-        "published_at": "2026-09-09T17:04:58+00:00",
-        "headline": "Oil Tops $100, Meta and Cloudflare Jump On AI Breakthroughs: Stock Market Today",
-        "source": "benzinga",
-        "symbol": "DBC",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock,crude",
-        "polarity": "bullish",
-        "polarity_score": 1.0
-      },
-      {
-        "published_at": "2026-09-09T17:04:58+00:00",
-        "headline": "Oil Tops $100, Meta and Cloudflare Jump On AI Breakthroughs: Stock Market Today",
-        "source": "benzinga",
-        "symbol": "GSG",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock,crude",
-        "polarity": "bullish",
-        "polarity_score": 1.0
-      },
-      {
-        "published_at": "2026-09-09T14:19:30+00:00",
-        "headline": "Oil Hits $100 a Barrel: Will Trump \u2018TACO\u2019 Again?",
-        "source": "benzinga",
-        "symbol": "BNO",
-        "match_type": "explicit",
-        "matched_themes": "crude",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-09-09T14:19:30+00:00",
-        "headline": "Oil Hits $100 a Barrel: Will Trump \u2018TACO\u2019 Again?",
-        "source": "benzinga",
-        "symbol": "XLE",
-        "match_type": "theme",
-        "matched_themes": "crude",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-09-09T14:19:30+00:00",
-        "headline": "Oil Hits $100 a Barrel: Will Trump \u2018TACO\u2019 Again?",
-        "source": "benzinga",
-        "symbol": "DBC",
-        "match_type": "theme",
-        "matched_themes": "crude",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-09-09T14:19:30+00:00",
-        "headline": "Oil Hits $100 a Barrel: Will Trump \u2018TACO\u2019 Again?",
-        "source": "benzinga",
-        "symbol": "GSG",
-        "match_type": "theme",
-        "matched_themes": "crude",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-09-09T13:25:39+00:00",
-        "headline": "Oil Hits $100: Which Stocks And ETFs Win Or Lose?",
-        "source": "benzinga",
-        "symbol": "XLE",
-        "match_type": "explicit",
-        "matched_themes": "geopolitical_supply_shock",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-09-09T13:25:39+00:00",
-        "headline": "Oil Hits $100: Which Stocks And ETFs Win Or Lose?",
-        "source": "benzinga",
-        "symbol": "WEAT",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-09-09T13:25:39+00:00",
-        "headline": "Oil Hits $100: Which Stocks And ETFs Win Or Lose?",
-        "source": "benzinga",
-        "symbol": "CORN",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-09-09T13:25:39+00:00",
-        "headline": "Oil Hits $100: Which Stocks And ETFs Win Or Lose?",
-        "source": "benzinga",
-        "symbol": "UNG",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-09-09T13:25:39+00:00",
-        "headline": "Oil Hits $100: Which Stocks And ETFs Win Or Lose?",
-        "source": "benzinga",
-        "symbol": "BNO",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-09-09T13:25:39+00:00",
-        "headline": "Oil Hits $100: Which Stocks And ETFs Win Or Lose?",
-        "source": "benzinga",
-        "symbol": "IAU",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-09-09T13:10:07+00:00",
-        "headline": "Leading And Lagging Sectors For September 9, 2026",
-        "source": "benzinga",
-        "symbol": "XLE",
-        "match_type": "explicit",
-        "matched_themes": "",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-09-09T10:48:52+00:00",
-        "headline": "'European Gas Prices Hit Highest Since 2023 as Market Braces for Prolonged LNG Squeeze' - WSJ",
-        "source": "benzinga",
-        "symbol": "UNG",
-        "match_type": "explicit",
-        "matched_themes": "",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-09-08T22:06:17+00:00",
-        "headline": "Bitcoin Braces For CPI as Oil Nears $100 and ETF Inflows Hit $3.8 Billion",
-        "source": "benzinga",
-        "symbol": "BNO",
-        "match_type": "explicit",
-        "matched_themes": "inflation_hedge",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-09-08T22:06:17+00:00",
-        "headline": "Bitcoin Braces For CPI as Oil Nears $100 and ETF Inflows Hit $3.8 Billion",
-        "source": "benzinga",
-        "symbol": "XLE",
-        "match_type": "explicit",
-        "matched_themes": "inflation_hedge",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-09-08T22:06:17+00:00",
-        "headline": "Bitcoin Braces For CPI as Oil Nears $100 and ETF Inflows Hit $3.8 Billion",
-        "source": "benzinga",
-        "symbol": "DBA",
-        "match_type": "theme",
-        "matched_themes": "inflation_hedge",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-09-08T22:06:17+00:00",
-        "headline": "Bitcoin Braces For CPI as Oil Nears $100 and ETF Inflows Hit $3.8 Billion",
+        "published_at": "2026-09-10T13:42:11+00:00",
+        "headline": "Hot PPI Sinks Gold, Freight Stocks: 10 Names To Watch Thursday",
         "source": "benzinga",
         "symbol": "SLV",
-        "match_type": "theme",
-        "matched_themes": "inflation_hedge",
+        "match_type": "explicit",
+        "matched_themes": "",
         "polarity": "neutral",
         "polarity_score": 0.0
       },
       {
-        "published_at": "2026-09-08T22:06:17+00:00",
-        "headline": "Bitcoin Braces For CPI as Oil Nears $100 and ETF Inflows Hit $3.8 Billion",
-        "source": "benzinga",
-        "symbol": "IAU",
-        "match_type": "theme",
-        "matched_themes": "inflation_hedge",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-09-08T22:06:17+00:00",
-        "headline": "Bitcoin Braces For CPI as Oil Nears $100 and ETF Inflows Hit $3.8 Billion",
-        "source": "benzinga",
-        "symbol": "PPLT",
-        "match_type": "theme",
-        "matched_themes": "inflation_hedge",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-09-08T22:06:17+00:00",
-        "headline": "Bitcoin Braces For CPI as Oil Nears $100 and ETF Inflows Hit $3.8 Billion",
-        "source": "benzinga",
-        "symbol": "DBC",
-        "match_type": "theme",
-        "matched_themes": "inflation_hedge",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-09-08T22:06:17+00:00",
-        "headline": "Bitcoin Braces For CPI as Oil Nears $100 and ETF Inflows Hit $3.8 Billion",
-        "source": "benzinga",
-        "symbol": "GSG",
-        "match_type": "theme",
-        "matched_themes": "inflation_hedge",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-09-08T17:13:16+00:00",
-        "headline": "S&P 500, Nasdaq Slip as $98 Brent Reignites Inflation Fears: Stock Market Today",
+        "published_at": "2026-09-10T13:10:11+00:00",
+        "headline": "Leading And Lagging Sectors For September 10, 2026",
         "source": "benzinga",
         "symbol": "XLE",
         "match_type": "explicit",
-        "matched_themes": "inflation_hedge",
+        "matched_themes": "",
         "polarity": "neutral",
         "polarity_score": 0.0
       },
       {
-        "published_at": "2026-09-08T17:13:16+00:00",
-        "headline": "S&P 500, Nasdaq Slip as $98 Brent Reignites Inflation Fears: Stock Market Today",
+        "published_at": "2026-09-10T10:45:25+00:00",
+        "headline": "The $100 Oil Tipping Point: The Economy Is Running Out of Shock Absorbers",
         "source": "benzinga",
-        "symbol": "DBA",
+        "symbol": "XLE",
+        "match_type": "explicit",
+        "matched_themes": "geopolitical_supply_shock",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-09-10T10:45:25+00:00",
+        "headline": "The $100 Oil Tipping Point: The Economy Is Running Out of Shock Absorbers",
+        "source": "benzinga",
+        "symbol": "BNO",
+        "match_type": "explicit",
+        "matched_themes": "geopolitical_supply_shock",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-09-10T10:45:25+00:00",
+        "headline": "The $100 Oil Tipping Point: The Economy Is Running Out of Shock Absorbers",
+        "source": "benzinga",
+        "symbol": "WEAT",
         "match_type": "theme",
-        "matched_themes": "inflation_hedge",
+        "matched_themes": "geopolitical_supply_shock",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-09-10T10:45:25+00:00",
+        "headline": "The $100 Oil Tipping Point: The Economy Is Running Out of Shock Absorbers",
+        "source": "benzinga",
+        "symbol": "CORN",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-09-10T10:45:25+00:00",
+        "headline": "The $100 Oil Tipping Point: The Economy Is Running Out of Shock Absorbers",
+        "source": "benzinga",
+        "symbol": "UNG",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-09-10T10:45:25+00:00",
+        "headline": "The $100 Oil Tipping Point: The Economy Is Running Out of Shock Absorbers",
+        "source": "benzinga",
+        "symbol": "IAU",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-09-10T03:53:40+00:00",
+        "headline": "Trump Says Iran War Will End 'Immediately After' the Midterms, Peter Schiff Calls It His 'Latest Lie': Economist Warns of 'Upward Pressure' on Oil Prices",
+        "source": "benzinga",
+        "symbol": "BNO",
+        "match_type": "explicit",
+        "matched_themes": "geopolitical_supply_shock,crude",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-09-10T03:53:40+00:00",
+        "headline": "Trump Says Iran War Will End 'Immediately After' the Midterms, Peter Schiff Calls It His 'Latest Lie': Economist Warns of 'Upward Pressure' on Oil Prices",
+        "source": "benzinga",
+        "symbol": "WEAT",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock,crude",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-09-10T03:53:40+00:00",
+        "headline": "Trump Says Iran War Will End 'Immediately After' the Midterms, Peter Schiff Calls It His 'Latest Lie': Economist Warns of 'Upward Pressure' on Oil Prices",
+        "source": "benzinga",
+        "symbol": "CORN",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock,crude",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-09-10T03:53:40+00:00",
+        "headline": "Trump Says Iran War Will End 'Immediately After' the Midterms, Peter Schiff Calls It His 'Latest Lie': Economist Warns of 'Upward Pressure' on Oil Prices",
+        "source": "benzinga",
+        "symbol": "UNG",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock,crude",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-09-10T03:53:40+00:00",
+        "headline": "Trump Says Iran War Will End 'Immediately After' the Midterms, Peter Schiff Calls It His 'Latest Lie': Economist Warns of 'Upward Pressure' on Oil Prices",
+        "source": "benzinga",
+        "symbol": "IAU",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock,crude",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-09-10T03:53:40+00:00",
+        "headline": "Trump Says Iran War Will End 'Immediately After' the Midterms, Peter Schiff Calls It His 'Latest Lie': Economist Warns of 'Upward Pressure' on Oil Prices",
+        "source": "benzinga",
+        "symbol": "XLE",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock,crude",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-09-10T03:53:40+00:00",
+        "headline": "Trump Says Iran War Will End 'Immediately After' the Midterms, Peter Schiff Calls It His 'Latest Lie': Economist Warns of 'Upward Pressure' on Oil Prices",
+        "source": "benzinga",
+        "symbol": "DBC",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock,crude",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-09-10T03:53:40+00:00",
+        "headline": "Trump Says Iran War Will End 'Immediately After' the Midterms, Peter Schiff Calls It His 'Latest Lie': Economist Warns of 'Upward Pressure' on Oil Prices",
+        "source": "benzinga",
+        "symbol": "GSG",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock,crude",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-09-09T17:04:58+00:00",
+        "headline": "Oil Tops $100, Meta and Cloudflare Jump On AI Breakthroughs: Stock Market Today",
+        "source": "benzinga",
+        "symbol": "XLE",
+        "match_type": "explicit",
+        "matched_themes": "geopolitical_supply_shock,crude",
+        "polarity": "bullish",
+        "polarity_score": 1.0
+      },
+      {
+        "published_at": "2026-09-09T17:04:58+00:00",
+        "headline": "Oil Tops $100, Meta and Cloudflare Jump On AI Breakthroughs: Stock Market Today",
+        "source": "benzinga",
+        "symbol": "WEAT",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock,crude",
+        "polarity": "bullish",
+        "polarity_score": 1.0
+      },
+      {
+        "published_at": "2026-09-09T17:04:58+00:00",
+        "headline": "Oil Tops $100, Meta and Cloudflare Jump On AI Breakthroughs: Stock Market Today",
+        "source": "benzinga",
+        "symbol": "CORN",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock,crude",
+        "polarity": "bullish",
+        "polarity_score": 1.0
+      },
+      {
+        "published_at": "2026-09-09T17:04:58+00:00",
+        "headline": "Oil Tops $100, Meta and Cloudflare Jump On AI Breakthroughs: Stock Market Today",
+        "source": "benzinga",
+        "symbol": "UNG",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock,crude",
+        "polarity": "bullish",
+        "polarity_score": 1.0
+      },
+      {
+        "published_at": "2026-09-09T17:04:58+00:00",
+        "headline": "Oil Tops $100, Meta and Cloudflare Jump On AI Breakthroughs: Stock Market Today",
+        "source": "benzinga",
+        "symbol": "BNO",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock,crude",
+        "polarity": "bullish",
+        "polarity_score": 1.0
+      },
+      {
+        "published_at": "2026-09-09T17:04:58+00:00",
+        "headline": "Oil Tops $100, Meta and Cloudflare Jump On AI Breakthroughs: Stock Market Today",
+        "source": "benzinga",
+        "symbol": "IAU",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock,crude",
+        "polarity": "bullish",
+        "polarity_score": 1.0
+      },
+      {
+        "published_at": "2026-09-09T17:04:58+00:00",
+        "headline": "Oil Tops $100, Meta and Cloudflare Jump On AI Breakthroughs: Stock Market Today",
+        "source": "benzinga",
+        "symbol": "DBC",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock,crude",
+        "polarity": "bullish",
+        "polarity_score": 1.0
+      },
+      {
+        "published_at": "2026-09-09T17:04:58+00:00",
+        "headline": "Oil Tops $100, Meta and Cloudflare Jump On AI Breakthroughs: Stock Market Today",
+        "source": "benzinga",
+        "symbol": "GSG",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock,crude",
+        "polarity": "bullish",
+        "polarity_score": 1.0
+      },
+      {
+        "published_at": "2026-09-09T14:19:30+00:00",
+        "headline": "Oil Hits $100 a Barrel: Will Trump \u2018TACO\u2019 Again?",
+        "source": "benzinga",
+        "symbol": "BNO",
+        "match_type": "explicit",
+        "matched_themes": "crude",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-09-09T14:19:30+00:00",
+        "headline": "Oil Hits $100 a Barrel: Will Trump \u2018TACO\u2019 Again?",
+        "source": "benzinga",
+        "symbol": "XLE",
+        "match_type": "theme",
+        "matched_themes": "crude",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-09-09T14:19:30+00:00",
+        "headline": "Oil Hits $100 a Barrel: Will Trump \u2018TACO\u2019 Again?",
+        "source": "benzinga",
+        "symbol": "DBC",
+        "match_type": "theme",
+        "matched_themes": "crude",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-09-09T14:19:30+00:00",
+        "headline": "Oil Hits $100 a Barrel: Will Trump \u2018TACO\u2019 Again?",
+        "source": "benzinga",
+        "symbol": "GSG",
+        "match_type": "theme",
+        "matched_themes": "crude",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-09-09T13:25:39+00:00",
+        "headline": "Oil Hits $100: Which Stocks And ETFs Win Or Lose?",
+        "source": "benzinga",
+        "symbol": "XLE",
+        "match_type": "explicit",
+        "matched_themes": "geopolitical_supply_shock",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-09-09T13:25:39+00:00",
+        "headline": "Oil Hits $100: Which Stocks And ETFs Win Or Lose?",
+        "source": "benzinga",
+        "symbol": "WEAT",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock",
         "polarity": "neutral",
         "polarity_score": 0.0
       }
     ],
-    "scored_n": 0,
-    "base_rate": null,
-    "accuracy_by_match_type": []
+    "scored_n": 57,
+    "base_rate": 68.4,
+    "accuracy_by_match_type": [
+      {
+        "match_type": "explicit",
+        "n": 1,
+        "accuracy": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0
+      },
+      {
+        "match_type": "theme",
+        "n": 7,
+        "accuracy": 85.7,
+        "ci_low": 59.8,
+        "ci_high": 100.0
+      }
+    ]
   }
 }
