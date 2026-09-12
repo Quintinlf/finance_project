@@ -22,6 +22,11 @@ from logic.calibration import (
 )
 from logic.sqlite_store import init_db, connect
 
+# These fixtures are hand-built samples of a few dozen rows, sized to make
+# one mechanical property obvious each. The production floor (MIN_SAMPLE)
+# is deliberately far higher and is asserted on its own below.
+_FIXTURE_MIN = 30
+
 
 def _seed_db(db_path: Path, pairs):
     """Write (claimed_prob, realized_up) pairs into decisions + component tables."""
@@ -82,7 +87,7 @@ class TestCalibrationTrainsOnRawClaims(unittest.TestCase):
                         (f"k{i}", ts, f"S{i}", 0.01 if up else -0.01),
                     )
 
-            curve = fit_calibration(db_path=db, out_path=out, min_sample=MIN_SAMPLE)
+            curve = fit_calibration(db_path=db, out_path=out, min_sample=_FIXTURE_MIN)
 
         self.assertIsNotNone(curve)
         # Trained on raw: the curve must separate 0.05 from 0.95. Had it
@@ -111,7 +116,7 @@ class TestFitCalibration(unittest.TestCase):
             db = Path(d) / "t.db"
             out = Path(d) / "calibration.json"
             _seed_db(db, pairs)
-            curve = fit_calibration(db_path=db, out_path=out, min_sample=MIN_SAMPLE)
+            curve = fit_calibration(db_path=db, out_path=out, min_sample=_FIXTURE_MIN)
             self.assertIsNotNone(curve)
             self.assertEqual(curve.n, 40)
             self.assertGreater(curve.apply(0.9), 0.7)
@@ -125,7 +130,7 @@ class TestFitCalibration(unittest.TestCase):
             out = Path(d) / "calibration.json"
             pairs = [(0.95, True)] * 34 + [(0.95, False)] * 16  # 68% true at claim=0.95
             _seed_db(db, pairs)
-            curve = fit_calibration(db_path=db, out_path=out, min_sample=MIN_SAMPLE)
+            curve = fit_calibration(db_path=db, out_path=out, min_sample=_FIXTURE_MIN)
             self.assertIsNotNone(curve)
             calibrated = curve.apply(0.95)
             self.assertLess(calibrated, 0.95)
@@ -140,7 +145,7 @@ class TestFitCalibration(unittest.TestCase):
             random.seed(0)
             pairs = [(p / 100.0, random.random() < (p / 100.0)) for p in range(1, 100)]
             _seed_db(db, pairs)
-            curve = fit_calibration(db_path=db, out_path=out, min_sample=MIN_SAMPLE)
+            curve = fit_calibration(db_path=db, out_path=out, min_sample=_FIXTURE_MIN)
             self.assertIsNotNone(curve)
             outs = [curve.apply(x / 100.0) for x in range(1, 100)]
             self.assertTrue(all(a <= b + 1e-9 for a, b in zip(outs, outs[1:])))
@@ -151,11 +156,51 @@ class TestFitCalibration(unittest.TestCase):
             out = Path(d) / "calibration.json"
             pairs = [(0.9, True)] * 30 + [(0.1, False)] * 30
             _seed_db(db, pairs)
-            fit_calibration(db_path=db, out_path=out, min_sample=MIN_SAMPLE)
+            fit_calibration(db_path=db, out_path=out, min_sample=_FIXTURE_MIN)
             reloaded = load_calibration(out)
             self.assertIsNotNone(reloaded)
             payload = json.loads(out.read_text(encoding="utf-8"))
             self.assertEqual(payload["n"], 60)
+
+
+class TestDegeneracyDetection(unittest.TestCase):
+    """The production curve on 2026-09-11 mapped every realistic input to
+    0.649. Applied to live signals that silently meant "approve every BUY,
+    reject every SELL" -- a policy nobody chose."""
+
+    def test_constant_curve_is_flagged(self):
+        curve = CalibrationCurve(fitted_at="x", n=249, x=[0.0, 1.0], y=[0.65, 0.65])
+        self.assertTrue(curve.is_degenerate())
+
+    def test_the_real_production_curve_is_flagged(self):
+        """Its nominal spread looks large (0.0 -> 0.649) because of one
+        breakpoint near zero, while every realistic input lands on 0.649."""
+        curve = CalibrationCurve(
+            fitted_at="2026-09-11T17:27:51+00:00", n=249,
+            x=[0.000286, 0.002768, 0.99999],
+            y=[0.0, 0.649194, 0.649194],
+        )
+        self.assertTrue(curve.is_degenerate())
+
+    def test_a_degenerate_curve_is_not_applied(self):
+        """fit_calibration leaves an old file in place when the sample later
+        falls below min_sample, so without this a bad curve applies forever."""
+        curve = CalibrationCurve(fitted_at="x", n=249, x=[0.0, 1.0], y=[0.649, 0.649])
+        sigs = [_signal(0.93), _signal(0.04, side="sell")]
+        apply_probability_calibration(sigs, curve=curve, verbose=False)
+        self.assertEqual(sigs[0].prob_profit, 0.93)   # untouched
+        self.assertEqual(sigs[1].prob_profit, 0.04)   # untouched
+        self.assertFalse(sigs[0].meta["calibration_applied"])
+        self.assertIn("degenerate", sigs[0].meta["calibration_skipped_reason"])
+
+    def test_an_informative_curve_is_not_flagged(self):
+        curve = CalibrationCurve(fitted_at="x", n=900, x=[0.0, 0.5, 1.0], y=[0.2, 0.5, 0.8])
+        self.assertFalse(curve.is_degenerate())
+
+    def test_min_sample_is_high_enough_for_isotonic(self):
+        """Isotonic will fit a step function through a few dozen noisy points;
+        30 was indefensibly low."""
+        self.assertGreaterEqual(MIN_SAMPLE, 500)
 
 
 class TestApplyProbabilityCalibration(unittest.TestCase):
@@ -167,11 +212,16 @@ class TestApplyProbabilityCalibration(unittest.TestCase):
         self.assertFalse(sigs[0].meta["calibration_applied"])
 
     def test_curve_overrides_prob_profit_and_keeps_raw_for_audit(self):
-        curve = CalibrationCurve(fitted_at="2026-08-21T00:00:00+00:00", n=78, x=[0.0, 1.0], y=[0.6, 0.6])
-        sigs = [_signal(0.98)]
+        # Informative (non-constant) curve: a flat one is refused, tested above.
+        curve = CalibrationCurve(
+            fitted_at="2026-08-21T00:00:00+00:00", n=900,
+            x=[0.0, 0.5, 1.0], y=[0.25, 0.5, 0.68],
+        )
+        sigs = [_signal(1.0)]
         apply_probability_calibration(sigs, curve=curve, verbose=False)
-        self.assertAlmostEqual(sigs[0].prob_profit, 0.6, places=4)
-        self.assertEqual(sigs[0].meta["raw_prob_profit"], 0.98)
+        # The real finding: a ~100% claim is pulled down toward 68%.
+        self.assertAlmostEqual(sigs[0].prob_profit, 0.68, places=4)
+        self.assertEqual(sigs[0].meta["raw_prob_profit"], 1.0)
         self.assertTrue(sigs[0].meta["calibration_applied"])
 
     def test_a_confident_sell_gets_correctly_downweighted(self):
@@ -179,12 +229,18 @@ class TestApplyProbabilityCalibration(unittest.TestCase):
         curve reflects a base-rate-dominated market, should stop looking like
         a near-certain trade."""
         # Curve says: regardless of the raw claim, empirical P(up) is ~0.75.
-        curve = CalibrationCurve(fitted_at="x", n=78, x=[0.0, 1.0], y=[0.75, 0.75])
+        curve = CalibrationCurve(
+            fitted_at="x", n=900, x=[0.0, 0.5, 1.0], y=[0.70, 0.75, 0.80],
+        )
         sig = _signal(prob_profit=0.05, side="sell")  # claimed 95% confident DOWN
         apply_probability_calibration([sig], curve=curve, verbose=False)
         # prob_profit (P(up)) is now 0.75; a SELL's directional confidence is
         # 1 - prob_profit = 0.25, correctly humbled from the raw 0.95 claim.
-        self.assertAlmostEqual(sig.prob_profit, 0.75, places=4)
+        # 0.05 interpolates to ~0.705 on this curve; the point is that a
+        # claimed 95%-confident DOWN call comes back as P(up) ~0.7, so the
+        # SELL's directional confidence collapses from 0.95 to ~0.3.
+        self.assertAlmostEqual(sig.prob_profit, 0.705, places=3)
+        self.assertLess(1.0 - sig.prob_profit, 0.35)
 
 
 if __name__ == "__main__":

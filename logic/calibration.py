@@ -37,7 +37,20 @@ CALIBRATION_PATH = Path("trade_logs") / "calibration.json"
 
 # Below this many matched (claim, outcome) pairs, isotonic regression is
 # curve-fitting noise. Raw probabilities pass through unchanged instead.
-MIN_SAMPLE = 30
+#
+# 30 was indefensibly low. Isotonic regression is non-parametric and will
+# happily fit a step function through a few dozen noisy points: the curve fit
+# on 249 live rows collapsed to a single step, mapping essentially every input
+# to a constant 0.649. Applied to live signals that silently meant "approve
+# every BUY, reject every SELL" -- a trading policy nobody chose, emerging from
+# an artifact. Several hundred observations is the minimum for this to mean
+# anything.
+MIN_SAMPLE = 500
+
+# A fitted curve whose output varies by less than this across its whole input
+# range is constant in every way that matters: the model's confidence no longer
+# influences the decision at all.
+DEGENERATE_SPREAD = 0.02
 
 
 @dataclass
@@ -55,6 +68,18 @@ class CalibrationCurve:
         import numpy as np
 
         return float(np.clip(np.interp(p, self.x, self.y), 0.0, 1.0))
+
+    def is_degenerate(self, tolerance: float = DEGENERATE_SPREAD) -> bool:
+        """True when the curve maps effectively everything to one value.
+
+        Measured over the *plausible* input range rather than the raw
+        breakpoints: a lone breakpoint near 0 can make the nominal spread look
+        large (0.0 to 0.649) while every realistic input still lands on the
+        same constant.
+        """
+        probe = [i / 20.0 for i in range(1, 20)]
+        outputs = [self.apply(p) for p in probe]
+        return (max(outputs) - min(outputs)) < tolerance
 
     def to_dict(self) -> dict:
         return {"fitted_at": self.fitted_at, "n": self.n, "x": self.x, "y": self.y}
@@ -150,6 +175,18 @@ def fit_calibration(
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(curve.to_dict(), indent=2), encoding="utf-8")
     logging.info("CALIBRATION: refit from %s matched prediction(s), saved to %s", curve.n, out_path)
+
+    if curve.is_degenerate():
+        constant = curve.apply(0.5)
+        logging.warning(
+            "CALIBRATION COLLAPSED TO A CONSTANT (%.3f): the models' confidence no "
+            "longer affects any decision. Downstream this means every BUY clears the "
+            "directional threshold and every SELL fails it -- a trading policy that "
+            "fell out of the fit rather than being chosen. Either the models carry no "
+            "signal (consistent with the horizon analysis) or the sample is still too "
+            "thin to fit.",
+            constant,
+        )
     return curve
 
 
@@ -187,6 +224,32 @@ def apply_probability_calibration(
                 signal.meta = {}
             signal.meta["raw_prob_profit"] = float(getattr(signal, "prob_profit", 0.0) or 0.0)
             signal.meta["calibration_applied"] = False
+        return signals
+
+    if curve.is_degenerate():
+        # NOT applied. A constant curve gives every symbol the same
+        # prob_profit, which downstream means "every BUY clears the threshold,
+        # every SELL fails it" -- a trading policy imposed by a fitting
+        # artifact rather than chosen. Raw claims are also imperfect
+        # (overconfident, per the measurements), but at least the logged reason
+        # then reflects what the model actually said.
+        #
+        # This also matters because fit_calibration leaves a previously-fitted
+        # file in place when the sample later falls below min_sample, so
+        # without this check a bad curve would keep applying indefinitely.
+        logging.warning(
+            "CALIBRATION DEGENERATE (constant %.3f, n=%s) — NOT applied. It would "
+            "make prob_profit identical for every symbol and silently reduce the "
+            "threshold filter to 'approve every buy, reject every sell'. Passing "
+            "raw probabilities through instead.",
+            curve.apply(0.5), curve.n,
+        )
+        for signal in signals:
+            if not hasattr(signal, "meta") or signal.meta is None:
+                signal.meta = {}
+            signal.meta["raw_prob_profit"] = float(getattr(signal, "prob_profit", 0.0) or 0.0)
+            signal.meta["calibration_applied"] = False
+            signal.meta["calibration_skipped_reason"] = "degenerate curve"
         return signals
 
     moved = 0
