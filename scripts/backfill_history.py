@@ -30,7 +30,7 @@ from __future__ import annotations
 import argparse
 import logging
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -50,17 +50,28 @@ from logic.universe import get_symbols  # noqa: E402
 
 
 def _load_history(symbols, years: float):
-    """Full daily history per symbol, fetched once and sliced per bar."""
-    import yfinance as yf
+    """Full daily history per symbol, fetched once and sliced per bar.
 
-    period = f"{max(1, int(years * 365) + 90)}d"
+    Routed through the price cache. The first backfill fetched this history
+    directly, and the scoring pass that followed was rate limited into
+    returning nothing for all 24 symbols -- 8,269 predictions went ungraded.
+    Sharing one cache between replay and scoring removes the duplicate traffic
+    that caused it.
+    """
+    from datetime import date
+
+    from logic.price_cache import RateLimited, get_history
+
+    start = date.today() - timedelta(days=int(years * 365) + 90)
     history = {}
     for symbol in symbols:
         try:
-            df = yf.Ticker(symbol).history(period=period, interval="1d")
+            df = get_history(symbol, start=start)
             if df is not None and not df.empty:
                 history[symbol] = df
                 logging.info("history %s: %s bars", symbol, len(df))
+        except RateLimited as exc:
+            logging.error("history %s RATE LIMITED (%s) — symbol skipped", symbol, exc)
         except Exception as exc:  # noqa: BLE001
             logging.warning("history %s failed (%s)", symbol, exc)
     return history
