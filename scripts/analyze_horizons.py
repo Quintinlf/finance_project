@@ -30,12 +30,13 @@ Two honest caveats, stated up front because they decide how to read the output:
 from __future__ import annotations
 
 import argparse
+import json
 import logging
 import math
 import sqlite3
 import sys
 from collections import defaultdict
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Dict, List, Optional, Sequence, Tuple
 
@@ -138,7 +139,7 @@ def _effective_n(n: int, horizon: int) -> float:
     return max(1.0, n / float(max(1, horizon)))
 
 
-def analyze(db_path, horizons: Sequence[int], scope_symbols=None) -> None:
+def analyze(db_path, horizons: Sequence[int], scope_symbols=None, out_path=None) -> dict:
     preds = load_predictions(db_path, scope_symbols)
     logging.info("Loaded %s predictions", len(preds))
 
@@ -199,6 +200,7 @@ def analyze(db_path, horizons: Sequence[int], scope_symbols=None) -> None:
           f"Bonferroni-corrected one;")
     print( "  a result clearing only the raw bar is noise, not a finding.")
     print()
+    results: List[dict] = []
     print(f"  {'component':<14}{'horizon':>8}{'n':>8}{'eff_n':>8}"
           f"{'acc':>8}{'vs base':>9}{'IC':>9}{'|IC| bar':>10}  verdict")
     print("  " + "-" * 86)
@@ -235,13 +237,39 @@ def analyze(db_path, horizons: Sequence[int], scope_symbols=None) -> None:
                   f"{p_hat * 100:>7.1f}%{(p_hat - base_rate) * 100:>+8.1f}pp"
                   f"{ic:>9.4f}{ic_bonf_bar:>10.4f}  {verdict}")
 
+            results.append({
+                "component": label, "horizon": h, "n": total,
+                "effective_n": round(eff_n), "accuracy": round(p_hat * 100, 1),
+                "base_rate": round(base_rate * 100, 1),
+                "vs_base": round((p_hat - base_rate) * 100, 1),
+                "ic": None if math.isnan(ic) else round(ic, 4),
+                "ic_threshold": round(ic_bonf_bar, 4),
+                "verdict": verdict,
+            })
+
     print()
+
+    payload = {
+        "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "n_tests": n_tests,
+        "base_rates": {
+            str(h): round(100.0 * sum(base[h]) / len(base[h]), 1)
+            for h in horizons if base[h]
+        },
+        "results": results,
+    }
+    if out_path:
+        Path(out_path).parent.mkdir(parents=True, exist_ok=True)
+        Path(out_path).write_text(json.dumps(payload, indent=2), encoding="utf-8")
+        print(f"  -> {out_path}")
+    return payload
 
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--horizons", default="1,5,10,20")
     ap.add_argument("--scope", default=None, help="limit to a universe scope")
+    ap.add_argument("--out", default="trade_logs/horizon_analysis.json")
     args = ap.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(message)s")
@@ -258,7 +286,7 @@ def main() -> None:
 
         scope_symbols = set(get_symbols(args.scope))
 
-    analyze(DEFAULT_DB_PATH, horizons, scope_symbols)
+    analyze(DEFAULT_DB_PATH, horizons, scope_symbols, out_path=args.out)
 
 
 if __name__ == "__main__":

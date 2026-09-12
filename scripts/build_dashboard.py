@@ -307,6 +307,22 @@ def load_component_accuracy() -> Dict[str, Any]:
     }
 
 
+def load_horizon_analysis() -> Dict[str, Any]:
+    """Forward-horizon test results, if scripts/analyze_horizons.py has run.
+
+    This is the single most decisive measurement in the project -- 20 tests
+    across 4 horizons, none surviving correction -- and it was living only in
+    terminal output.
+    """
+    path = TRADE_LOGS / "horizon_analysis.json"
+    if not path.exists():
+        return {}
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+
 def load_news_events(limit: int = 30) -> Dict[str, Any]:
     """Recent news-diffusion events, plus scored accuracy vs the base rate.
 
@@ -459,6 +475,7 @@ def main() -> None:
         "component_accuracy": _safe(load_component_accuracy, {}),
         "calibration": _safe(load_calibration_status, {}),
         "news": _safe(load_news_events, {}),
+        "horizons": _safe(load_horizon_analysis, {}),
     }
 
     OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -471,6 +488,7 @@ def main() -> None:
     print(f"  backtests     : {len(payload['backtests'])}")
     print(f"  scored preds  : {payload['component_accuracy'].get('base_n', 0)}")
     print(f"  news events   : {len(payload['news'].get('events', []))}")
+    print(f"  horizon tests : {len(payload['horizons'].get('results', []))}")
     cal = payload["calibration"]
     if cal.get("target_ready_date"):
         print(f"  calibration   : {cal.get('scored_n', 0)} scored, meaningful sample ~{cal['target_ready_date']}")

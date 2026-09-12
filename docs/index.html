@@ -167,6 +167,12 @@
   </section>
 
   <section>
+    <h2>Signal at any horizon? <span class="note" id="horizon-note"></span></h2>
+    <div class="body" id="horizon-summary"></div>
+    <div class="scroll" id="horizons"></div>
+  </section>
+
+  <section>
     <h2>Backtest reality check <span class="note">every window, not the best one</span></h2>
     <div class="scroll" id="backtests"></div>
   </section>
@@ -452,6 +458,47 @@ function renderNews(d){
   ], events, 'No news matched the universe in the last lookback window.');
 }
 
+/* The decisive measurement: does the signal work at ANY horizon, or only the
+   one we happened to pick? Shown with the corrected significance bar, because
+   20 tests guarantee roughly one false positive at p<0.05. */
+function renderHorizons(d){
+  const h = d.horizons || {};
+  const rows = h.results || [];
+  if(!rows.length){
+    $('horizons').innerHTML = '<div class="empty">Run <code>python scripts/analyze_horizons.py</code> to populate this.</div>';
+    return;
+  }
+  const survived = rows.filter(r => (r.verdict||'').startsWith('SURVIVES'));
+  const belowBase = rows.filter(r => r.vs_base < 0).length;
+
+  $('horizon-note').textContent = `${h.n_tests} tests · ${(h.generated_at||'').slice(0,10)}`;
+  $('horizon-summary').innerHTML = `
+    <div class="alert ${survived.length ? '' : 'crit'}" style="margin:0 0 12px">
+      <div>${survived.length ? '&#9432;' : '&#9888;'}</div><div>
+      <h3>${survived.length} of ${rows.length} tests survive multiple-comparison correction</h3>
+      <p>${belowBase} of ${rows.length} components finish <em>below</em> the base rate at their horizon.
+      Base rates: ${Object.entries(h.base_rates||{}).map(([k,v])=>`${k}d ${v}%`).join(' · ')} —
+      the rise with horizon is the market drifting up, not skill.</p>
+    </div>`;
+
+  $('horizons').innerHTML = table([
+    {label:'Component', get:r=>`<span class="sym">${esc(r.component)}</span>`},
+    {label:'Horizon', num:true, get:r=>`${r.horizon}d`},
+    {label:'N', num:true, get:r=>r.n},
+    // Overlapping windows: 15,067 rows carry ~753 independent observations.
+    {label:'Eff. N', num:true, get:r=>`<span class="muted">${r.effective_n}</span>`},
+    {label:'Acc', num:true, get:r=>`${r.accuracy}%`},
+    {label:'vs base', num:true, get:r=>`<span class="${r.vs_base>0?'up':'down'}">${r.vs_base>0?'+':''}${r.vs_base}pp</span>`},
+    {label:'IC', num:true, get:r=>`<span class="${(r.ic||0)<0?'down':'muted'}">${r.ic==null?'--':r.ic.toFixed(4)}</span>`},
+    {label:'|IC| bar', num:true, get:r=>`<span class="muted">${r.ic_threshold}</span>`},
+    {label:'Verdict', cls:'reason', get:r=>{
+      const v = r.verdict||'';
+      const c = v.startsWith('SURVIVES') ? 'up' : v.includes('noise') ? 'warn' : 'muted';
+      return `<span class="${c}">${esc(v)}</span>`;
+    }},
+  ], rows, '');
+}
+
 /* Real market charts, straight from TradingView, for whatever the bot holds
    or flagged today. */
 function renderTV(d){
@@ -498,7 +545,7 @@ fetch('data.json?t='+Date.now())
     $('stamp').textContent = 'built ' + (d.generated_at||'').replace('T',' ').replace('+00:00',' UTC');
     renderAlerts(d); renderStats(d); renderEquity(d);
     renderPositions(d); renderSignals(d); renderTrades(d);
-    renderAccuracy(d); renderCalibration(d); renderNews(d); renderBacktests(d); renderTV(d);
+    renderAccuracy(d); renderCalibration(d); renderHorizons(d); renderNews(d); renderBacktests(d); renderTV(d);
   })
   .catch(e=>{
     $('alerts').innerHTML = `<div class="alert crit"><div>&#9888;</div><div>
