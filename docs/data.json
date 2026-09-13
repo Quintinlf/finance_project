@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-11T17:28:06+00:00",
+  "generated_at": "2026-09-13T07:15:38+00:00",
   "equity_curve": [
     {
       "time": "2026-08-13",
@@ -126,6 +126,18 @@
       "value": 499.11,
       "exposure": 0.1221,
       "daily_return": -0.004607
+    },
+    {
+      "time": "2026-09-12",
+      "value": 499.43,
+      "exposure": 0.2013,
+      "daily_return": -0.003969
+    },
+    {
+      "time": "2026-09-13",
+      "value": 499.4,
+      "exposure": 0.2013,
+      "daily_return": 0.0
     }
   ],
   "trades": [
@@ -710,6 +722,97 @@
     "win_rate": 50.0
   },
   "decisions": [
+    {
+      "timestamp": "2026-09-12T20:05:44.535087",
+      "symbol": "CPER",
+      "signal_type": "buy",
+      "confidence": 0.75,
+      "prob_profit": 0.5197916666666664,
+      "action": "hold",
+      "reason": "Signal=BUY but already long 1.0 shares \u2192 hold",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-09-12T20:05:44.503085",
+      "symbol": "SLV",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5197916666666664,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-09-12T20:05:44.468691",
+      "symbol": "DBA",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5197342711996874,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-09-12T20:05:44.439982",
+      "symbol": "UNG",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.4834123222748815,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-09-11T19:44:27.274616",
+      "symbol": "CPER",
+      "signal_type": "buy",
+      "confidence": 0.75,
+      "prob_profit": 0.955030726156921,
+      "action": "hold",
+      "reason": "Signal=BUY but already long 1.0 shares \u2192 hold",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-09-11T19:44:27.215746",
+      "symbol": "WEAT",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.3454740815501469,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-09-11T19:44:27.149504",
+      "symbol": "UNG",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.26569032195784426,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
     {
       "timestamp": "2026-09-11T17:28:05.934476",
       "symbol": "DBB",
@@ -3218,97 +3321,6 @@
       "planned_quantity": null,
       "planned_entry_price": null,
       "error_message": null
-    },
-    {
-      "timestamp": "2026-08-21T14:27:36.403143",
-      "symbol": "PALL",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.49112967364729593,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-08-21T14:27:36.398092",
-      "symbol": "SLV",
-      "signal_type": "buy",
-      "confidence": 0.6375,
-      "prob_profit": 0.999998511210666,
-      "action": "rejected",
-      "reason": "Blocked: portfolio exposure limit reached",
-      "executed": 0,
-      "planned_quantity": 1.0,
-      "planned_entry_price": 63.02009963989258,
-      "error_message": "Blocked: portfolio exposure limit reached"
-    },
-    {
-      "timestamp": "2026-08-21T14:27:36.394038",
-      "symbol": "XLE",
-      "signal_type": "hold",
-      "confidence": 0.425,
-      "prob_profit": 0.5236456827319903,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-08-21T14:27:36.388396",
-      "symbol": "KOLD",
-      "signal_type": "buy",
-      "confidence": 0.75,
-      "prob_profit": 0.9999354412806114,
-      "action": "rejected",
-      "reason": "Blocked: portfolio exposure limit reached",
-      "executed": 0,
-      "planned_quantity": 1.0,
-      "planned_entry_price": 30.290000915527344,
-      "error_message": "Blocked: portfolio exposure limit reached"
-    },
-    {
-      "timestamp": "2026-08-21T14:27:36.384645",
-      "symbol": "DBA",
-      "signal_type": "hold",
-      "confidence": 0.425,
-      "prob_profit": 0.7900391102601227,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-08-21T14:27:36.381152",
-      "symbol": "CANE",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.5092202594252262,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-08-21T14:27:36.377492",
-      "symbol": "SOYB",
-      "signal_type": "hold",
-      "confidence": 0.425,
-      "prob_profit": 0.7036637528613284,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
     }
   ],
   "latest_run": {
@@ -3823,71 +3835,163 @@
     }
   ],
   "component_accuracy": {
-    "base_rate": 51.9,
-    "base_n": 22667,
+    "base_rate": 51.7,
+    "base_n": 24149,
     "components": [
       {
         "name": "Bollinger",
-        "n": 6361,
-        "accuracy": 49.7,
-        "ci_low": 48.5,
-        "ci_high": 50.9
+        "n": 6748,
+        "accuracy": 50.0,
+        "ci_low": 48.8,
+        "ci_high": 51.2
       },
       {
         "name": "Bayesian",
-        "n": 22667,
+        "n": 24149,
         "accuracy": 49.2,
         "ci_low": 48.6,
-        "ci_high": 49.9
+        "ci_high": 49.8
       },
       {
         "name": "Gaussian Process",
-        "n": 22667,
+        "n": 24149,
         "accuracy": 50.8,
         "ci_low": 50.2,
-        "ci_high": 51.5
+        "ci_high": 51.4
       },
       {
         "name": "RSI",
-        "n": 5501,
-        "accuracy": 51.0,
-        "ci_low": 49.7,
-        "ci_high": 52.3
+        "n": 5793,
+        "accuracy": 51.4,
+        "ci_low": 50.1,
+        "ci_high": 52.7
       },
       {
         "name": "Ensemble",
-        "n": 4275,
-        "accuracy": 50.7,
-        "ci_low": 49.2,
-        "ci_high": 52.2
+        "n": 4631,
+        "accuracy": 51.0,
+        "ci_low": 49.6,
+        "ci_high": 52.4
       }
     ]
   },
   "calibration": {
     "fitted": true,
-    "fitted_at": "2026-09-11T17:27:51+00:00",
-    "n": 249,
+    "fitted_at": "2026-09-13T07:15:26+00:00",
+    "n": 24147,
     "curve": [
       [
-        0.0002864583865482338,
+        2.4268068669548615e-13,
         0.0
       ],
       [
-        0.0027675274929044105,
-        0.6491935483870969
+        1.2718004953064526e-12,
+        0.4117647058823529
       ],
       [
-        0.9999999521390279,
-        0.6491935483870969
+        1.0793728601379199e-07,
+        0.4117647058823529
+      ],
+      [
+        1.473180205681255e-07,
+        0.4583333333333333
+      ],
+      [
+        3.627961963702374e-05,
+        0.4583333333333333
+      ],
+      [
+        3.7036393233595496e-05,
+        0.49115646258503404
+      ],
+      [
+        0.029684997998879234,
+        0.49115646258503404
+      ],
+      [
+        0.029788613746748526,
+        0.49217609013144187
+      ],
+      [
+        0.2859929085426113,
+        0.49217609013144187
+      ],
+      [
+        0.2860794636857479,
+        0.4975417895771876
+      ],
+      [
+        0.3314645967900248,
+        0.4975417895771876
+      ],
+      [
+        0.33149132922143265,
+        0.5149802148106277
+      ],
+      [
+        0.4722672091532012,
+        0.5149802148106277
+      ],
+      [
+        0.47229608251365635,
+        0.5198505371321811
+      ],
+      [
+        0.6350315870926211,
+        0.5198505371321811
+      ],
+      [
+        0.6351001712746975,
+        0.5238095238095238
+      ],
+      [
+        0.6358742303896174,
+        0.5238095238095238
+      ],
+      [
+        0.63594216582721,
+        0.5319148936170216
+      ],
+      [
+        0.6625434401325038,
+        0.5319148936170216
+      ],
+      [
+        0.6625600327912682,
+        0.5321008403361346
+      ],
+      [
+        0.9999999079908523,
+        0.5321008403361346
+      ],
+      [
+        0.999999926434373,
+        0.5555555555555556
+      ],
+      [
+        0.9999999881380154,
+        0.5555555555555556
+      ],
+      [
+        0.9999999901312604,
+        0.625
+      ],
+      [
+        0.9999999999960568,
+        0.625
+      ],
+      [
+        0.9999999999999878,
+        1.0
       ]
     ],
-    "scored_n": 22667,
-    "logged_n": 22746,
+    "scored_n": 24149,
+    "logged_n": 24193,
     "min_sample": 30,
     "target_sample": 300,
     "min_sample_met": true,
     "predictions_per_run_day": 24.2,
-    "target_ready_date": "2026-09-11"
+    "target_ready_date": "2026-09-13"
   },
   "news": {
     "events": [
@@ -4192,22 +4296,274 @@
         "polarity_score": 0.0
       }
     ],
-    "scored_n": 73,
-    "base_rate": 61.6,
+    "scored_n": 86,
+    "base_rate": 59.3,
     "accuracy_by_match_type": [
       {
         "match_type": "explicit",
-        "n": 1,
-        "accuracy": 0.0,
+        "n": 3,
+        "accuracy": 33.3,
         "ci_low": 0.0,
-        "ci_high": 0.0
+        "ci_high": 86.7
       },
       {
         "match_type": "theme",
-        "n": 7,
-        "accuracy": 85.7,
-        "ci_low": 59.8,
-        "ci_high": 100.0
+        "n": 18,
+        "accuracy": 55.6,
+        "ci_low": 32.6,
+        "ci_high": 78.5
+      }
+    ]
+  },
+  "horizons": {
+    "generated_at": "2026-09-13T07:15:32+00:00",
+    "n_tests": 20,
+    "base_rates": {
+      "1": 52.9,
+      "5": 56.0,
+      "10": 57.5,
+      "20": 58.8
+    },
+    "results": [
+      {
+        "component": "Bollinger",
+        "horizon": 1,
+        "n": 2800,
+        "effective_n": 2800,
+        "accuracy": 49.1,
+        "base_rate": 52.9,
+        "vs_base": -3.8,
+        "ic": 0.0019,
+        "ic_threshold": 0.0499,
+        "verdict": "nothing"
+      },
+      {
+        "component": "Bollinger",
+        "horizon": 5,
+        "n": 2752,
+        "effective_n": 550,
+        "accuracy": 50.5,
+        "base_rate": 56.0,
+        "vs_base": -5.5,
+        "ic": 0.0252,
+        "ic_threshold": 0.1125,
+        "verdict": "nothing"
+      },
+      {
+        "component": "Bollinger",
+        "horizon": 10,
+        "n": 2702,
+        "effective_n": 270,
+        "accuracy": 48.9,
+        "base_rate": 57.5,
+        "vs_base": -8.5,
+        "ic": 0.0109,
+        "ic_threshold": 0.1605,
+        "verdict": "nothing"
+      },
+      {
+        "component": "Bollinger",
+        "horizon": 20,
+        "n": 2606,
+        "effective_n": 130,
+        "accuracy": 50.0,
+        "base_rate": 58.8,
+        "vs_base": -8.7,
+        "ic": 0.0111,
+        "ic_threshold": 0.2317,
+        "verdict": "nothing"
+      },
+      {
+        "component": "Bayesian",
+        "horizon": 1,
+        "n": 9869,
+        "effective_n": 9869,
+        "accuracy": 50.1,
+        "base_rate": 52.9,
+        "vs_base": -2.8,
+        "ic": -0.0046,
+        "ic_threshold": 0.0499,
+        "verdict": "nothing"
+      },
+      {
+        "component": "Bayesian",
+        "horizon": 5,
+        "n": 9711,
+        "effective_n": 1942,
+        "accuracy": 48.7,
+        "base_rate": 56.0,
+        "vs_base": -7.2,
+        "ic": -0.0295,
+        "ic_threshold": 0.1125,
+        "verdict": "nothing"
+      },
+      {
+        "component": "Bayesian",
+        "horizon": 10,
+        "n": 9537,
+        "effective_n": 954,
+        "accuracy": 49.3,
+        "base_rate": 57.5,
+        "vs_base": -8.1,
+        "ic": -0.0066,
+        "ic_threshold": 0.1605,
+        "verdict": "nothing"
+      },
+      {
+        "component": "Bayesian",
+        "horizon": 20,
+        "n": 9152,
+        "effective_n": 458,
+        "accuracy": 50.3,
+        "base_rate": 58.8,
+        "vs_base": -8.5,
+        "ic": 0.0087,
+        "ic_threshold": 0.2317,
+        "verdict": "nothing"
+      },
+      {
+        "component": "GaussianProc",
+        "horizon": 1,
+        "n": 9869,
+        "effective_n": 9869,
+        "accuracy": 51.0,
+        "base_rate": 52.9,
+        "vs_base": -1.9,
+        "ic": 0.0136,
+        "ic_threshold": 0.0499,
+        "verdict": "nothing"
+      },
+      {
+        "component": "GaussianProc",
+        "horizon": 5,
+        "n": 9711,
+        "effective_n": 1942,
+        "accuracy": 50.9,
+        "base_rate": 56.0,
+        "vs_base": -5.0,
+        "ic": -0.0047,
+        "ic_threshold": 0.1125,
+        "verdict": "nothing"
+      },
+      {
+        "component": "GaussianProc",
+        "horizon": 10,
+        "n": 9537,
+        "effective_n": 954,
+        "accuracy": 50.4,
+        "base_rate": 57.5,
+        "vs_base": -7.1,
+        "ic": -0.0155,
+        "ic_threshold": 0.1605,
+        "verdict": "nothing"
+      },
+      {
+        "component": "GaussianProc",
+        "horizon": 20,
+        "n": 9152,
+        "effective_n": 458,
+        "accuracy": 51.1,
+        "base_rate": 58.8,
+        "vs_base": -7.7,
+        "ic": -0.0175,
+        "ic_threshold": 0.2317,
+        "verdict": "nothing"
+      },
+      {
+        "component": "RSI",
+        "horizon": 1,
+        "n": 2482,
+        "effective_n": 2482,
+        "accuracy": 49.8,
+        "base_rate": 52.9,
+        "vs_base": -3.1,
+        "ic": 0.0099,
+        "ic_threshold": 0.0499,
+        "verdict": "nothing"
+      },
+      {
+        "component": "RSI",
+        "horizon": 5,
+        "n": 2422,
+        "effective_n": 484,
+        "accuracy": 50.4,
+        "base_rate": 56.0,
+        "vs_base": -5.6,
+        "ic": 0.0135,
+        "ic_threshold": 0.1125,
+        "verdict": "nothing"
+      },
+      {
+        "component": "RSI",
+        "horizon": 10,
+        "n": 2348,
+        "effective_n": 235,
+        "accuracy": 50.2,
+        "base_rate": 57.5,
+        "vs_base": -7.3,
+        "ic": 0.0154,
+        "ic_threshold": 0.1605,
+        "verdict": "nothing"
+      },
+      {
+        "component": "RSI",
+        "horizon": 20,
+        "n": 2226,
+        "effective_n": 111,
+        "accuracy": 53.8,
+        "base_rate": 58.8,
+        "vs_base": -5.0,
+        "ic": 0.0323,
+        "ic_threshold": 0.2317,
+        "verdict": "nothing"
+      },
+      {
+        "component": "ENSEMBLE",
+        "horizon": 1,
+        "n": 1916,
+        "effective_n": 1916,
+        "accuracy": 51.1,
+        "base_rate": 52.9,
+        "vs_base": -1.7,
+        "ic": 0.0164,
+        "ic_threshold": 0.0499,
+        "verdict": "nothing"
+      },
+      {
+        "component": "ENSEMBLE",
+        "horizon": 5,
+        "n": 1873,
+        "effective_n": 375,
+        "accuracy": 50.3,
+        "base_rate": 56.0,
+        "vs_base": -5.7,
+        "ic": 0.0154,
+        "ic_threshold": 0.1125,
+        "verdict": "nothing"
+      },
+      {
+        "component": "ENSEMBLE",
+        "horizon": 10,
+        "n": 1818,
+        "effective_n": 182,
+        "accuracy": 48.5,
+        "base_rate": 57.5,
+        "vs_base": -8.9,
+        "ic": -0.0028,
+        "ic_threshold": 0.1605,
+        "verdict": "nothing"
+      },
+      {
+        "component": "ENSEMBLE",
+        "horizon": 20,
+        "n": 1722,
+        "effective_n": 86,
+        "accuracy": 51.4,
+        "base_rate": 58.8,
+        "vs_base": -7.4,
+        "ic": 0.0031,
+        "ic_threshold": 0.2317,
+        "verdict": "nothing"
       }
     ]
   }
