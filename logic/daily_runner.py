@@ -38,6 +38,7 @@ from logic.options_engine import (
 from logic.portfolio_state import get_position_states
 from logic.position_reconciler import reconcile_position_exits
 from logic.risk_config import load_risk_config
+from logic.volatility_sizing import apply_volatility_sizing
 from logic.signal_engine import (
     filter_signals_by_thresholds,
     generate_signals,
@@ -135,6 +136,7 @@ def run_daily_trading_cycle(
     enable_inverse_routing: bool = True,
     enforce_edge_gate: bool = False,
     edge_margin: float = 1.5,
+    enforce_vol_sizing: bool = True,
 ) -> None:
     logging.info("START DAILY TRADING RUN")
 
@@ -373,6 +375,12 @@ def run_daily_trading_cycle(
     # model's raw and demonstrably overconfident claim.
     apply_probability_calibration(all_signals, verbose=True)
     apply_news_context(all_signals, news_events)
+    # Volatility-scaled sizing. The one lever the measurements actually
+    # support: forward vol is ~50% predictable here (r=0.708) while the best
+    # direction signal was IC 0.021 and survived nothing. This creates no
+    # edge -- it makes position risk consistent across instruments instead of
+    # position dollars. Clamped so it can only shrink a position.
+    apply_volatility_sizing(all_signals, enforce=enforce_vol_sizing, verbose=True)
     decision_signals = filter_signals_by_thresholds(
         all_signals,
         min_confidence=config.min_confidence,

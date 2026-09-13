@@ -443,7 +443,14 @@ def build_order_plan(
         
         # Apply minimax confidence multiplier (hybrid mode)
         mm = calculate_minimax_multiplier(signal)
-        quantity = int(base_qty * mm)
+        # Volatility scaling. A flat 2%-of-equity position is four times the
+        # risk in UNG (58% vol) that it is in DBA (13%); this makes "one
+        # position" mean one quantity of risk rather than one of dollars.
+        # Clamped at 1.0 upstream, so it can only ever reduce size.
+        vol_scale = float(signal.meta.get('vol_scale', 1.0) or 1.0)
+        if not signal.meta.get('vol_sizing_enforced', False):
+            vol_scale = 1.0
+        quantity = int(base_qty * mm * vol_scale)
         if max_shares < 1:
             quantity = 0
         elif quantity < 1:
@@ -451,8 +458,9 @@ def build_order_plan(
         else:
             quantity = min(quantity, max_shares)
         
-        # Store minimax multiplier in signal metadata for audit trail
+        # Store multipliers in signal metadata for audit trail
         signal.meta['minimax_applied_multiplier'] = mm
+        signal.meta['vol_applied_multiplier'] = vol_scale
         
         # Calculate TP/SL for long position
         tp_price = round(current_price * (1 + effective_tp_pct), 2)

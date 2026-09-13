@@ -1,0 +1,232 @@
+{
+  "generated_at": "2026-09-13T03:03:57+00:00",
+  "lookback": 20,
+  "horizon": 20,
+  "pooled": {
+    "n": 32432,
+    "effective_n": 1622,
+    "r": 0.7082,
+    "r2": 0.5016,
+    "spearman": 0.7503,
+    "significance_bar": 0.0487,
+    "direction_ic_for_comparison": 0.021
+  },
+  "per_symbol": [
+    {
+      "symbol": "AAPL",
+      "n": 1204,
+      "effective_n": 60,
+      "r": 0.3927,
+      "r2": 0.1542,
+      "spearman": 0.4533,
+      "mean_vol": 0.2615
+    },
+    {
+      "symbol": "MSFT",
+      "n": 1204,
+      "effective_n": 60,
+      "r": 0.3993,
+      "r2": 0.1595,
+      "spearman": 0.4978,
+      "mean_vol": 0.2628
+    },
+    {
+      "symbol": "AMZN",
+      "n": 1204,
+      "effective_n": 60,
+      "r": 0.2696,
+      "r2": 0.0727,
+      "spearman": 0.2539,
+      "mean_vol": 0.3427
+    },
+    {
+      "symbol": "NVDA",
+      "n": 1204,
+      "effective_n": 60,
+      "r": 0.3525,
+      "r2": 0.1243,
+      "spearman": 0.463,
+      "mean_vol": 0.4959
+    },
+    {
+      "symbol": "GOOGL",
+      "n": 1204,
+      "effective_n": 60,
+      "r": 0.1636,
+      "r2": 0.0268,
+      "spearman": 0.1904,
+      "mean_vol": 0.3109
+    },
+    {
+      "symbol": "WEAT",
+      "n": 1476,
+      "effective_n": 74,
+      "r": 0.434,
+      "r2": 0.1883,
+      "spearman": 0.4728,
+      "mean_vol": 0.2717
+    },
+    {
+      "symbol": "CORN",
+      "n": 1476,
+      "effective_n": 74,
+      "r": 0.5802,
+      "r2": 0.3366,
+      "spearman": 0.5,
+      "mean_vol": 0.1925
+    },
+    {
+      "symbol": "SOYB",
+      "n": 1476,
+      "effective_n": 74,
+      "r": 0.4109,
+      "r2": 0.1688,
+      "spearman": 0.3755,
+      "mean_vol": 0.1709
+    },
+    {
+      "symbol": "CANE",
+      "n": 1476,
+      "effective_n": 74,
+      "r": 0.1083,
+      "r2": 0.0117,
+      "spearman": 0.0501,
+      "mean_vol": 0.2054
+    },
+    {
+      "symbol": "DBA",
+      "n": 1476,
+      "effective_n": 74,
+      "r": 0.5006,
+      "r2": 0.2506,
+      "spearman": 0.5147,
+      "mean_vol": 0.1319
+    },
+    {
+      "symbol": "UNG",
+      "n": 1476,
+      "effective_n": 74,
+      "r": 0.5087,
+      "r2": 0.2588,
+      "spearman": 0.5927,
+      "mean_vol": 0.5847
+    },
+    {
+      "symbol": "BNO",
+      "n": 1204,
+      "effective_n": 60,
+      "r": 0.4966,
+      "r2": 0.2466,
+      "spearman": 0.5264,
+      "mean_vol": 0.3376
+    },
+    {
+      "symbol": "USO",
+      "n": 1204,
+      "effective_n": 60,
+      "r": 0.4821,
+      "r2": 0.2324,
+      "spearman": 0.4955,
+      "mean_vol": 0.3468
+    },
+    {
+      "symbol": "UGA",
+      "n": 1204,
+      "effective_n": 60,
+      "r": 0.4129,
+      "r2": 0.1705,
+      "spearman": 0.496,
+      "mean_vol": 0.3282
+    },
+    {
+      "symbol": "XLE",
+      "n": 1476,
+      "effective_n": 74,
+      "r": 0.5298,
+      "r2": 0.2807,
+      "spearman": 0.7199,
+      "mean_vol": 0.2606
+    },
+    {
+      "symbol": "SLV",
+      "n": 1476,
+      "effective_n": 74,
+      "r": 0.6324,
+      "r2": 0.3999,
+      "spearman": 0.5827,
+      "mean_vol": 0.3222
+    },
+    {
+      "symbol": "IAU",
+      "n": 1476,
+      "effective_n": 74,
+      "r": 0.4882,
+      "r2": 0.2383,
+      "spearman": 0.4066,
+      "mean_vol": 0.1648
+    },
+    {
+      "symbol": "GLD",
+      "n": 1204,
+      "effective_n": 60,
+      "r": 0.4916,
+      "r2": 0.2417,
+      "spearman": 0.4615,
+      "mean_vol": 0.1695
+    },
+    {
+      "symbol": "PPLT",
+      "n": 1476,
+      "effective_n": 74,
+      "r": 0.6604,
+      "r2": 0.4361,
+      "spearman": 0.5639,
+      "mean_vol": 0.3028
+    },
+    {
+      "symbol": "PALL",
+      "n": 1476,
+      "effective_n": 74,
+      "r": 0.4259,
+      "r2": 0.1814,
+      "spearman": 0.4442,
+      "mean_vol": 0.3923
+    },
+    {
+      "symbol": "CPER",
+      "n": 1476,
+      "effective_n": 74,
+      "r": 0.1565,
+      "r2": 0.0245,
+      "spearman": 0.2875,
+      "mean_vol": 0.2511
+    },
+    {
+      "symbol": "DBB",
+      "n": 1476,
+      "effective_n": 74,
+      "r": 0.3655,
+      "r2": 0.1336,
+      "spearman": 0.422,
+      "mean_vol": 0.1912
+    },
+    {
+      "symbol": "DBC",
+      "n": 1204,
+      "effective_n": 60,
+      "r": 0.3596,
+      "r2": 0.1293,
+      "spearman": 0.4871,
+      "mean_vol": 0.1797
+    },
+    {
+      "symbol": "GSG",
+      "n": 1204,
+      "effective_n": 60,
+      "r": 0.4311,
+      "r2": 0.1858,
+      "spearman": 0.5111,
+      "mean_vol": 0.2107
+    }
+  ]
+}
