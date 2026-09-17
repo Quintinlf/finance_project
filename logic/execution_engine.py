@@ -1041,6 +1041,8 @@ def run_trading_cycle(
                 action=current_entry.action,
                 price_at_signal=current_signal.meta.get('current_price'),
                 component_snapshot=component_snapshot,
+                raw_prob_profit=current_signal.meta.get('raw_prob_profit'),
+                forecast_magnitude=current_signal.meta.get('ensemble_forecast_return'),
                 next_day_return=None,  # backfilled asynchronously when next-day data is available
                 db_path=performance_db_path,
             )

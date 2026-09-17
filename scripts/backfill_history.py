@@ -160,6 +160,10 @@ def replay(
                 raw_prob_profit=float(sig.prob_profit)
                 if sig.prob_profit is not None
                 else None,
+                # Size of the predicted move. Break-even accuracy is 60.2% on a
+                # 0.6% forecast and 52.0% on a 3% one; without this the two are
+                # indistinguishable in the data.
+                forecast_magnitude=sig.meta.get("ensemble_forecast_return"),
                 db_path=db_path,
             )
             written += 1

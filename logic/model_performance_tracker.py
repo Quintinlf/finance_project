@@ -248,6 +248,15 @@ def init_model_performance_tracker(db_path: Union[str, "PathLike[str]"] = DEFAUL
             conn.execute(
                 "ALTER TABLE model_component_performance ADD COLUMN raw_prob_profit REAL"
             )
+        # The size of the predicted move, not just its direction. Costs are a
+        # fixed 12-45bp toll per round trip, so a 0.6% prediction and a 3%
+        # prediction are completely different bets even at identical accuracy:
+        # break-even needs 60.2% on the former and 52.0% on the latter. Without
+        # this column that distinction cannot be measured at all.
+        if "forecast_magnitude" not in perf_cols:
+            conn.execute(
+                "ALTER TABLE model_component_performance ADD COLUMN forecast_magnitude REAL"
+            )
 
         conn.execute(
             "CREATE INDEX IF NOT EXISTS idx_model_component_perf_symbol_time "
@@ -269,6 +278,7 @@ def log_model_decision(
     component_snapshot: Optional[ComponentSnapshot],
     next_day_return: Optional[float] = None,
     raw_prob_profit: Optional[float] = None,
+    forecast_magnitude: Optional[float] = None,
     db_path: Union[str, "PathLike[str]"] = DEFAULT_DB_PATH,
 ) -> None:
     """Insert one component-level decision row.
@@ -314,6 +324,7 @@ def log_model_decision(
         float(component_snapshot.get("agreement_score_weighted", 1.0) or 1.0),
         1 if (bb_direction in ACTIONABLE_DIRECTIONS and ens_direction in ACTIONABLE_DIRECTIONS and bb_direction != ens_direction) else 0,
         float(raw_prob_profit) if raw_prob_profit is not None else None,
+        abs(float(forecast_magnitude)) if forecast_magnitude is not None else None,
     )
 
     try:
@@ -329,8 +340,8 @@ def log_model_decision(
                   rsi_direction, rsi_confidence, rsi_value, rsi_correct,
                   ensemble_direction, ensemble_confidence, ensemble_correct,
                   agreement_score_raw, agreement_score_weighted, bb_disagrees_with_ensemble,
-                  raw_prob_profit
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                  raw_prob_profit, forecast_magnitude
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """.strip(),
                 payload,
             )
