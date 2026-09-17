@@ -47,6 +47,35 @@ class RateLimited(RuntimeError):
     """Fetching failed because the data provider throttled us."""
 
 
+def _normalize_index(df):
+    """Force a uniform, tz-naive DatetimeIndex of calendar dates.
+
+    Daily bars come back from yfinance tz-aware in market time, so a series
+    spanning a DST boundary carries mixed UTC offsets (-04:00 and -05:00).
+    Round-tripping that through CSV makes pandas give up and parse the index as
+    `object` dtype -- an array of Timestamps rather than a DatetimeIndex. Label
+    slicing (`df.loc[:"2024-06-03"]`) then raises
+    "'<' not supported between instances of 'Timestamp' and 'str'", which is
+    exactly how the Tier 0 replay died.
+
+    Converting through UTC first unifies the offsets; dropping the zone and
+    normalizing to midnight preserves the calendar date every caller actually
+    uses, so nothing downstream shifts by a day.
+    """
+    import pandas as pd
+
+    if df is None or len(df) == 0:
+        return df
+    try:
+        idx = pd.to_datetime(df.index, utc=True, errors="coerce")
+        df = df[idx.notna()]
+        df.index = pd.DatetimeIndex(idx[idx.notna()]).tz_localize(None).normalize()
+        return df.sort_index()
+    except Exception as exc:  # noqa: BLE001
+        logging.warning("Could not normalize price index (%s); leaving as-is.", exc)
+        return df
+
+
 def _cache_path(symbol: str) -> Path:
     return CACHE_DIR / f"{symbol.upper()}.csv"
 
@@ -70,8 +99,8 @@ def load_cached(symbol: str, max_age_days: int = MAX_CACHE_AGE_DAYS):
     try:
         import pandas as pd
 
-        df = pd.read_csv(path, index_col=0, parse_dates=True)
-        return df if not df.empty else None
+        df = _normalize_index(pd.read_csv(path, index_col=0))
+        return df if df is not None and not df.empty else None
     except Exception as exc:  # noqa: BLE001
         logging.warning("Could not read price cache for %s (%s).", symbol, exc)
         return None
@@ -160,5 +189,6 @@ def get_history(
 
     df = fetch_with_retry(symbol, period=f"{span_days}d")
     if df is not None and not df.empty:
+        df = _normalize_index(df)
         save_cached(symbol, df)
     return df

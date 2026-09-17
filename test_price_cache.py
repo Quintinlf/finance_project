@@ -69,6 +69,56 @@ class TestCacheRoundTrip(unittest.TestCase):
             self.assertIsNotNone(load_cached("WEAT", max_age_days=60))
 
 
+class TestIndexNormalization(unittest.TestCase):
+    """Regression: this broke the Tier 0 replay outright.
+
+    Daily bars are tz-aware in market time, so a series crossing a DST boundary
+    carries mixed offsets (-04:00 and -05:00). Round-tripping through CSV makes
+    pandas parse the index as `object` dtype, and label slicing then raises
+    "'<' not supported between instances of 'Timestamp' and 'str'".
+    """
+
+    def _dst_crossing_frame(self):
+        idx = pd.to_datetime([
+            "2021-10-01 00:00:00-04:00",  # EDT
+            "2021-11-05 00:00:00-04:00",  # EDT
+            "2021-12-01 00:00:00-05:00",  # EST -- different offset
+        ])
+        return pd.DataFrame({"Close": [10.0, 11.0, 12.0]}, index=idx)
+
+    def test_mixed_offsets_become_a_real_datetimeindex(self):
+        with _CacheDir():
+            save_cached("DST", self._dst_crossing_frame())
+            back = load_cached("DST")
+        self.assertIsInstance(back.index, pd.DatetimeIndex)
+        self.assertEqual(back.index.dtype, "datetime64[ns]")
+
+    def test_label_slicing_works_after_round_trip(self):
+        """The exact operation the replay does every bar."""
+        with _CacheDir():
+            save_cached("DST", self._dst_crossing_frame())
+            back = load_cached("DST")
+            sliced = back.loc[:"2021-11-05"]  # must not raise
+        self.assertEqual(len(sliced), 2)
+
+    def test_calendar_dates_are_preserved_not_shifted(self):
+        """Converting through UTC must not move a bar to the previous/next day."""
+        with _CacheDir():
+            save_cached("DST", self._dst_crossing_frame())
+            back = load_cached("DST")
+        self.assertEqual(
+            [d.date().isoformat() for d in back.index],
+            ["2021-10-01", "2021-11-05", "2021-12-01"],
+        )
+
+    def test_index_comes_back_sorted(self):
+        with _CacheDir():
+            idx = pd.to_datetime(["2021-12-01 00:00:00-05:00", "2021-10-01 00:00:00-04:00"])
+            save_cached("UNSORTED", pd.DataFrame({"Close": [12.0, 10.0]}, index=idx))
+            back = load_cached("UNSORTED")
+        self.assertTrue(back.index.is_monotonic_increasing)
+
+
 class TestRetry(unittest.TestCase):
     def test_retries_through_a_transient_rate_limit(self):
         calls = {"n": 0}
