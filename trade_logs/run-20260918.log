@@ -1,0 +1,487 @@
+2026-09-18 17:25:12,584 | WARNING | EOS FINANCE DOMAINS UNAVAILABLE (ImportError: eos checkout not found at /home/runner/work/finance_project/mcp_server. Set EOS_ROOT to the mcp_server directory to enable the finance domains.). Running on reduced built-in logic only -- this is NOT the configuration backtests are validated under. Set EOS_ROOT to the mcp_server directory to restore it.
+2026-09-18 17:25:12,862 | INFO | Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Non-scalable fonts are not supported
+2026-09-18 17:25:12,880 | INFO | generated new fontManager
+2026-09-18 17:25:13,083 | INFO | START DAILY TRADING RUN
+2026-09-18 17:25:13,083 | INFO | DATE/TIME: 2026-09-18T13:25:13.083191-04:00
+2026-09-18 17:25:13,613 | INFO | ACCOUNT: equity=$499.07 (source=broker_live) | cash=$389.81 | exposure=21.9%
+2026-09-18 17:25:13,664 | INFO | FILL RECONCILE: 19 fills -> 8 round trips, realized P&L $-0.58 (4W/4L, 50.0% win rate), 4 lots still open, 8 rows written
+2026-09-18 17:25:13,664 | INFO |   TSLA     1.00 sh  2026-03-24 -> 2026-07-23  $379.74 -> $337.00  P&L $-42.74 (-11.26%, 120d)
+2026-09-18 17:25:13,664 | INFO |   BAC      1.00 sh  2026-03-24 -> 2026-09-09  $47.38 -> $62.79  P&L $+15.41 (+32.52%, 169d)
+2026-09-18 17:25:13,664 | INFO |   BAC      1.00 sh  2026-03-24 -> 2026-09-11  $47.38 -> $62.54  P&L $+15.16 (+32.00%, 171d)
+2026-09-18 17:25:13,664 | INFO |   CORN     1.00 sh  2026-09-09 -> 2026-09-11  $19.91 -> $19.89  P&L $-0.02 (-0.10%, 1d)
+2026-09-18 17:25:13,664 | INFO |   KOLD     1.00 sh  2026-09-15 -> 2026-09-15  $28.63 -> $28.34  P&L $-0.29 (-1.01%, 0d)
+2026-09-18 17:25:13,664 | INFO |   CPER     1.00 sh  2026-09-11 -> 2026-09-17  $39.27 -> $39.89  P&L $+0.62 (+1.58%, 6d)
+2026-09-18 17:25:13,664 | INFO |   BNO      1.00 sh  2026-08-13 -> 2026-09-17  $49.60 -> $61.30  P&L $+11.70 (+23.59%, 35d)
+2026-09-18 17:25:13,664 | INFO |   KOLD     1.00 sh  2026-09-16 -> 2026-09-18  $29.39 -> $28.97  P&L $-0.42 (-1.43%, 1d)
+2026-09-18 17:25:13,664 | INFO |   OPEN DBC      1.00 sh @ $33.27 since 2026-09-16
+2026-09-18 17:25:13,664 | INFO |   OPEN GSG      1.00 sh @ $36.72 since 2026-09-16
+2026-09-18 17:25:13,664 | INFO |   OPEN PPLT     1.00 sh @ $16.17 since 2026-09-17
+2026-09-18 17:25:13,664 | INFO |   OPEN PALL     1.00 sh @ $23.36 since 2026-09-17
+2026-09-18 17:25:13,689 | INFO | CURRENTLY HELD: DBC, GSG, PALL, PPLT
+2026-09-18 17:25:13,690 | INFO | Failed to create TzCache, reason: Error creating TzCache folder: '/home/runner/.cache/py-yfinance' reason: [Errno 17] File exists: '/home/runner/.cache/py-yfinance'. TzCache will not be used. Tip: You can direct cache to use a different location with 'set_tz_cache_location(mylocation)'
+2026-09-18 17:25:15,014 | INFO | UNIVERSE SCREEN: scope=all | 16/24 affordable at $99.81/position (20% of $499.07 equity)
+  OK UNG        $10.42  up to 9 share(s) at $10.42
+  OK CANE       $11.07  up to 9 share(s) at $11.07
+  OK PPLT       $16.34  up to 6 share(s) at $16.34
+  OK CORN       $19.72  up to 5 share(s) at $19.72
+  OK PALL       $23.72  up to 4 share(s) at $23.72
+  OK DBB        $25.83  up to 3 share(s) at $25.83
+  OK WEAT       $25.86  up to 3 share(s) at $25.86
+  OK SOYB       $27.67  up to 3 share(s) at $27.67
+  OK DBA        $28.14  up to 3 share(s) at $28.14
+  OK DBC        $32.93  up to 3 share(s) at $32.93
+  OK GSG        $36.27  up to 2 share(s) at $36.27
+  OK CPER       $40.17  up to 2 share(s) at $40.17
+  OK SLV        $60.21  up to 1 share(s) at $60.21
+  OK BNO        $60.58  up to 1 share(s) at $60.58
+  OK XLE        $64.35  up to 1 share(s) at $64.35
+  OK IAU        $82.40  up to 1 share(s) at $82.40
+  -- UGA       $144.14  1 share costs $144.14 but the cap is $99.81 (20% of $499.07)
+  -- USO       $153.96  1 share costs $153.96 but the cap is $99.81 (20% of $499.07)
+  -- NVDA      $219.98  1 share costs $219.98 but the cap is $99.81 (20% of $499.07)
+  -- AMZN      $253.20  1 share costs $253.20 but the cap is $99.81 (20% of $499.07)
+  -- AAPL      $335.39  1 share costs $335.39 but the cap is $99.81 (20% of $499.07)
+  -- GOOGL     $349.41  1 share costs $349.41 but the cap is $99.81 (20% of $499.07)
+  -- GLD       $401.92  1 share costs $401.92 but the cap is $99.81 (20% of $499.07)
+  -- MSFT      $494.35  1 share costs $494.35 but the cap is $99.81 (20% of $499.07)
+2026-09-18 17:25:15,014 | INFO | TRADING UNIVERSE (16): WEAT, CORN, SOYB, CANE, DBA, UNG, BNO, XLE, SLV, IAU, PPLT, PALL, CPER, DBB, DBC, GSG
+2026-09-18 17:25:15,110 | INFO | EXIT RECONCILE | DBC | ALREADY_PROTECTED | open protective sell order exists
+2026-09-18 17:25:15,110 | INFO | EXIT RECONCILE | GSG | ALREADY_PROTECTED | open protective sell order exists
+2026-09-18 17:25:15,110 | INFO | EXIT RECONCILE | PALL | ATTACHED | GTC trailing exit attached qty=1 (trail 2.0%)
+2026-09-18 17:25:15,110 | INFO | EXIT RECONCILE | PPLT | ATTACHED | GTC trailing exit attached qty=1 (trail 2.0%)
+2026-09-18 17:25:15,110 | INFO | EXIT RECONCILE SUMMARY: 4 positions checked, 2 exits attached
+2026-09-18 17:25:15,289 | INFO | scored AAPL: 1 row(s)
+2026-09-18 17:25:15,392 | INFO | scored MSFT: 1 row(s)
+2026-09-18 17:25:15,474 | INFO | scored AMZN: 1 row(s)
+2026-09-18 17:25:15,577 | INFO | scored NVDA: 1 row(s)
+2026-09-18 17:25:15,693 | INFO | scored GOOGL: 1 row(s)
+2026-09-18 17:25:15,833 | INFO | scored WEAT: 1 row(s)
+2026-09-18 17:25:15,994 | INFO | scored CORN: 1 row(s)
+2026-09-18 17:25:16,104 | INFO | scored SOYB: 1 row(s)
+2026-09-18 17:25:16,331 | INFO | scored CANE: 1 row(s)
+2026-09-18 17:25:16,450 | INFO | scored DBA: 1 row(s)
+2026-09-18 17:25:16,509 | INFO | scored UNG: 1 row(s)
+2026-09-18 17:25:16,615 | INFO | scored BNO: 1 row(s)
+2026-09-18 17:25:16,723 | INFO | scored USO: 1 row(s)
+2026-09-18 17:25:16,859 | INFO | scored UGA: 1 row(s)
+2026-09-18 17:25:17,011 | INFO | scored XLE: 1 row(s)
+2026-09-18 17:25:17,067 | INFO | scored SLV: 1 row(s)
+2026-09-18 17:25:17,150 | INFO | scored IAU: 1 row(s)
+2026-09-18 17:25:17,210 | INFO | scored GLD: 1 row(s)
+2026-09-18 17:25:17,329 | INFO | scored PPLT: 1 row(s)
+2026-09-18 17:25:17,431 | INFO | scored PALL: 1 row(s)
+2026-09-18 17:25:17,565 | INFO | scored CPER: 1 row(s)
+2026-09-18 17:25:17,639 | INFO | scored DBB: 1 row(s)
+2026-09-18 17:25:17,825 | INFO | scored DBC: 1 row(s)
+2026-09-18 17:25:17,961 | INFO | scored GSG: 1 row(s)
+2026-09-18 17:25:17,962 | INFO | MODEL SCORING: 24 prediction(s) graded against realized returns
+2026-09-18 17:25:17,989 | INFO | COMPONENT ACCURACY (all history):
+  base rate: the market rose on 51.7% of 24237 scored observations — beat this, not 50%
+  component         n     acc            95% CI  verdict
+  --------------------------------------------------------------
+  Bollinger      6739   49.9%   [ 48.8%,  51.1%]  indistinguishable from a coin flip
+  Bayesian      24237   49.2%   [ 48.6%,  49.8%]  WORSE than chance
+  GaussianProc  24237   50.8%   [ 50.2%,  51.4%]  beats 50% but NOT the 51.7% base rate
+  RSI            5827   51.4%   [ 50.1%,  52.7%]  beats 50% but NOT the 51.7% base rate
+  ENSEMBLE       4628   50.9%   [ 49.4%,  52.3%]  indistinguishable from a coin flip
+2026-09-18 17:25:18,339 | INFO | CALIBRATION: refit from 24228 matched prediction(s), saved to trade_logs/calibration.json
+2026-09-18 17:25:20,342 | INFO | NEWS SCORING: 27 event(s) graded against realized returns
+2026-09-18 17:25:20,343 | INFO | NEWS DIFFUSION ACCURACY (all history):
+  base rate: the market rose on 49.7% of 155 scored news-linked observations
+  match_type    n     acc            95% CI  verdict
+  ----------------------------------------------------------
+  explicit     11    9.1%   [  0.0%,  26.1%]  WORSE than chance
+  theme        49   40.8%   [ 27.1%,  54.6%]  indistinguishable from chance
+2026-09-18 17:25:20,435 | INFO | NEWS DIFFUSION: 9 event(s) across 11 symbol(s)
+2026-09-18 17:25:20,435 | INFO | NEWS EVENT | symbol=XLE | match=explicit | polarity=neutral (0.00) | themes=- | Bitcoin Tops $80,000, S&P 500 Slips as Yields Reclaim 5%: Stock Market Today
+2026-09-18 17:25:20,435 | INFO | NEWS EVENT | symbol=XLE | match=explicit | polarity=bullish (1.00) | themes=- | Exxon Sees Power Demand Exploding 65% By 2050
+2026-09-18 17:25:20,435 | INFO | NEWS EVENT | symbol=UNG | match=explicit | polarity=bullish (1.00) | themes=- | Exxon Sees Power Demand Exploding 65% By 2050
+2026-09-18 17:25:20,435 | INFO | NEWS EVENT | symbol=XLE | match=explicit | polarity=neutral (0.00) | themes=- | Leading And Lagging Sectors For September 18, 2026
+2026-09-18 17:25:20,435 | INFO | NEWS EVENT | symbol=BNO | match=explicit | polarity=neutral (0.00) | themes=geopolitical_supply_shock,inflation_hedge | Meet the New Boss, Same as The Old Boss’: James Thorne Says Kevin Warsh Failed His First Fed Test After Rate Hike, Warns
+2026-09-18 17:25:20,435 | INFO | NEWS EVENT | symbol=WEAT | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock,inflation_hedge | Meet the New Boss, Same as The Old Boss’: James Thorne Says Kevin Warsh Failed His First Fed Test After Rate Hike, Warns
+2026-09-18 17:25:20,435 | INFO | NEWS EVENT | symbol=CORN | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock,inflation_hedge | Meet the New Boss, Same as The Old Boss’: James Thorne Says Kevin Warsh Failed His First Fed Test After Rate Hike, Warns
+2026-09-18 17:25:20,435 | INFO | NEWS EVENT | symbol=UNG | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock,inflation_hedge | Meet the New Boss, Same as The Old Boss’: James Thorne Says Kevin Warsh Failed His First Fed Test After Rate Hike, Warns
+2026-09-18 17:25:20,435 | INFO | NEWS EVENT | symbol=IAU | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock,inflation_hedge | Meet the New Boss, Same as The Old Boss’: James Thorne Says Kevin Warsh Failed His First Fed Test After Rate Hike, Warns
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=DBA | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock,inflation_hedge | Meet the New Boss, Same as The Old Boss’: James Thorne Says Kevin Warsh Failed His First Fed Test After Rate Hike, Warns
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=SLV | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock,inflation_hedge | Meet the New Boss, Same as The Old Boss’: James Thorne Says Kevin Warsh Failed His First Fed Test After Rate Hike, Warns
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=PPLT | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock,inflation_hedge | Meet the New Boss, Same as The Old Boss’: James Thorne Says Kevin Warsh Failed His First Fed Test After Rate Hike, Warns
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=DBC | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock,inflation_hedge | Meet the New Boss, Same as The Old Boss’: James Thorne Says Kevin Warsh Failed His First Fed Test After Rate Hike, Warns
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=GSG | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock,inflation_hedge | Meet the New Boss, Same as The Old Boss’: James Thorne Says Kevin Warsh Failed His First Fed Test After Rate Hike, Warns
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=XLE | match=explicit | polarity=bullish (1.00) | themes=geopolitical_supply_shock | $105 Oil Is Quietly Engineering Its Own Demise
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=BNO | match=explicit | polarity=bullish (1.00) | themes=geopolitical_supply_shock | $105 Oil Is Quietly Engineering Its Own Demise
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=WEAT | match=theme | polarity=bullish (1.00) | themes=geopolitical_supply_shock | $105 Oil Is Quietly Engineering Its Own Demise
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=CORN | match=theme | polarity=bullish (1.00) | themes=geopolitical_supply_shock | $105 Oil Is Quietly Engineering Its Own Demise
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=UNG | match=theme | polarity=bullish (1.00) | themes=geopolitical_supply_shock | $105 Oil Is Quietly Engineering Its Own Demise
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=IAU | match=theme | polarity=bullish (1.00) | themes=geopolitical_supply_shock | $105 Oil Is Quietly Engineering Its Own Demise
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=XLE | match=explicit | polarity=bullish (1.00) | themes=inflation_hedge | Nasdaq 100 Rallies as Oil Slides, Yields Retreat: Stock Market Today
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=DBA | match=theme | polarity=bullish (1.00) | themes=inflation_hedge | Nasdaq 100 Rallies as Oil Slides, Yields Retreat: Stock Market Today
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=SLV | match=theme | polarity=bullish (1.00) | themes=inflation_hedge | Nasdaq 100 Rallies as Oil Slides, Yields Retreat: Stock Market Today
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=IAU | match=theme | polarity=bullish (1.00) | themes=inflation_hedge | Nasdaq 100 Rallies as Oil Slides, Yields Retreat: Stock Market Today
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=PPLT | match=theme | polarity=bullish (1.00) | themes=inflation_hedge | Nasdaq 100 Rallies as Oil Slides, Yields Retreat: Stock Market Today
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=DBC | match=theme | polarity=bullish (1.00) | themes=inflation_hedge | Nasdaq 100 Rallies as Oil Slides, Yields Retreat: Stock Market Today
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=GSG | match=theme | polarity=bullish (1.00) | themes=inflation_hedge | Nasdaq 100 Rallies as Oil Slides, Yields Retreat: Stock Market Today
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=XLE | match=explicit | polarity=neutral (0.00) | themes=- | Leading And Lagging Sectors For September 17, 2026
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=XLE | match=explicit | polarity=neutral (0.00) | themes=crude,inflation_hedge | Fed Rate Hike Is Back: 4 ETFs That Could Benefit From Higher Rates, Sticky Inflation
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=BNO | match=theme | polarity=neutral (0.00) | themes=crude,inflation_hedge | Fed Rate Hike Is Back: 4 ETFs That Could Benefit From Higher Rates, Sticky Inflation
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=DBC | match=theme | polarity=neutral (0.00) | themes=crude,inflation_hedge | Fed Rate Hike Is Back: 4 ETFs That Could Benefit From Higher Rates, Sticky Inflation
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=GSG | match=theme | polarity=neutral (0.00) | themes=crude,inflation_hedge | Fed Rate Hike Is Back: 4 ETFs That Could Benefit From Higher Rates, Sticky Inflation
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=DBA | match=theme | polarity=neutral (0.00) | themes=crude,inflation_hedge | Fed Rate Hike Is Back: 4 ETFs That Could Benefit From Higher Rates, Sticky Inflation
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=SLV | match=theme | polarity=neutral (0.00) | themes=crude,inflation_hedge | Fed Rate Hike Is Back: 4 ETFs That Could Benefit From Higher Rates, Sticky Inflation
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=IAU | match=theme | polarity=neutral (0.00) | themes=crude,inflation_hedge | Fed Rate Hike Is Back: 4 ETFs That Could Benefit From Higher Rates, Sticky Inflation
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=PPLT | match=theme | polarity=neutral (0.00) | themes=crude,inflation_hedge | Fed Rate Hike Is Back: 4 ETFs That Could Benefit From Higher Rates, Sticky Inflation
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=XLE | match=explicit | polarity=neutral (0.00) | themes=geopolitical_supply_shock,inflation_hedge | Stocks Sink, 10-Year Yield Reclaims 5% as Warsh Delivers His Hawkish Show
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=WEAT | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock,inflation_hedge | Stocks Sink, 10-Year Yield Reclaims 5% as Warsh Delivers His Hawkish Show
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=CORN | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock,inflation_hedge | Stocks Sink, 10-Year Yield Reclaims 5% as Warsh Delivers His Hawkish Show
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=UNG | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock,inflation_hedge | Stocks Sink, 10-Year Yield Reclaims 5% as Warsh Delivers His Hawkish Show
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=BNO | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock,inflation_hedge | Stocks Sink, 10-Year Yield Reclaims 5% as Warsh Delivers His Hawkish Show
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=IAU | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock,inflation_hedge | Stocks Sink, 10-Year Yield Reclaims 5% as Warsh Delivers His Hawkish Show
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=DBA | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock,inflation_hedge | Stocks Sink, 10-Year Yield Reclaims 5% as Warsh Delivers His Hawkish Show
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=SLV | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock,inflation_hedge | Stocks Sink, 10-Year Yield Reclaims 5% as Warsh Delivers His Hawkish Show
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=PPLT | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock,inflation_hedge | Stocks Sink, 10-Year Yield Reclaims 5% as Warsh Delivers His Hawkish Show
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=DBC | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock,inflation_hedge | Stocks Sink, 10-Year Yield Reclaims 5% as Warsh Delivers His Hawkish Show
+2026-09-18 17:25:20,436 | INFO | NEWS EVENT | symbol=GSG | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock,inflation_hedge | Stocks Sink, 10-Year Yield Reclaims 5% as Warsh Delivers His Hawkish Show
+2026-09-18 17:25:20,438 | INFO | NEWS DIFFUSION: 20 new event(s) persisted for scoring
+2026-09-18 17:25:20,439 | INFO | Generating signals...
+YF.download() has changed argument auto_adjust default to True
+
+🔵 Running Bayesian Linear Regression for WEAT...
+🟠 Running Gaussian Process for WEAT...
+
+📊 WEAT - Unified Forecast Summary (2026-09-18)
+======================================================================
+🔵 Bayesian Forecast: -0.0096 ± 0.2020
+🟠 GP Forecast:       -0.0044 ± 0.0072
+🟢 Ensemble Forecast: -0.0044 ± 0.0104
+📈 RSI Signal:        HOLD (RSI: 53.2)
+📊 BB Signal:         HOLD (Z-Score: -0.99)
+🎯 Final Signal:      HOLD (Confidence: 50.0%)
+💰 Recommendation:    HOLD
+
+💰 Next-Day Closing Price Predictions:
+   Current Close:    $25.86
+   Bayesian:         $25.61 ($20.39 - $30.84)
+   GP:               $25.75 ($25.56 - $25.93)
+   Ensemble:         $25.75 ($25.48 - $26.01)
+
+🔵 Running Bayesian Linear Regression for CORN...
+🟠 Running Gaussian Process for CORN...
+
+📊 CORN - Unified Forecast Summary (2026-09-18)
+======================================================================
+🔵 Bayesian Forecast: -0.0028 ± 0.2017
+🟠 GP Forecast:       0.0009 ± 0.0031
+🟢 Ensemble Forecast: 0.0009 ± 0.0048
+📈 RSI Signal:        HOLD (RSI: 61.8)
+📊 BB Signal:         HOLD (Z-Score: -0.53)
+🎯 Final Signal:      HOLD (Confidence: 50.0%)
+💰 Recommendation:    HOLD
+
+💰 Next-Day Closing Price Predictions:
+   Current Close:    $19.72
+   Bayesian:         $19.66 ($15.69 - $23.64)
+   GP:               $19.74 ($19.68 - $19.80)
+   Ensemble:         $19.74 ($19.64 - $19.83)
+
+🔵 Running Bayesian Linear Regression for SOYB...
+🟠 Running Gaussian Process for SOYB...
+
+📊 SOYB - Unified Forecast Summary (2026-09-18)
+======================================================================
+🔵 Bayesian Forecast: 0.0004 ± 0.2016
+🟠 GP Forecast:       0.0022 ± 0.0057
+🟢 Ensemble Forecast: 0.0022 ± 0.0083
+📈 RSI Signal:        HOLD (RSI: 57.2)
+📊 BB Signal:         HOLD (Z-Score: 0.44)
+🎯 Final Signal:      HOLD (Confidence: 50.0%)
+💰 Recommendation:    HOLD
+
+💰 Next-Day Closing Price Predictions:
+   Current Close:    $27.67
+   Bayesian:         $27.68 ($22.10 - $33.26)
+   GP:               $27.73 ($27.57 - $27.89)
+   Ensemble:         $27.73 ($27.50 - $27.96)
+
+🔵 Running Bayesian Linear Regression for CANE...
+🟠 Running Gaussian Process for CANE...
+
+📊 CANE - Unified Forecast Summary (2026-09-18)
+======================================================================
+🔵 Bayesian Forecast: -0.0054 ± 0.2023
+🟠 GP Forecast:       0.0029 ± 0.0066
+🟢 Ensemble Forecast: 0.0029 ± 0.0096
+📈 RSI Signal:        HOLD (RSI: 43.2)
+📊 BB Signal:         BUY (Z-Score: -1.53)
+🎯 Final Signal:      HOLD (Confidence: 50.0%)
+💰 Recommendation:    HOLD
+
+💰 Next-Day Closing Price Predictions:
+   Current Close:    $11.07
+   Bayesian:         $11.01 ($8.77 - $13.26)
+   GP:               $11.11 ($11.03 - $11.18)
+   Ensemble:         $11.11 ($11.00 - $11.21)
+
+🔵 Running Bayesian Linear Regression for DBA...
+🟠 Running Gaussian Process for DBA...
+
+📊 DBA - Unified Forecast Summary (2026-09-18)
+======================================================================
+🔵 Bayesian Forecast: -0.0069 ± 0.2036
+🟠 GP Forecast:       -0.0025 ± 0.0066
+🟢 Ensemble Forecast: -0.0025 ± 0.0096
+📈 RSI Signal:        HOLD (RSI: 37.2)
+📊 BB Signal:         BUY (Z-Score: -1.82)
+🎯 Final Signal:      HOLD (Confidence: 50.0%)
+💰 Recommendation:    HOLD
+
+💰 Next-Day Closing Price Predictions:
+   Current Close:    $28.14
+   Bayesian:         $27.94 ($22.21 - $33.67)
+   GP:               $28.06 ($27.88 - $28.25)
+   Ensemble:         $28.06 ($27.79 - $28.33)
+
+🔵 Running Bayesian Linear Regression for UNG...
+🟠 Running Gaussian Process for UNG...
+
+📊 UNG - Unified Forecast Summary (2026-09-18)
+======================================================================
+🔵 Bayesian Forecast: 0.0076 ± 0.2011
+🟠 GP Forecast:       0.0050 ± 0.0047
+🟢 Ensemble Forecast: 0.0050 ± 0.0069
+📈 RSI Signal:        HOLD (RSI: 44.7)
+📊 BB Signal:         HOLD (Z-Score: 0.27)
+🎯 Final Signal:      HOLD (Confidence: 50.0%)
+💰 Recommendation:    HOLD
+
+💰 Next-Day Closing Price Predictions:
+   Current Close:    $10.42
+   Bayesian:         $10.50 ($8.40 - $12.59)
+   GP:               $10.47 ($10.42 - $10.52)
+   Ensemble:         $10.47 ($10.40 - $10.54)
+
+🔵 Running Bayesian Linear Regression for BNO...
+🟠 Running Gaussian Process for BNO...
+
+📊 BNO - Unified Forecast Summary (2026-09-18)
+======================================================================
+🔵 Bayesian Forecast: 0.0158 ± 0.2022
+🟠 GP Forecast:       -0.0027 ± 0.0089
+🟢 Ensemble Forecast: -0.0026 ± 0.0129
+📈 RSI Signal:        HOLD (RSI: 57.8)
+📊 BB Signal:         HOLD (Z-Score: 0.83)
+🎯 Final Signal:      HOLD (Confidence: 50.0%)
+💰 Recommendation:    HOLD
+
+💰 Next-Day Closing Price Predictions:
+   Current Close:    $60.58
+   Bayesian:         $61.54 ($49.29 - $73.79)
+   GP:               $60.42 ($59.88 - $60.96)
+   Ensemble:         $60.42 ($59.64 - $61.20)
+
+🔵 Running Bayesian Linear Regression for XLE...
+🟠 Running Gaussian Process for XLE...
+
+📊 XLE - Unified Forecast Summary (2026-09-18)
+======================================================================
+🔵 Bayesian Forecast: 0.0019 ± 0.2018
+🟠 GP Forecast:       0.0037 ± 0.0054
+🟢 Ensemble Forecast: 0.0037 ± 0.0079
+📈 RSI Signal:        HOLD (RSI: 47.2)
+📊 BB Signal:         HOLD (Z-Score: 0.22)
+🎯 Final Signal:      HOLD (Confidence: 50.0%)
+💰 Recommendation:    HOLD
+
+💰 Next-Day Closing Price Predictions:
+   Current Close:    $64.35
+   Bayesian:         $64.47 ($51.49 - $77.45)
+   GP:               $64.58 ($64.24 - $64.93)
+   Ensemble:         $64.58 ($64.07 - $65.09)
+
+🔵 Running Bayesian Linear Regression for SLV...
+🟠 Running Gaussian Process for SLV...
+
+📊 SLV - Unified Forecast Summary (2026-09-18)
+======================================================================
+🔵 Bayesian Forecast: -0.0027 ± 0.2006
+🟠 GP Forecast:       0.0011 ± 0.0050
+🟢 Ensemble Forecast: 0.0011 ± 0.0073
+📈 RSI Signal:        BUY (RSI: 25.6)
+📊 BB Signal:         HOLD (Z-Score: 0.22)
+🎯 Final Signal:      HOLD (Confidence: 50.0%)
+💰 Recommendation:    HOLD
+
+💰 Next-Day Closing Price Predictions:
+   Current Close:    $60.19
+   Bayesian:         $60.03 ($47.95 - $72.10)
+   GP:               $60.26 ($59.96 - $60.56)
+   Ensemble:         $60.26 ($59.81 - $60.70)
+
+🔵 Running Bayesian Linear Regression for IAU...
+🟠 Running Gaussian Process for IAU...
+
+📊 IAU - Unified Forecast Summary (2026-09-18)
+======================================================================
+🔵 Bayesian Forecast: -0.0036 ± 0.2009
+🟠 GP Forecast:       0.0035 ± 0.0045
+🟢 Ensemble Forecast: 0.0035 ± 0.0066
+📈 RSI Signal:        BUY (RSI: 26.5)
+📊 BB Signal:         HOLD (Z-Score: -0.40)
+🎯 Final Signal:      HOLD (Confidence: 50.0%)
+💰 Recommendation:    HOLD
+
+💰 Next-Day Closing Price Predictions:
+   Current Close:    $82.40
+   Bayesian:         $82.10 ($65.55 - $98.65)
+   GP:               $82.69 ($82.32 - $83.06)
+   Ensemble:         $82.69 ($82.14 - $83.23)
+
+🔵 Running Bayesian Linear Regression for PPLT...
+🟠 Running Gaussian Process for PPLT...
+
+📊 PPLT - Unified Forecast Summary (2026-09-18)
+======================================================================
+🔵 Bayesian Forecast: -0.0038 ± 0.2005
+🟠 GP Forecast:       0.0038 ± 0.0068
+🟢 Ensemble Forecast: 0.0038 ± 0.0099
+📈 RSI Signal:        BUY (RSI: 23.7)
+📊 BB Signal:         HOLD (Z-Score: -0.13)
+🎯 Final Signal:      HOLD (Confidence: 50.0%)
+💰 Recommendation:    HOLD
+
+💰 Next-Day Closing Price Predictions:
+   Current Close:    $16.34
+   Bayesian:         $16.28 ($13.01 - $19.56)
+   GP:               $16.41 ($16.30 - $16.52)
+   Ensemble:         $16.41 ($16.25 - $16.57)
+
+🔵 Running Bayesian Linear Regression for PALL...
+🟠 Running Gaussian Process for PALL...
+
+📊 PALL - Unified Forecast Summary (2026-09-18)
+======================================================================
+🔵 Bayesian Forecast: -0.0075 ± 0.2008
+🟠 GP Forecast:       0.0053 ± 0.0087
+🟢 Ensemble Forecast: 0.0053 ± 0.0125
+📈 RSI Signal:        BUY (RSI: 23.6)
+📊 BB Signal:         HOLD (Z-Score: -0.64)
+🎯 Final Signal:      HOLD (Confidence: 50.0%)
+💰 Recommendation:    HOLD
+
+💰 Next-Day Closing Price Predictions:
+   Current Close:    $23.71
+   Bayesian:         $23.53 ($18.77 - $28.29)
+   GP:               $23.84 ($23.63 - $24.04)
+   Ensemble:         $23.84 ($23.54 - $24.13)
+
+🔵 Running Bayesian Linear Regression for CPER...
+🟠 Running Gaussian Process for CPER...
+
+📊 CPER - Unified Forecast Summary (2026-09-18)
+======================================================================
+🔵 Bayesian Forecast: 0.0021 ± 0.2012
+🟠 GP Forecast:       -0.0022 ± 0.0071
+🟢 Ensemble Forecast: -0.0022 ± 0.0102
+📈 RSI Signal:        HOLD (RSI: 35.1)
+📊 BB Signal:         HOLD (Z-Score: 0.63)
+🎯 Final Signal:      HOLD (Confidence: 50.0%)
+💰 Recommendation:    HOLD
+
+💰 Next-Day Closing Price Predictions:
+   Current Close:    $40.17
+   Bayesian:         $40.25 ($32.17 - $48.33)
+   GP:               $40.07 ($39.79 - $40.36)
+   Ensemble:         $40.08 ($39.66 - $40.49)
+
+🔵 Running Bayesian Linear Regression for DBB...
+🟠 Running Gaussian Process for DBB...
+
+📊 DBB - Unified Forecast Summary (2026-09-18)
+======================================================================
+🔵 Bayesian Forecast: 0.0024 ± 0.2009
+🟠 GP Forecast:       -0.0017 ± 0.0062
+🟢 Ensemble Forecast: -0.0017 ± 0.0090
+📈 RSI Signal:        HOLD (RSI: 43.2)
+📊 BB Signal:         HOLD (Z-Score: 0.84)
+🎯 Final Signal:      HOLD (Confidence: 50.0%)
+💰 Recommendation:    HOLD
+
+💰 Next-Day Closing Price Predictions:
+   Current Close:    $25.83
+   Bayesian:         $25.89 ($20.70 - $31.08)
+   GP:               $25.78 ($25.62 - $25.94)
+   Ensemble:         $25.78 ($25.55 - $26.01)
+
+🔵 Running Bayesian Linear Regression for DBC...
+🟠 Running Gaussian Process for DBC...
+
+📊 DBC - Unified Forecast Summary (2026-09-18)
+======================================================================
+🔵 Bayesian Forecast: 0.0034 ± 0.2013
+🟠 GP Forecast:       0.0035 ± 0.0052
+🟢 Ensemble Forecast: 0.0035 ± 0.0076
+📈 RSI Signal:        HOLD (RSI: 49.1)
+📊 BB Signal:         HOLD (Z-Score: 0.78)
+🎯 Final Signal:      HOLD (Confidence: 50.0%)
+💰 Recommendation:    HOLD
+
+💰 Next-Day Closing Price Predictions:
+   Current Close:    $32.93
+   Bayesian:         $33.04 ($26.41 - $39.67)
+   GP:               $33.05 ($32.88 - $33.22)
+   Ensemble:         $33.05 ($32.80 - $33.29)
+
+🔵 Running Bayesian Linear Regression for GSG...
+🟠 Running Gaussian Process for GSG...
+
+📊 GSG - Unified Forecast Summary (2026-09-18)
+======================================================================
+🔵 Bayesian Forecast: 0.0051 ± 0.2014
+🟠 GP Forecast:       0.0006 ± 0.0049
+🟢 Ensemble Forecast: 0.0006 ± 0.0072
+📈 RSI Signal:        HOLD (RSI: 67.5)
+📊 BB Signal:         HOLD (Z-Score: 0.85)
+🎯 Final Signal:      HOLD (Confidence: 50.0%)
+💰 Recommendation:    HOLD
+
+💰 Next-Day Closing Price Predictions:
+   Current Close:    $36.27
+   Bayesian:         $36.45 ($29.15 - $43.76)
+   GP:               $36.29 ($36.11 - $36.47)
+   Ensemble:         $36.29 ($36.03 - $36.55)
+2026-09-18 17:25:27,792 | INFO | CALIBRATION APPLIED: 16 signal(s), fit on n=24228 (fitted 2026-09-18T17:25:18+00:00) — 15 moved by >5pp
+2026-09-18 17:25:27,793 | INFO | SIGNAL FILTER | symbol=WEAT | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.4924 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-09-18 17:25:27,793 | INFO | SIGNAL FILTER | symbol=CORN | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5255 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-09-18 17:25:27,793 | INFO | SIGNAL FILTER | symbol=SOYB | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5322 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-09-18 17:25:27,793 | INFO | SIGNAL FILTER | symbol=CANE | original=HOLD | normalized=HOLD | confidence=0.4250 | prob_profit=0.5322 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-09-18 17:25:27,793 | INFO | SIGNAL FILTER | symbol=DBA | original=HOLD | normalized=HOLD | confidence=0.4250 | prob_profit=0.4956 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-09-18 17:25:27,793 | INFO | SIGNAL FILTER | symbol=UNG | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5322 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-09-18 17:25:27,793 | INFO | SIGNAL FILTER | symbol=BNO | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5155 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-09-18 17:25:27,793 | INFO | SIGNAL FILTER | symbol=XLE | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5322 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-09-18 17:25:27,793 | INFO | SIGNAL FILTER | symbol=SLV | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5208 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-09-18 17:25:27,793 | INFO | SIGNAL FILTER | symbol=IAU | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5322 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-09-18 17:25:27,793 | INFO | SIGNAL FILTER | symbol=PPLT | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5322 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-09-18 17:25:27,793 | INFO | SIGNAL FILTER | symbol=PALL | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5322 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-09-18 17:25:27,793 | INFO | SIGNAL FILTER | symbol=CPER | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.4956 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-09-18 17:25:27,793 | INFO | SIGNAL FILTER | symbol=DBB | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5155 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-09-18 17:25:27,793 | INFO | SIGNAL FILTER | symbol=DBC | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5322 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-09-18 17:25:27,793 | INFO | SIGNAL FILTER | symbol=GSG | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5208 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-09-18 17:25:27,793 | INFO | EDGE GATE SUMMARY: 0 directional signal(s) evaluated, 0 demoted to HOLD (shadow mode)
+2026-09-18 17:25:27,793 | INFO | SIGNALS GENERATED: 16 total, 0 directional candidates, 16 hold decisions
+2026-09-18 17:25:27,795 | INFO | THESES SHADOW-LOGGED: 16
+2026-09-18 17:25:27,795 | INFO | OPTIONS CANDIDATES FOR TODAY: none
+2026-09-18 17:25:27,795 | INFO | Loading portfolio state...
+2026-09-18 17:25:27,842 | INFO | INVERSE ROUTING: nothing to route
+  (no directional signals to route)
+2026-09-18 17:25:27,842 | INFO | Executing trading cycle...
+
+📋 Pre-trade snapshot:
+   Equity source: broker_live
+   Account equity: $499.06
+   Exposure (invested fraction): 0.2189
+   Trades today (executed): 0
+   Daily return: 0.0000
+   Risk config: exposure=0.3, max_pos=0.2, max_trades/day=3, daily_loss_limit=0.02, paper_mode=True
+[INFO] PAPER TRADING MODE: True — executing in paper mode with guardrails enabled.
+2026-09-18 17:25:27,970 | INFO | ORDERS ATTEMPTED: 0
+2026-09-18 17:25:27,970 | INFO | ORDERS SUBMITTED: 0
+2026-09-18 17:25:27,972 | INFO | Decision summary: {'hold': 16}
+2026-09-18 17:25:27,972 | INFO | END DAILY TRADING RUN
