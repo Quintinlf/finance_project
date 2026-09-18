@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-17T17:53:42+00:00",
+  "generated_at": "2026-09-18T04:38:02+00:00",
   "equity_curve": [
     {
       "time": "2026-08-13",
@@ -3998,42 +3998,42 @@
   ],
   "component_accuracy": {
     "base_rate": 51.7,
-    "base_n": 24149,
+    "base_n": 24213,
     "components": [
       {
         "name": "Bollinger",
-        "n": 6748,
-        "accuracy": 50.0,
-        "ci_low": 48.8,
-        "ci_high": 51.2
+        "n": 6736,
+        "accuracy": 49.9,
+        "ci_low": 48.7,
+        "ci_high": 51.1
       },
       {
         "name": "Bayesian",
-        "n": 24149,
+        "n": 24213,
         "accuracy": 49.2,
         "ci_low": 48.6,
         "ci_high": 49.8
       },
       {
         "name": "Gaussian Process",
-        "n": 24149,
+        "n": 24213,
         "accuracy": 50.8,
-        "ci_low": 50.2,
+        "ci_low": 50.1,
         "ci_high": 51.4
       },
       {
         "name": "RSI",
-        "n": 5793,
+        "n": 5819,
         "accuracy": 51.4,
         "ci_low": 50.1,
         "ci_high": 52.7
       },
       {
         "name": "Ensemble",
-        "n": 4631,
-        "accuracy": 51.0,
-        "ci_low": 49.6,
-        "ci_high": 52.4
+        "n": 4622,
+        "accuracy": 50.8,
+        "ci_low": 49.4,
+        "ci_high": 52.3
       }
     ]
   },
@@ -4147,13 +4147,13 @@
         1.0
       ]
     ],
-    "scored_n": 24149,
+    "scored_n": 24213,
     "logged_n": 24254,
     "min_sample": 30,
     "target_sample": 300,
     "min_sample_met": true,
-    "predictions_per_run_day": 24.1,
-    "target_ready_date": "2026-09-17"
+    "predictions_per_run_day": 24.3,
+    "target_ready_date": "2026-09-18"
   },
   "news": {
     "events": [
