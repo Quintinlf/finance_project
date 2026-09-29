@@ -143,6 +143,11 @@ def main() -> int:
     inverse_env = os.getenv("INVERSE_ROUTING", "true").strip().lower()
     enable_inverse_routing = inverse_env in {"1", "true", "yes", "y"}
 
+    # Default on: a signal whose predicted move does not clear its own costs
+    # must not become an order. Set ENFORCE_EDGE_GATE=false to log only.
+    edge_env = os.getenv("ENFORCE_EDGE_GATE", "true").strip().lower()
+    enforce_edge_gate = edge_env in {"1", "true", "yes", "y"}
+
     from logic.daily_runner import run_daily_trading_cycle
 
     run_daily_trading_cycle(
@@ -158,6 +163,7 @@ def main() -> int:
         universe_scope=universe_scope,
         screen_affordability=screen_affordability,
         enable_inverse_routing=enable_inverse_routing,
+        enforce_edge_gate=enforce_edge_gate,
     )
     return 0
 

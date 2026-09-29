@@ -117,6 +117,8 @@ class ExecutionConfig:
     max_allowed_drawdown_pct: Optional[float] = None
     asset_scope: Literal['us_equities', 'multi_asset'] = 'us_equities'
     debug_force_strongest_signal: bool = False
+    # When True, a buy/sell with no passing edge verdict is refused.
+    enforce_edge_gate: bool = False
 
     # Benchmark freeze controls (Phase 0)
     benchmark_bundle_name: Optional[str] = None

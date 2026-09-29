@@ -159,6 +159,50 @@ def fetch_with_retry(
     raise RateLimited(f"{symbol}: rate limited after {attempts} attempts ({last_exc})")
 
 
+def _label_to_date(label) -> Optional[date]:
+    """Calendar date for a cache index label, including raw CSV strings.
+
+    ``DatetimeIndex.date()`` is what scoring calls. A round-tripped CSV can
+    come back as plain strings, and ``str`` has no ``.date`` — that is the
+    error that aborted history fetches for every symbol on 2026-09-17.
+    """
+    if isinstance(label, datetime):
+        return label.date()
+    if isinstance(label, date):
+        return label
+    if hasattr(label, "date") and not isinstance(label, str):
+        try:
+            converted = label.date()
+            if isinstance(converted, date):
+                return converted
+        except Exception:
+            pass
+    try:
+        import pandas as pd
+
+        parsed = pd.to_datetime(label, utc=True, errors="coerce")
+        if pd.isna(parsed):
+            return None
+        return parsed.date()
+    except Exception:
+        return None
+
+
+def _usable_history(df):
+    """Return a DatetimeIndex frame, or None when the index is not a date series."""
+    import pandas as pd
+
+    if df is None or len(df) == 0:
+        return None
+    if not isinstance(df.index, pd.DatetimeIndex):
+        df = _normalize_index(df)
+    if df is None or len(df) == 0 or not isinstance(df.index, pd.DatetimeIndex):
+        return None
+    if _label_to_date(df.index[0]) is None or _label_to_date(df.index[-1]) is None:
+        return None
+    return df
+
+
 def get_history(
     symbol: str,
     *,
@@ -173,12 +217,23 @@ def get_history(
     partial coverage triggers a refetch, because silently returning a short
     series would make the caller compute returns from the wrong bars.
     """
-    cached = load_cached(symbol, max_age_days=max_age_days)
+    cached = _usable_history(load_cached(symbol, max_age_days=max_age_days))
     if cached is not None and len(cached):
-        covered_start = cached.index[0].date()
-        covered_end = cached.index[-1].date()
-        if (start is None or covered_start <= start) and (end is None or covered_end >= end):
+        covered_start = _label_to_date(cached.index[0])
+        covered_end = _label_to_date(cached.index[-1])
+        if (
+            covered_start is not None
+            and covered_end is not None
+            and (start is None or covered_start <= start)
+            and (end is None or covered_end >= end)
+        ):
             return cached
+        logging.warning(
+            "Price cache for %s does not cover %s..%s with a date index; refetching.",
+            symbol,
+            start,
+            end,
+        )
 
     if not allow_fetch:
         return cached
@@ -188,7 +243,7 @@ def get_history(
         span_days = max(span_days, (date.today() - start).days + 60)
 
     df = fetch_with_retry(symbol, period=f"{span_days}d")
-    if df is not None and not df.empty:
-        df = _normalize_index(df)
+    df = _usable_history(df)
+    if df is not None:
         save_cached(symbol, df)
     return df

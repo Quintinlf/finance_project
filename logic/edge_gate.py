@@ -139,14 +139,11 @@ def apply_edge_gate(
 ) -> list:
     """Annotate every signal with its cost-adjusted edge.
 
-    With ``enforce=False`` (the default) this only records and logs the verdict,
-    so the gate can be observed against live signals before it is allowed to
-    change any behaviour. With ``enforce=True`` failing directional signals are
-    demoted to HOLD.
-
-    Shadow-first is deliberate: this gate would currently reject nearly every
-    trade the strategy generates, and that conclusion deserves to be watched
-    before it is wired to the order path.
+    With ``enforce=False`` this only records the verdict. The daily runner
+    defaults to ``enforce=True``: a directional signal that does not clear its
+    own costs is demoted to HOLD and logged as ``rejection_reason: edge gate``,
+    which the dashboard lists as a blocker. Passing the gate is required again
+    on the order path (``order_block_reason``), including after inverse routing.
     """
     kept = []
     rejected = 0
@@ -179,6 +176,13 @@ def apply_edge_gate(
             signal.meta["threshold_decision"] = "hold"
             signal.meta["threshold_reason"] = f"edge gate: {verdict.reason}"
             rejected += 1
+            # Dashboard blockers scan the run log for this prefix. The reason
+            # already contains the predicted move and the round-trip cost.
+            logging.error(
+                "rejection_reason: edge gate %s: %s",
+                verdict.symbol,
+                verdict.reason,
+            )
 
         kept.append(signal)
 
@@ -191,3 +195,21 @@ def apply_edge_gate(
         )
 
     return kept
+
+
+def order_block_reason(signal: Any, *, enforce: bool) -> Optional[str]:
+    """Why this signal must not become an order, or None if it may.
+
+    The gate demotes failures to HOLD before the cycle. This is the backstop
+    on the order path itself: a buy/sell that never recorded ``edge_passes``
+    is refused when enforcement is on, including anything routing or a debug
+    override added after the gate ran.
+    """
+    if not enforce:
+        return None
+    if str(getattr(signal, "signal_type", "") or "").lower() == "hold":
+        return None
+    meta = getattr(signal, "meta", None) or {}
+    if meta.get("edge_passes") is True:
+        return None
+    return str(meta.get("edge_reason") or "trade does not clear its own costs")

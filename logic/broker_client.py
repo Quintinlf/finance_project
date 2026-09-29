@@ -13,6 +13,7 @@ from datetime import date, datetime
 from typing import Any, Dict, Iterable, Optional, Tuple
 import logging
 import os
+import time
 
 from logic.data_structures import PositionState
 
@@ -240,7 +241,48 @@ class AlpacaBrokerClient(BrokerClient):
                 )
         return position_states
 
+    def _release_reserved_shares(self, symbol: str) -> None:
+        """Cancel resting sells so a new sell is not rejected for held_for_orders."""
+        from logic.exposure_manager import cancel_resting_sells
+
+        try:
+            cancelled = cancel_resting_sells(self._trading_client, symbol)
+        except Exception as exc:
+            logging.warning("Could not release reserved shares for %s (%s).", symbol, exc)
+            return
+        if cancelled:
+            logging.info(
+                "Released %s resting sell(s) on %s before submitting a sell.",
+                cancelled,
+                symbol,
+            )
+
     def place_market_order(
+        self, *, symbol: str, qty: int, side: str, time_in_force: str = "day"
+    ) -> Optional[BrokerOrder]:
+        from logic.exposure_manager import shares_reserved_error
+
+        selling = str(side).lower() == "sell"
+        attempts = 2 if selling else 1
+        order: Optional[BrokerOrder] = None
+        for attempt in range(attempts):
+            if selling:
+                self._release_reserved_shares(symbol)
+                if attempt:
+                    time.sleep(0.5)
+            order = self._place_market_order_once(
+                symbol=symbol, qty=qty, side=side, time_in_force=time_in_force
+            )
+            if order is not None or not shares_reserved_error(self.last_order_error):
+                return order
+            logging.warning(
+                "SELL %s still blocked by reserved shares (%s); retrying once.",
+                symbol,
+                self.last_order_error,
+            )
+        return order
+
+    def _place_market_order_once(
         self, *, symbol: str, qty: int, side: str, time_in_force: str = "day"
     ) -> Optional[BrokerOrder]:
         from alpaca.trading.enums import TimeInForce
@@ -348,6 +390,49 @@ class AlpacaBrokerClient(BrokerClient):
         return new_tp, new_sl, note
 
     def place_bracket_order(
+        self,
+        *,
+        symbol: str,
+        qty: int,
+        side: str,
+        take_profit_price: float,
+        stop_loss_price: float,
+        time_in_force: str = "day",
+    ) -> Optional[BrokerOrder]:
+        from logic.exposure_manager import shares_reserved_error
+
+        selling = str(side).lower() == "sell"
+        if selling:
+            self._release_reserved_shares(symbol)
+
+        order = self._place_bracket_order_once(
+            symbol=symbol,
+            qty=qty,
+            side=side,
+            take_profit_price=take_profit_price,
+            stop_loss_price=stop_loss_price,
+            time_in_force=time_in_force,
+        )
+        if order is not None or not selling or not shares_reserved_error(self.last_order_error):
+            return order
+
+        logging.warning(
+            "SELL %s bracket still blocked by reserved shares (%s); retrying once.",
+            symbol,
+            self.last_order_error,
+        )
+        time.sleep(0.5)
+        self._release_reserved_shares(symbol)
+        return self._place_bracket_order_once(
+            symbol=symbol,
+            qty=qty,
+            side=side,
+            take_profit_price=take_profit_price,
+            stop_loss_price=stop_loss_price,
+            time_in_force=time_in_force,
+        )
+
+    def _place_bracket_order_once(
         self,
         *,
         symbol: str,

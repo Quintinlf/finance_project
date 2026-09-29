@@ -111,6 +111,30 @@ class TestIndexNormalization(unittest.TestCase):
             ["2021-10-01", "2021-11-05", "2021-12-01"],
         )
 
+    def test_string_index_does_not_crash_and_is_not_returned_raw(self):
+        """Sep 17 scoring died on str.date() for every symbol."""
+        bad = pd.DataFrame({"Close": [1.0, 2.0]}, index=pd.Index(["not-a-date", "also-bad"]))
+        good = _frame()
+        with patch.object(pc, "load_cached", return_value=bad), patch.object(
+            pc, "fetch_with_retry", return_value=good
+        ), patch.object(pc, "save_cached"):
+            out = get_history("WEAT", start=date(2026, 8, 1), end=date(2026, 8, 5))
+        self.assertIsInstance(out.index, pd.DatetimeIndex)
+        self.assertEqual(out.index[0].date().isoformat(), "2026-08-01")
+
+    def test_string_dates_normalize_without_calling_str_date(self):
+        cached = pd.DataFrame(
+            {"Close": [10.0, 11.0]},
+            index=pd.Index(["2026-08-01", "2026-08-10"]),
+        )
+        with patch.object(pc, "load_cached", return_value=cached), patch.object(
+            pc, "fetch_with_retry"
+        ) as fetch:
+            out = get_history("WEAT", start=date(2026, 8, 1), end=date(2026, 8, 5))
+        fetch.assert_not_called()
+        self.assertIsInstance(out.index, pd.DatetimeIndex)
+        self.assertEqual(out.index[0].date().isoformat(), "2026-08-01")
+
     def test_index_comes_back_sorted(self):
         with _CacheDir():
             idx = pd.to_datetime(["2021-12-01 00:00:00-05:00", "2021-10-01 00:00:00-04:00"])

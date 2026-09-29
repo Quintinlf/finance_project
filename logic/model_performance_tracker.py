@@ -779,8 +779,12 @@ def _returns_for_symbol(
         logging.warning("History fetch failed for %s (%s).", symbol, exc)
         return {}
 
+    from logic.price_cache import _label_to_date
+
+    if hist is None:
+        return {}
     closes = list(hist.get("Close", []))
-    bar_dates = [idx.date() for idx in hist.index]
+    bar_dates = [_label_to_date(idx) for idx in hist.index]
     if not closes:
         return {}
 
@@ -789,6 +793,8 @@ def _returns_for_symbol(
         base_close = None
         next_close = None
         for i, d in enumerate(bar_dates):
+            if d is None:
+                continue
             if d <= signal_date:
                 base_close = float(closes[i])
             elif base_close is not None:

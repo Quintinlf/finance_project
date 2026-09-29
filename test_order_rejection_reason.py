@@ -57,6 +57,41 @@ class TestSubmitterRaisesWithReason(unittest.TestCase):
 
 
 class TestBrokerClientCapturesReason(unittest.TestCase):
+    def test_sell_cancels_resting_sells_before_submitting(self):
+        from logic import alpaca_exercises
+
+        trading_client = MagicMock()
+        resting = MagicMock()
+        resting.side = "sell"
+        resting.id = "stop-1"
+        trading_client.get_orders.return_value = [resting]
+        trading_client.submit_order.return_value = MagicMock(
+            id="new-sell", symbol="KOLD", qty=1, status="accepted"
+        )
+        broker = AlpacaBrokerClient(trading_client, paper=True)
+
+        order = broker.place_market_order(symbol="KOLD", qty=1, side="sell")
+        trading_client.cancel_order_by_id.assert_called_once_with("stop-1")
+        self.assertEqual(order.id, "new-sell")
+
+    def test_reserved_shares_are_retried_once(self):
+        from logic import alpaca_exercises
+
+        trading_client = MagicMock()
+        trading_client.get_orders.return_value = []
+        trading_client.submit_order.side_effect = [
+            alpaca_exercises.APIError(
+                '{"message":"insufficient qty available for order","held_for_orders":"1"}'
+            ),
+            MagicMock(id="retry-sell", symbol="KOLD", qty=1, status="accepted"),
+        ]
+        broker = AlpacaBrokerClient(trading_client, paper=True)
+
+        with patch("logic.broker_client.time.sleep"):
+            order = broker.place_market_order(symbol="KOLD", qty=1, side="sell")
+        self.assertEqual(order.id, "retry-sell")
+        self.assertEqual(trading_client.submit_order.call_count, 2)
+
     def test_market_rejection_sets_last_order_error(self):
         from logic import alpaca_exercises
 

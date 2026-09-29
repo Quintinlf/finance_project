@@ -10,7 +10,12 @@ from types import SimpleNamespace
 from unittest.mock import patch
 
 from logic import costs
-from logic.edge_gate import DEFAULT_EDGE_MARGIN, apply_edge_gate, evaluate_edge
+from logic.edge_gate import (
+    DEFAULT_EDGE_MARGIN,
+    apply_edge_gate,
+    evaluate_edge,
+    order_block_reason,
+)
 
 
 def _signal(symbol="UNG", side="buy", forecast=0.01, p_dir=0.7):
@@ -92,6 +97,20 @@ class TestApplyEdgeGate(unittest.TestCase):
         sigs = [_signal("XLE", forecast=0.03, p_dir=0.80)]
         apply_edge_gate(sigs, enforce=True, verbose=False)
         self.assertEqual(sigs[0].signal_type, "buy")
+
+    def test_enforce_logs_a_dashboard_blocker(self):
+        sigs = [_signal("CANE", forecast=0.001, p_dir=0.52)]
+        with self.assertLogs(level="ERROR") as captured:
+            apply_edge_gate(sigs, enforce=True, verbose=False)
+        self.assertTrue(any("rejection_reason: edge gate CANE:" in line for line in captured.output))
+        self.assertIn("cost", captured.output[-1])
+
+    def test_order_path_refuses_a_buy_that_never_passed(self):
+        sig = _signal("CANE", forecast=0.001, p_dir=0.52)
+        self.assertIsNotNone(order_block_reason(sig, enforce=True))
+        sig.meta["edge_passes"] = True
+        self.assertIsNone(order_block_reason(sig, enforce=True))
+        self.assertIsNone(order_block_reason(sig, enforce=False))
 
     def test_hold_signals_pass_through_untouched(self):
         sigs = [SimpleNamespace(symbol="WEAT", signal_type="hold", meta={})]

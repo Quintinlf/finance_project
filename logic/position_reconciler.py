@@ -60,16 +60,15 @@ def _open_orders_by_symbol(trading_client: Any) -> Dict[str, List[Any]]:
 
 
 def _has_protective_sell(orders: List[Any]) -> bool:
-    """True if an open SELL order already protects the position (limit/stop/OCO/bracket)."""
+    """True if any open SELL already claims this position's shares.
+
+    A working market sell (an exposure trim that has not filled yet) reserves
+    the same shares a trailing stop would. Treating only limit/stop/OCO as
+    protection made the reconciler stack a second sell and get
+    "insufficient qty" / "account is not allowed to short".
+    """
     for order in orders:
-        if _enum_str(getattr(order, "side", None)) != "sell":
-            continue
-        order_type = _enum_str(getattr(order, "type", None))
-        order_class = _enum_str(getattr(order, "order_class", None))
-        # "trailing_stop" must be in this set: without it a trailing exit is not
-        # recognised as protection and a fresh one is stacked on every cycle,
-        # eventually over-committing the position's shares.
-        if order_type in {"limit", "stop", "stop_limit", "trailing_stop"} or order_class in {"oco", "bracket", "oto"}:
+        if _enum_str(getattr(order, "side", None)) == "sell":
             return True
     return False
 

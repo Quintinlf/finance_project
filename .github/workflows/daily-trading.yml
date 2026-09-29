@@ -72,29 +72,32 @@ jobs:
           fi
           echo "Alpaca credentials present (key ends ...${APCA_API_KEY_ID: -4})."
 
-      # The finance algorithms live in a sibling repo. Without this step
-      # logic/eos_bridge.py cannot import them, EOS_AVAILABLE stays False, and
-      # the bot trades on reduced built-in logic while every local backtest runs
-      # WITH the algorithms -- a silent backtest/production mismatch that made
-      # months of validated results describe a strategy that never executed.
+      # The finance algorithms live in a sibling repo. Without them the bot
+      # trades on reduced built-in logic, which is not the configuration
+      # backtests were validated under. This step records that explicitly.
+      # It does not abort the job: paper orders still run. A later step fails
+      # the job so a green check cannot mean "validated configuration".
       - name: Fetch eos finance algorithms
         id: eos
         env:
           EOS_REPO_TOKEN: ${{ secrets.EOS_REPO_TOKEN }}
         run: |
-          REPO="https://github.com/Quintinlf/My_folder.git"
-          if [ -n "${EOS_REPO_TOKEN}" ]; then
-            REPO="https://x-access-token:${EOS_REPO_TOKEN}@github.com/Quintinlf/My_folder.git"
+          echo "available=false" >> "$GITHUB_OUTPUT"
+          if [ -z "${EOS_REPO_TOKEN}" ]; then
+            echo "::error title=EOS algorithms unavailable::EOS_REPO_TOKEN is not set. The public clone of Quintinlf/My_folder cannot supply mcp_server, so this run uses reduced built-in logic. That is NOT the configuration backtests were validated under. Add an EOS_REPO_TOKEN secret with read access to Quintinlf/My_folder. Paper trading will still run; the job will fail after it so this mismatch is not a green check."
+            exit 0
           fi
-          if git clone --depth 1 --filter=blob:none --sparse "$REPO" "${RUNNER_TEMP}/eos" 2>/dev/null; then
+          REPO="https://x-access-token:${EOS_REPO_TOKEN}@github.com/Quintinlf/My_folder.git"
+          if git clone --depth 1 --filter=blob:none --sparse "$REPO" "${RUNNER_TEMP}/eos"; then
             git -C "${RUNNER_TEMP}/eos" sparse-checkout set mcp_server
             if [ -d "${RUNNER_TEMP}/eos/mcp_server" ]; then
               echo "EOS_ROOT=${RUNNER_TEMP}/eos/mcp_server" >> "$GITHUB_ENV"
+              echo "available=true" >> "$GITHUB_OUTPUT"
               echo "eos algorithms available at ${RUNNER_TEMP}/eos/mcp_server"
               exit 0
             fi
           fi
-          echo "::warning title=eos algorithms unavailable::Could not fetch the mcp_server checkout, so the run falls back to built-in logic only. This is NOT the configuration your backtests were validated under. Add an EOS_REPO_TOKEN secret with read access to Quintinlf/My_folder."
+          echo "::error title=EOS algorithms unavailable::Clone of mcp_server failed even with EOS_REPO_TOKEN set. This run uses reduced built-in logic, which is NOT the configuration backtests were validated under. Paper trading will still run; the job will fail after it."
 
       - name: Execute daily trading entrypoint
         env:
@@ -110,6 +113,8 @@ jobs:
           BASE_RISK_PCT: "2.0"
           UNIVERSE_SCOPE: ${{ inputs.universe_scope || 'all' }}
           INVERSE_ROUTING: "true"
+          # Only submit names whose predicted move clears round-trip costs.
+          ENFORCE_EDGE_GATE: "true"
           # Refuse the silent in-memory fallback: a fake fill in CI is worse
           # than a failed job, because it looks like success.
           STRICT_BROKER: "true"
@@ -200,3 +205,12 @@ jobs:
           # Another run may have pushed since checkout; rebase rather than fail.
           git pull --rebase --autostash origin main || true
           git push
+
+      # Backtests that include the EOS algorithms are not what just traded
+      # when this output is false. Fail after the log commit so the mismatch
+      # is a red check, without throwing away the paper run or its artifacts.
+      - name: Fail if EOS algorithms did not load
+        if: always() && steps.eos.outputs.available != 'true'
+        run: |
+          echo "::error title=Reduced logic traded::EOS finance algorithms did not load. This paper run used built-in logic only, which is not the configuration backtests were validated under. Set the EOS_REPO_TOKEN secret."
+          exit 1

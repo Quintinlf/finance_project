@@ -32,8 +32,9 @@ from __future__ import annotations
 
 import logging
 import math
+import time
 from dataclasses import dataclass
-from typing import Any, List, Optional
+from typing import Any, Iterable, List, Optional, Set
 
 
 # Trim to this many percentage points *below* the cap rather than exactly to it.
@@ -56,7 +57,13 @@ def _enum_str(value: Any) -> str:
     return str(getattr(value, "value", value)).lower()
 
 
-def _cancel_resting_sells(trading_client: Any, symbol: str) -> int:
+def shares_reserved_error(message: Optional[str]) -> bool:
+    """True when Alpaca rejected a sell because a resting order still holds the shares."""
+    text = (message or "").lower()
+    return "insufficient qty" in text or "held_for_orders" in text
+
+
+def cancel_resting_sells(trading_client: Any, symbol: str) -> int:
     """Cancel open SELL orders on ``symbol`` so its shares become sellable.
 
     Alpaca reserves shares backing a resting protective sell; without this a
@@ -167,7 +174,7 @@ def trim_to_exposure_cap(
             excess_dollars -= freed
             continue
 
-        cancelled = _cancel_resting_sells(trading_client, symbol)
+        cancelled = cancel_resting_sells(trading_client, symbol)
         order = broker_client.place_market_order(
             symbol=symbol, qty=want_qty, side="sell", time_in_force="day"
         )
@@ -194,3 +201,58 @@ def trim_to_exposure_cap(
             logging.info("EXPOSURE TRIM | %s | %s | %s", r.symbol, r.action.upper(), r.detail)
 
     return results
+
+
+_TERMINAL_ORDER_STATUSES = {
+    "filled",
+    "canceled",
+    "cancelled",
+    "expired",
+    "rejected",
+    "done_for_day",
+    "replaced",
+}
+
+
+def wait_for_orders(
+    broker_client: Any,
+    order_ids: Iterable[str],
+    *,
+    timeout_s: float = 8.0,
+    poll_s: float = 0.4,
+) -> None:
+    """Block until submitted sells leave the open state, or the timeout hits.
+
+    A market sell that is merely accepted still holds the shares and still
+    counts as exposure. Re-reading the account in that window reports the old
+    book, and the exit reconciler then tries to attach another sell on quantity
+    the broker has already reserved.
+    """
+    trading_client = getattr(broker_client, "_trading_client", None)
+    pending: Set[str] = {oid for oid in order_ids if oid}
+    if trading_client is None or not pending:
+        return
+
+    deadline = time.monotonic() + float(timeout_s)
+    while pending and time.monotonic() < deadline:
+        still: Set[str] = set()
+        for oid in pending:
+            try:
+                order = trading_client.get_order_by_id(oid)
+            except Exception as exc:
+                logging.warning("Could not read order %s (%s); will retry.", oid, exc)
+                still.add(oid)
+                continue
+            status = _enum_str(getattr(order, "status", ""))
+            if status not in _TERMINAL_ORDER_STATUSES:
+                still.add(oid)
+        pending = still
+        if pending:
+            time.sleep(poll_s)
+
+    if pending:
+        logging.warning(
+            "ORDERS STILL OPEN after %.0fs (exposure may be stale): %s",
+            timeout_s,
+            ", ".join(sorted(pending)),
+        )

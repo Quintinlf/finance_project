@@ -14,7 +14,7 @@ from logic.calibration import apply_probability_calibration, fit_calibration
 from logic.data_structures import ExecutionConfig
 from logic.edge_gate import apply_edge_gate
 from logic.execution_engine import run_trading_cycle
-from logic.exposure_manager import trim_to_exposure_cap
+from logic.exposure_manager import trim_to_exposure_cap, wait_for_orders
 from logic.fill_reconciler import reconcile_fills
 from logic.inverse_routing import format_routing_table, route_signals
 from logic.model_performance_tracker import (
@@ -134,7 +134,7 @@ def run_daily_trading_cycle(
     universe_scope: str = "all",
     screen_affordability: bool = True,
     enable_inverse_routing: bool = True,
-    enforce_edge_gate: bool = False,
+    enforce_edge_gate: bool = True,
     edge_margin: float = 1.5,
     enforce_vol_sizing: bool = True,
 ) -> None:
@@ -251,6 +251,7 @@ def run_daily_trading_cycle(
         min_confidence=min_confidence,
         min_prob_up=min_prob_up,
         debug_force_strongest_signal=debug_force_strongest_signal,
+        enforce_edge_gate=enforce_edge_gate,
     )
 
     # Bring the book back inside its exposure cap BEFORE anything else touches
@@ -276,6 +277,12 @@ def run_daily_trading_cycle(
                 len(trim_results),
                 freed,
             )
+            # An accepted market sell still holds the shares until it fills.
+            # Re-reading before that reports the old exposure, and the exit
+            # reconciler then tries to sell shares the trim order already reserved.
+            submitted = [r.order_id for r in trim_results if r.action == "trimmed" and r.order_id]
+            if submitted and not dry_run:
+                wait_for_orders(broker_client, submitted)
             # Exposure just changed; re-read it so sizing works off the new book.
             equity_ctx = resolve_account_equity(
                 broker_client=broker_client,
@@ -487,6 +494,16 @@ def run_daily_trading_cycle(
                     sim_portfolio={},
                 )
             )
+
+    # Gate the orders we will actually submit, after inverse routing has
+    # renamed a bearish underlying into the proxy we would buy. A pass on the
+    # underlying is not a pass on the proxy's costs.
+    decision_signals = apply_edge_gate(
+        decision_signals,
+        margin=edge_margin,
+        enforce=enforce_edge_gate,
+        verbose=True,
+    )
 
     logging.info("Executing trading cycle...")
     decision_log = run_trading_cycle(

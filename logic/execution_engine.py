@@ -29,6 +29,7 @@ from logic.account_equity import AccountEquityContext, resolve_account_equity
 
 from logic.broker_client import BrokerClient
 from logic import eos_bridge
+from logic.edge_gate import order_block_reason
 from logic.data_structures import (
     Signal, PositionState, ExecutionConfig, OrderPlan, DecisionLogEntry
 )
@@ -1168,6 +1169,17 @@ def run_trading_cycle(
         
         # STEP 2 & 3: If actionable, plan and execute
         if action in ['buy', 'sell']:
+            block = order_block_reason(signal, enforce=bool(getattr(config, "enforce_edge_gate", False)))
+            if block:
+                log_entry.action = 'rejected'
+                log_entry.reason = f"edge gate: {block}"
+                log_entry.executed = False
+                logging.error("rejection_reason: edge gate %s: %s", symbol, block)
+                _log_component_performance_event(signal, log_entry)
+                log_entries.append(log_entry)
+                continue
+            if getattr(config, "enforce_edge_gate", False) and "edge_passes=true" not in (log_entry.reason or ""):
+                log_entry.reason = f"{log_entry.reason} | edge_passes=true"
             # Get current price from signal meta
             current_price = signal.meta.get('current_price', 0.0)
 

@@ -53,6 +53,11 @@ class HasProtectiveSellTests(unittest.TestCase):
         orders = [_Order(side="sell", type="market", order_class="oco")]
         self.assertTrue(_has_protective_sell(orders))
 
+    def test_working_market_sell_locks_the_shares(self) -> None:
+        """A trim sell that has not filled still reserves the only share."""
+        orders = [_Order(side="sell", type="market", order_class="simple")]
+        self.assertTrue(_has_protective_sell(orders))
+
     def test_ignores_buy_orders(self) -> None:
         orders = [_Order(side="buy", type="limit", order_class="simple")]
         self.assertFalse(_has_protective_sell(orders))

@@ -15,7 +15,7 @@ import unittest
 from unittest.mock import MagicMock
 
 from logic.data_structures import OrderPlan, PositionState
-from logic.exposure_manager import trim_to_exposure_cap
+from logic.exposure_manager import trim_to_exposure_cap, wait_for_orders
 from logic.execution_engine import enforce_risk_limits
 from logic.risk_config import PortfolioRiskConfig
 
@@ -206,6 +206,12 @@ class TestTrimToExposureCap(unittest.TestCase):
         )
         self.assertEqual(results[0].action, "error")
         self.assertIn("market closed", results[0].detail)
+
+    def test_wait_for_orders_returns_once_filled(self):
+        broker = MagicMock()
+        broker._trading_client.get_order_by_id.return_value = MagicMock(status="filled")
+        wait_for_orders(broker, ["order-1"], timeout_s=1.0, poll_s=0.01)
+        broker._trading_client.get_order_by_id.assert_called_once_with("order-1")
 
     def test_simulation_broker_is_a_noop(self):
         broker = MagicMock(spec=[])  # no _trading_client attribute
