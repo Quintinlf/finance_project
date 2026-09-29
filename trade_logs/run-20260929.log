@@ -1,37 +1,36 @@
-2026-09-29 22:40:42,770 | WARNING | EOS FINANCE DOMAINS UNAVAILABLE (ImportError: eos checkout not found at /home/runner/work/finance_project/mcp_server. Set EOS_ROOT to the mcp_server directory to enable the finance domains.). Running on reduced built-in logic only -- this is NOT the configuration backtests are validated under. Set EOS_ROOT to the mcp_server directory to restore it.
-2026-09-29 22:40:43,136 | INFO | Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Non-scalable fonts are not supported
-2026-09-29 22:40:43,171 | INFO | generated new fontManager
-2026-09-29 22:40:43,392 | INFO | START DAILY TRADING RUN
-2026-09-29 22:40:43,393 | INFO | DATE/TIME: 2026-09-29T18:40:43.393054-04:00
-2026-09-29 22:40:43,737 | INFO | Duplicate run detected for 2026-09-29. Forcing dry_run=True.
-2026-09-29 22:40:43,885 | INFO | ACCOUNT: equity=$494.05 (source=broker_live) | cash=$469.06 | exposure=5.1%
-2026-09-29 22:40:43,947 | INFO | FILL RECONCILE: 38 fills -> 19 round trips, realized P&L $-5.86 (7W/12L, 36.8% win rate), 1 lots still open [dry run, nothing written]
-2026-09-29 22:40:43,947 | INFO |   TSLA     1.00 sh  2026-03-24 -> 2026-07-23  $379.74 -> $337.00  P&L $-42.74 (-11.26%, 120d)
-2026-09-29 22:40:43,947 | INFO |   BAC      1.00 sh  2026-03-24 -> 2026-09-09  $47.38 -> $62.79  P&L $+15.41 (+32.52%, 169d)
-2026-09-29 22:40:43,947 | INFO |   BAC      1.00 sh  2026-03-24 -> 2026-09-11  $47.38 -> $62.54  P&L $+15.16 (+32.00%, 171d)
-2026-09-29 22:40:43,948 | INFO |   CORN     1.00 sh  2026-09-09 -> 2026-09-11  $19.91 -> $19.89  P&L $-0.02 (-0.10%, 1d)
-2026-09-29 22:40:43,948 | INFO |   KOLD     1.00 sh  2026-09-15 -> 2026-09-15  $28.63 -> $28.34  P&L $-0.29 (-1.01%, 0d)
-2026-09-29 22:40:43,948 | INFO |   CPER     1.00 sh  2026-09-11 -> 2026-09-17  $39.27 -> $39.89  P&L $+0.62 (+1.58%, 6d)
-2026-09-29 22:40:43,948 | INFO |   BNO      1.00 sh  2026-08-13 -> 2026-09-17  $49.60 -> $61.30  P&L $+11.70 (+23.59%, 35d)
-2026-09-29 22:40:43,948 | INFO |   KOLD     1.00 sh  2026-09-16 -> 2026-09-18  $29.39 -> $28.97  P&L $-0.42 (-1.43%, 1d)
-2026-09-29 22:40:43,948 | INFO |   GSG      1.00 sh  2026-09-16 -> 2026-09-21  $36.72 -> $35.97  P&L $-0.75 (-2.04%, 4d)
-2026-09-29 22:40:43,948 | INFO |   DBC      1.00 sh  2026-09-16 -> 2026-09-21  $33.27 -> $32.54  P&L $-0.73 (-2.19%, 4d)
-2026-09-29 22:40:43,948 | INFO |   PALL     1.00 sh  2026-09-17 -> 2026-09-21  $23.36 -> $23.57  P&L $+0.21 (+0.90%, 3d)
-2026-09-29 22:40:43,948 | INFO |   PPLT     1.00 sh  2026-09-17 -> 2026-09-23  $16.17 -> $15.99  P&L $-0.18 (-1.11%, 5d)
-2026-09-29 22:40:43,948 | INFO |   SLV      1.00 sh  2026-09-22 -> 2026-09-24  $59.76 -> $57.24  P&L $-2.52 (-4.22%, 1d)
-2026-09-29 22:40:43,948 | INFO |   PALL     1.00 sh  2026-09-22 -> 2026-09-25  $23.48 -> $22.67  P&L $-0.81 (-3.45%, 2d)
-2026-09-29 22:40:43,948 | INFO |   KOLD     1.00 sh  2026-09-24 -> 2026-09-25  $22.92 -> $24.80  P&L $+1.88 (+8.20%, 1d)
-2026-09-29 22:40:43,948 | INFO |   IAU      1.00 sh  2026-09-24 -> 2026-09-28  $80.04 -> $77.93  P&L $-2.11 (-2.64%, 3d)
-2026-09-29 22:40:43,948 | INFO |   SCO      1.00 sh  2026-09-29 -> 2026-09-29  $20.40 -> $20.37  P&L $-0.03 (-0.15%, 0d)
-2026-09-29 22:40:43,948 | INFO |   GLL      1.00 sh  2026-09-29 -> 2026-09-29  $24.89 -> $24.93  P&L $+0.04 (+0.16%, 0d)
-2026-09-29 22:40:43,948 | INFO |   ZSL      1.00 sh  2026-09-29 -> 2026-09-29  $27.20 -> $26.92  P&L $-0.28 (-1.03%, 0d)
-2026-09-29 22:40:43,948 | INFO |   OPEN WEAT     1.00 sh @ $24.99 since 2026-09-29
-2026-09-29 22:40:43,977 | INFO | CURRENTLY HELD: WEAT
-2026-09-29 22:40:43,979 | INFO | Failed to create TzCache, reason: Error creating TzCache folder: '/home/runner/.cache/py-yfinance' reason: [Errno 17] File exists: '/home/runner/.cache/py-yfinance'. TzCache will not be used. Tip: You can direct cache to use a different location with 'set_tz_cache_location(mylocation)'
-2026-09-29 22:40:47,216 | ERROR | 
+2026-09-29 22:43:09,241 | WARNING | EOS FINANCE DOMAINS UNAVAILABLE (ImportError: eos checkout not found at /home/runner/work/finance_project/mcp_server. Set EOS_ROOT to the mcp_server directory to enable the finance domains.). Running on reduced built-in logic only -- this is NOT the configuration backtests are validated under. Set EOS_ROOT to the mcp_server directory to restore it.
+2026-09-29 22:43:09,963 | INFO | Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Non-scalable fonts are not supported
+2026-09-29 22:43:10,437 | INFO | generated new fontManager
+2026-09-29 22:43:10,606 | INFO | START DAILY TRADING RUN
+2026-09-29 22:43:10,606 | INFO | DATE/TIME: 2026-09-29T18:43:10.606897-04:00
+2026-09-29 22:43:11,041 | INFO | Duplicate run detected for 2026-09-29. Forcing dry_run=True.
+2026-09-29 22:43:11,327 | INFO | ACCOUNT: equity=$494.05 (source=broker_live) | cash=$469.06 | exposure=5.1%
+2026-09-29 22:43:11,416 | INFO | FILL RECONCILE: 38 fills -> 19 round trips, realized P&L $-5.86 (7W/12L, 36.8% win rate), 1 lots still open [dry run, nothing written]
+2026-09-29 22:43:11,416 | INFO |   TSLA     1.00 sh  2026-03-24 -> 2026-07-23  $379.74 -> $337.00  P&L $-42.74 (-11.26%, 120d)
+2026-09-29 22:43:11,416 | INFO |   BAC      1.00 sh  2026-03-24 -> 2026-09-09  $47.38 -> $62.79  P&L $+15.41 (+32.52%, 169d)
+2026-09-29 22:43:11,416 | INFO |   BAC      1.00 sh  2026-03-24 -> 2026-09-11  $47.38 -> $62.54  P&L $+15.16 (+32.00%, 171d)
+2026-09-29 22:43:11,416 | INFO |   CORN     1.00 sh  2026-09-09 -> 2026-09-11  $19.91 -> $19.89  P&L $-0.02 (-0.10%, 1d)
+2026-09-29 22:43:11,416 | INFO |   KOLD     1.00 sh  2026-09-15 -> 2026-09-15  $28.63 -> $28.34  P&L $-0.29 (-1.01%, 0d)
+2026-09-29 22:43:11,416 | INFO |   CPER     1.00 sh  2026-09-11 -> 2026-09-17  $39.27 -> $39.89  P&L $+0.62 (+1.58%, 6d)
+2026-09-29 22:43:11,416 | INFO |   BNO      1.00 sh  2026-08-13 -> 2026-09-17  $49.60 -> $61.30  P&L $+11.70 (+23.59%, 35d)
+2026-09-29 22:43:11,416 | INFO |   KOLD     1.00 sh  2026-09-16 -> 2026-09-18  $29.39 -> $28.97  P&L $-0.42 (-1.43%, 1d)
+2026-09-29 22:43:11,416 | INFO |   GSG      1.00 sh  2026-09-16 -> 2026-09-21  $36.72 -> $35.97  P&L $-0.75 (-2.04%, 4d)
+2026-09-29 22:43:11,416 | INFO |   DBC      1.00 sh  2026-09-16 -> 2026-09-21  $33.27 -> $32.54  P&L $-0.73 (-2.19%, 4d)
+2026-09-29 22:43:11,416 | INFO |   PALL     1.00 sh  2026-09-17 -> 2026-09-21  $23.36 -> $23.57  P&L $+0.21 (+0.90%, 3d)
+2026-09-29 22:43:11,416 | INFO |   PPLT     1.00 sh  2026-09-17 -> 2026-09-23  $16.17 -> $15.99  P&L $-0.18 (-1.11%, 5d)
+2026-09-29 22:43:11,416 | INFO |   SLV      1.00 sh  2026-09-22 -> 2026-09-24  $59.76 -> $57.24  P&L $-2.52 (-4.22%, 1d)
+2026-09-29 22:43:11,416 | INFO |   PALL     1.00 sh  2026-09-22 -> 2026-09-25  $23.48 -> $22.67  P&L $-0.81 (-3.45%, 2d)
+2026-09-29 22:43:11,416 | INFO |   KOLD     1.00 sh  2026-09-24 -> 2026-09-25  $22.92 -> $24.80  P&L $+1.88 (+8.20%, 1d)
+2026-09-29 22:43:11,416 | INFO |   IAU      1.00 sh  2026-09-24 -> 2026-09-28  $80.04 -> $77.93  P&L $-2.11 (-2.64%, 3d)
+2026-09-29 22:43:11,416 | INFO |   SCO      1.00 sh  2026-09-29 -> 2026-09-29  $20.40 -> $20.37  P&L $-0.03 (-0.15%, 0d)
+2026-09-29 22:43:11,416 | INFO |   GLL      1.00 sh  2026-09-29 -> 2026-09-29  $24.89 -> $24.93  P&L $+0.04 (+0.16%, 0d)
+2026-09-29 22:43:11,416 | INFO |   ZSL      1.00 sh  2026-09-29 -> 2026-09-29  $27.20 -> $26.92  P&L $-0.28 (-1.03%, 0d)
+2026-09-29 22:43:11,417 | INFO |   OPEN WEAT     1.00 sh @ $24.99 since 2026-09-29
+2026-09-29 22:43:11,473 | INFO | CURRENTLY HELD: WEAT
+2026-09-29 22:43:14,112 | ERROR | 
 1 Failed download:
-2026-09-29 22:40:47,216 | ERROR | ['CPER']: OperationalError('database is locked')
-2026-09-29 22:40:47,225 | INFO | UNIVERSE SCREEN: scope=all | 15/24 affordable at $98.81/position (20% of $494.05 equity)
+2026-09-29 22:43:14,112 | ERROR | ['DBA']: OperationalError('database is locked')
+2026-09-29 22:43:14,119 | INFO | UNIVERSE SCREEN: scope=all | 15/24 affordable at $98.81/position (20% of $494.05 equity)
   OK UNG        $10.35  up to 9 share(s) at $10.35
   OK CANE       $11.36  up to 8 share(s) at $11.36
   OK PPLT       $15.47  up to 6 share(s) at $15.47
@@ -40,9 +39,9 @@
   OK WEAT       $25.05  up to 3 share(s) at $25.05
   OK DBB        $25.56  up to 3 share(s) at $25.56
   OK SOYB       $27.59  up to 3 share(s) at $27.59
-  OK DBA        $28.25  up to 3 share(s) at $28.25
   OK DBC        $32.00  up to 3 share(s) at $32.00
   OK GSG        $35.11  up to 2 share(s) at $35.11
+  OK CPER       $39.93  up to 2 share(s) at $39.93
   OK SLV        $55.48  up to 1 share(s) at $55.48
   OK BNO        $58.75  up to 1 share(s) at $58.75
   OK XLE        $61.54  up to 1 share(s) at $61.54
@@ -55,42 +54,11 @@
   -- GOOGL     $340.92  1 share costs $340.92 but the cap is $98.81 (20% of $494.05)
   -- GLD       $382.89  1 share costs $382.89 but the cap is $98.81 (20% of $494.05)
   -- MSFT      $508.96  1 share costs $508.96 but the cap is $98.81 (20% of $494.05)
-  -- CPER          n/a  no price available
-2026-09-29 22:40:47,225 | INFO | TRADING UNIVERSE (15): WEAT, CORN, SOYB, CANE, DBA, UNG, BNO, XLE, SLV, IAU, PPLT, PALL, DBB, DBC, GSG
-2026-09-29 22:40:47,287 | INFO | EXIT RECONCILE | WEAT | DRY_RUN | would attach GTC trailing sell qty=1 @ anchor $24.99 (trail 2.0%)
-2026-09-29 22:40:47,287 | INFO | EXIT RECONCILE SUMMARY: 1 positions checked, 0 exits attached
-2026-09-29 22:40:47,297 | WARNING | Price cache for WEAT does not cover 2026-09-21..2026-10-12 with a date index; refetching.
-2026-09-29 22:40:47,512 | INFO | scored WEAT: 1 row(s)
-2026-09-29 22:40:47,514 | WARNING | Price cache for CORN does not cover 2026-09-21..2026-10-12 with a date index; refetching.
-2026-09-29 22:40:47,609 | INFO | scored CORN: 1 row(s)
-2026-09-29 22:40:47,612 | WARNING | Price cache for SOYB does not cover 2026-09-21..2026-10-12 with a date index; refetching.
-2026-09-29 22:40:47,707 | INFO | scored SOYB: 1 row(s)
-2026-09-29 22:40:47,710 | WARNING | Price cache for CANE does not cover 2026-09-21..2026-10-12 with a date index; refetching.
-2026-09-29 22:40:47,810 | INFO | scored CANE: 1 row(s)
-2026-09-29 22:40:47,812 | WARNING | Price cache for DBA does not cover 2026-09-21..2026-10-12 with a date index; refetching.
-2026-09-29 22:40:47,924 | INFO | scored DBA: 1 row(s)
-2026-09-29 22:40:47,927 | WARNING | Price cache for UNG does not cover 2026-09-21..2026-10-12 with a date index; refetching.
-2026-09-29 22:40:48,050 | INFO | scored UNG: 1 row(s)
-2026-09-29 22:40:48,055 | WARNING | Price cache for SCO does not cover 2026-09-21..2026-10-12 with a date index; refetching.
-2026-09-29 22:40:48,257 | INFO | scored SCO: 1 row(s)
-2026-09-29 22:40:48,260 | WARNING | Price cache for XLE does not cover 2026-09-21..2026-10-12 with a date index; refetching.
-2026-09-29 22:40:48,399 | INFO | scored XLE: 1 row(s)
-2026-09-29 22:40:48,403 | WARNING | Price cache for ZSL does not cover 2026-09-21..2026-10-12 with a date index; refetching.
-2026-09-29 22:40:48,578 | INFO | scored ZSL: 1 row(s)
-2026-09-29 22:40:48,582 | WARNING | Price cache for GLL does not cover 2026-09-21..2026-10-12 with a date index; refetching.
-2026-09-29 22:40:48,755 | INFO | scored GLL: 1 row(s)
-2026-09-29 22:40:48,757 | WARNING | Price cache for PPLT does not cover 2026-09-21..2026-10-12 with a date index; refetching.
-2026-09-29 22:40:48,867 | INFO | scored PPLT: 1 row(s)
-2026-09-29 22:40:48,869 | WARNING | Price cache for CPER does not cover 2026-09-21..2026-10-12 with a date index; refetching.
-2026-09-29 22:40:49,042 | INFO | scored CPER: 1 row(s)
-2026-09-29 22:40:49,045 | WARNING | Price cache for DBB does not cover 2026-09-21..2026-10-12 with a date index; refetching.
-2026-09-29 22:40:49,168 | INFO | scored DBB: 1 row(s)
-2026-09-29 22:40:49,170 | WARNING | Price cache for DBC does not cover 2026-09-21..2026-10-12 with a date index; refetching.
-2026-09-29 22:40:49,310 | INFO | scored DBC: 1 row(s)
-2026-09-29 22:40:49,313 | WARNING | Price cache for GSG does not cover 2026-09-21..2026-10-12 with a date index; refetching.
-2026-09-29 22:40:49,421 | INFO | scored GSG: 1 row(s)
-2026-09-29 22:40:49,423 | INFO | MODEL SCORING: 15 prediction(s) graded against realized returns
-2026-09-29 22:40:49,448 | INFO | COMPONENT ACCURACY (all history):
+  -- DBA           n/a  no price available
+2026-09-29 22:43:14,119 | INFO | TRADING UNIVERSE (15): WEAT, CORN, SOYB, CANE, UNG, BNO, XLE, SLV, IAU, PPLT, PALL, CPER, DBB, DBC, GSG
+2026-09-29 22:43:14,234 | INFO | EXIT RECONCILE | WEAT | DRY_RUN | would attach GTC trailing sell qty=1 @ anchor $24.99 (trail 2.0%)
+2026-09-29 22:43:14,234 | INFO | EXIT RECONCILE SUMMARY: 1 positions checked, 0 exits attached
+2026-09-29 22:43:14,262 | INFO | COMPONENT ACCURACY (all history):
   base rate: the market rose on 51.6% of 24366 scored observations — beat this, not 50%
   component         n     acc            95% CI  verdict
   --------------------------------------------------------------
@@ -99,40 +67,38 @@
   GaussianProc  24366   50.8%   [ 50.2%,  51.4%]  beats 50% but NOT the 51.6% base rate
   RSI            5862   51.5%   [ 50.2%,  52.7%]  beats 50% but NOT the 51.6% base rate
   ENSEMBLE       4645   50.9%   [ 49.5%,  52.4%]  indistinguishable from a coin flip
-2026-09-29 22:40:49,752 | INFO | CALIBRATION: refit from 24357 matched prediction(s), saved to trade_logs/calibration.json
-2026-09-29 22:40:49,754 | INFO | NEWS DIFFUSION ACCURACY (all history):
+2026-09-29 22:43:14,848 | INFO | CALIBRATION: refit from 24357 matched prediction(s), saved to trade_logs/calibration.json
+2026-09-29 22:43:14,850 | INFO | NEWS DIFFUSION ACCURACY (all history):
   base rate: the market rose on 43.9% of 264 scored news-linked observations
   match_type    n     acc            95% CI  verdict
   ----------------------------------------------------------
   explicit     24   12.5%   [  0.0%,  25.7%]  WORSE than chance
   theme        75   38.7%   [ 27.6%,  49.7%]  WORSE than chance
-2026-09-29 22:40:49,903 | INFO | NEWS DIFFUSION: 11 event(s) across 11 symbol(s)
-2026-09-29 22:40:49,903 | INFO | NEWS EVENT | symbol=UNG | match=explicit | polarity=neutral (0.00) | themes=- | 'Trump to Unveil $54B Alaska LNG Plan Amid Midterm Woes'- Bloomberg
-2026-09-29 22:40:49,903 | INFO | NEWS EVENT | symbol=XLE | match=explicit | polarity=bullish (0.33) | themes=- | 30-Year Yield Hits 2002 High; Credit-Score Giant FICO Plunges 27%: Stock Market Today
-2026-09-29 22:40:49,903 | INFO | NEWS EVENT | symbol=XLE | match=explicit | polarity=bearish (-1.00) | themes=- | Oil Near $100 Should Lift Energy. Instead XLE ETF Is Falling — Here's Why
-2026-09-29 22:40:49,903 | INFO | NEWS EVENT | symbol=WEAT | match=explicit | polarity=neutral (0.00) | themes=geopolitical_supply_shock | Reported September 28, 'Russia raises 2027 military spending by 27%, budget documents show' - Reuters Exclusive
-2026-09-29 22:40:49,903 | INFO | NEWS EVENT | symbol=UNG | match=explicit | polarity=neutral (0.00) | themes=geopolitical_supply_shock | Reported September 28, 'Russia raises 2027 military spending by 27%, budget documents show' - Reuters Exclusive
-2026-09-29 22:40:49,903 | INFO | NEWS EVENT | symbol=CORN | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock | Reported September 28, 'Russia raises 2027 military spending by 27%, budget documents show' - Reuters Exclusive
-2026-09-29 22:40:49,903 | INFO | NEWS EVENT | symbol=BNO | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock | Reported September 28, 'Russia raises 2027 military spending by 27%, budget documents show' - Reuters Exclusive
-2026-09-29 22:40:49,903 | INFO | NEWS EVENT | symbol=IAU | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock | Reported September 28, 'Russia raises 2027 military spending by 27%, budget documents show' - Reuters Exclusive
-2026-09-29 22:40:49,903 | INFO | NEWS EVENT | symbol=XLE | match=explicit | polarity=neutral (0.00) | themes=- | $700 Billion S&P 500 Sell-Off Meets $100 Oil: Are Investors Rotating Into Value ETFs?
-2026-09-29 22:40:49,903 | INFO | NEWS EVENT | symbol=BNO | match=explicit | polarity=bullish (1.00) | themes=geopolitical_supply_shock | Oil is trading higher following reports suggesting President Trump rejected Iran's plan to reopen the Strait of Hormuz a
-2026-09-29 22:40:49,904 | INFO | NEWS EVENT | symbol=WEAT | match=theme | polarity=bullish (1.00) | themes=geopolitical_supply_shock | Oil is trading higher following reports suggesting President Trump rejected Iran's plan to reopen the Strait of Hormuz a
-2026-09-29 22:40:49,904 | INFO | NEWS EVENT | symbol=CORN | match=theme | polarity=bullish (1.00) | themes=geopolitical_supply_shock | Oil is trading higher following reports suggesting President Trump rejected Iran's plan to reopen the Strait of Hormuz a
-2026-09-29 22:40:49,904 | INFO | NEWS EVENT | symbol=UNG | match=theme | polarity=bullish (1.00) | themes=geopolitical_supply_shock | Oil is trading higher following reports suggesting President Trump rejected Iran's plan to reopen the Strait of Hormuz a
-2026-09-29 22:40:49,904 | INFO | NEWS EVENT | symbol=IAU | match=theme | polarity=bullish (1.00) | themes=geopolitical_supply_shock | Oil is trading higher following reports suggesting President Trump rejected Iran's plan to reopen the Strait of Hormuz a
-2026-09-29 22:40:49,904 | INFO | NEWS EVENT | symbol=XLE | match=explicit | polarity=bullish (0.33) | themes=- | Nasdaq 100 Sinks, Oil Rallies as Trump Rejects Iran's Hormuz Plan: Stock Market Today
-2026-09-29 22:40:49,904 | INFO | NEWS EVENT | symbol=XLE | match=explicit | polarity=neutral (0.00) | themes=- | 8 Of 11 Sectors Fall In Monday Trading As Defensives Lead
-2026-09-29 22:40:49,904 | INFO | NEWS EVENT | symbol=SLV | match=explicit | polarity=neutral (0.00) | themes=inflation_hedge | Why Are Precious Metal Stocks Falling Today?
-2026-09-29 22:40:49,904 | INFO | NEWS EVENT | symbol=IAU | match=explicit | polarity=neutral (0.00) | themes=inflation_hedge | Why Are Precious Metal Stocks Falling Today?
-2026-09-29 22:40:49,904 | INFO | NEWS EVENT | symbol=DBA | match=theme | polarity=neutral (0.00) | themes=inflation_hedge | Why Are Precious Metal Stocks Falling Today?
-2026-09-29 22:40:49,904 | INFO | NEWS EVENT | symbol=PPLT | match=theme | polarity=neutral (0.00) | themes=inflation_hedge | Why Are Precious Metal Stocks Falling Today?
-2026-09-29 22:40:49,904 | INFO | NEWS EVENT | symbol=DBC | match=theme | polarity=neutral (0.00) | themes=inflation_hedge | Why Are Precious Metal Stocks Falling Today?
-2026-09-29 22:40:49,904 | INFO | NEWS EVENT | symbol=GSG | match=theme | polarity=neutral (0.00) | themes=inflation_hedge | Why Are Precious Metal Stocks Falling Today?
-2026-09-29 22:40:49,904 | INFO | NEWS EVENT | symbol=IAU | match=explicit | polarity=bullish (1.00) | themes=- | Gold Bull Run Looks Finished—Unless You Look Closer
-2026-09-29 22:40:49,904 | INFO | NEWS EVENT | symbol=UNG | match=explicit | polarity=neutral (0.00) | themes=- | Reported Earlier, 'Iran Is Pressed to Make Nuclear Concessions to Revive Peace Talks With U.S.' - WSJ
-2026-09-29 22:40:49,906 | INFO | NEWS DIFFUSION: 1 new event(s) persisted for scoring
-2026-09-29 22:40:49,906 | INFO | Generating signals...
+2026-09-29 22:43:15,049 | INFO | NEWS DIFFUSION: 11 event(s) across 10 symbol(s)
+2026-09-29 22:43:15,049 | INFO | NEWS EVENT | symbol=UNG | match=explicit | polarity=neutral (0.00) | themes=- | 'Trump to Unveil $54B Alaska LNG Plan Amid Midterm Woes'- Bloomberg
+2026-09-29 22:43:15,049 | INFO | NEWS EVENT | symbol=XLE | match=explicit | polarity=bullish (0.33) | themes=- | 30-Year Yield Hits 2002 High; Credit-Score Giant FICO Plunges 27%: Stock Market Today
+2026-09-29 22:43:15,049 | INFO | NEWS EVENT | symbol=XLE | match=explicit | polarity=bearish (-1.00) | themes=- | Oil Near $100 Should Lift Energy. Instead XLE ETF Is Falling — Here's Why
+2026-09-29 22:43:15,049 | INFO | NEWS EVENT | symbol=UNG | match=explicit | polarity=neutral (0.00) | themes=geopolitical_supply_shock | Reported September 28, 'Russia raises 2027 military spending by 27%, budget documents show' - Reuters Exclusive
+2026-09-29 22:43:15,049 | INFO | NEWS EVENT | symbol=WEAT | match=explicit | polarity=neutral (0.00) | themes=geopolitical_supply_shock | Reported September 28, 'Russia raises 2027 military spending by 27%, budget documents show' - Reuters Exclusive
+2026-09-29 22:43:15,049 | INFO | NEWS EVENT | symbol=CORN | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock | Reported September 28, 'Russia raises 2027 military spending by 27%, budget documents show' - Reuters Exclusive
+2026-09-29 22:43:15,049 | INFO | NEWS EVENT | symbol=BNO | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock | Reported September 28, 'Russia raises 2027 military spending by 27%, budget documents show' - Reuters Exclusive
+2026-09-29 22:43:15,049 | INFO | NEWS EVENT | symbol=IAU | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock | Reported September 28, 'Russia raises 2027 military spending by 27%, budget documents show' - Reuters Exclusive
+2026-09-29 22:43:15,049 | INFO | NEWS EVENT | symbol=XLE | match=explicit | polarity=neutral (0.00) | themes=- | $700 Billion S&P 500 Sell-Off Meets $100 Oil: Are Investors Rotating Into Value ETFs?
+2026-09-29 22:43:15,049 | INFO | NEWS EVENT | symbol=BNO | match=explicit | polarity=bullish (1.00) | themes=geopolitical_supply_shock | Oil is trading higher following reports suggesting President Trump rejected Iran's plan to reopen the Strait of Hormuz a
+2026-09-29 22:43:15,049 | INFO | NEWS EVENT | symbol=WEAT | match=theme | polarity=bullish (1.00) | themes=geopolitical_supply_shock | Oil is trading higher following reports suggesting President Trump rejected Iran's plan to reopen the Strait of Hormuz a
+2026-09-29 22:43:15,049 | INFO | NEWS EVENT | symbol=CORN | match=theme | polarity=bullish (1.00) | themes=geopolitical_supply_shock | Oil is trading higher following reports suggesting President Trump rejected Iran's plan to reopen the Strait of Hormuz a
+2026-09-29 22:43:15,049 | INFO | NEWS EVENT | symbol=UNG | match=theme | polarity=bullish (1.00) | themes=geopolitical_supply_shock | Oil is trading higher following reports suggesting President Trump rejected Iran's plan to reopen the Strait of Hormuz a
+2026-09-29 22:43:15,049 | INFO | NEWS EVENT | symbol=IAU | match=theme | polarity=bullish (1.00) | themes=geopolitical_supply_shock | Oil is trading higher following reports suggesting President Trump rejected Iran's plan to reopen the Strait of Hormuz a
+2026-09-29 22:43:15,049 | INFO | NEWS EVENT | symbol=XLE | match=explicit | polarity=bullish (0.33) | themes=- | Nasdaq 100 Sinks, Oil Rallies as Trump Rejects Iran's Hormuz Plan: Stock Market Today
+2026-09-29 22:43:15,049 | INFO | NEWS EVENT | symbol=XLE | match=explicit | polarity=neutral (0.00) | themes=- | 8 Of 11 Sectors Fall In Monday Trading As Defensives Lead
+2026-09-29 22:43:15,049 | INFO | NEWS EVENT | symbol=IAU | match=explicit | polarity=neutral (0.00) | themes=inflation_hedge | Why Are Precious Metal Stocks Falling Today?
+2026-09-29 22:43:15,050 | INFO | NEWS EVENT | symbol=SLV | match=explicit | polarity=neutral (0.00) | themes=inflation_hedge | Why Are Precious Metal Stocks Falling Today?
+2026-09-29 22:43:15,050 | INFO | NEWS EVENT | symbol=PPLT | match=theme | polarity=neutral (0.00) | themes=inflation_hedge | Why Are Precious Metal Stocks Falling Today?
+2026-09-29 22:43:15,050 | INFO | NEWS EVENT | symbol=DBC | match=theme | polarity=neutral (0.00) | themes=inflation_hedge | Why Are Precious Metal Stocks Falling Today?
+2026-09-29 22:43:15,050 | INFO | NEWS EVENT | symbol=GSG | match=theme | polarity=neutral (0.00) | themes=inflation_hedge | Why Are Precious Metal Stocks Falling Today?
+2026-09-29 22:43:15,050 | INFO | NEWS EVENT | symbol=IAU | match=explicit | polarity=bullish (1.00) | themes=- | Gold Bull Run Looks Finished—Unless You Look Closer
+2026-09-29 22:43:15,050 | INFO | NEWS EVENT | symbol=UNG | match=explicit | polarity=neutral (0.00) | themes=- | Reported Earlier, 'Iran Is Pressed to Make Nuclear Concessions to Revive Peace Talks With U.S.' - WSJ
+2026-09-29 22:43:15,052 | INFO | Generating signals...
 YF.download() has changed argument auto_adjust default to True
 
 🔵 Running Bayesian Linear Regression for WEAT...
@@ -210,25 +176,6 @@ YF.download() has changed argument auto_adjust default to True
    Bayesian:         $11.36 ($9.08 - $13.63)
    GP:               $11.38 ($11.32 - $11.43)
    Ensemble:         $11.38 ($11.30 - $11.45)
-
-🔵 Running Bayesian Linear Regression for DBA...
-🟠 Running Gaussian Process for DBA...
-
-📊 DBA - Unified Forecast Summary (2026-09-29)
-======================================================================
-🔵 Bayesian Forecast: -0.0053 ± 0.2029
-🟠 GP Forecast:       0.0027 ± 0.0063
-🟢 Ensemble Forecast: 0.0026 ± 0.0092
-📈 RSI Signal:        HOLD (RSI: 50.0)
-📊 BB Signal:         HOLD (Z-Score: -1.42)
-🎯 Final Signal:      HOLD (Confidence: 50.0%)
-💰 Recommendation:    HOLD
-
-💰 Next-Day Closing Price Predictions:
-   Current Close:    $28.25
-   Bayesian:         $28.10 ($22.37 - $33.83)
-   GP:               $28.32 ($28.15 - $28.50)
-   Ensemble:         $28.32 ($28.07 - $28.58)
 
 🔵 Running Bayesian Linear Regression for UNG...
 🟠 Running Gaussian Process for UNG...
@@ -363,6 +310,25 @@ YF.download() has changed argument auto_adjust default to True
    GP:               $22.03 ($21.92 - $22.15)
    Ensemble:         $22.03 ($21.87 - $22.20)
 
+🔵 Running Bayesian Linear Regression for CPER...
+🟠 Running Gaussian Process for CPER...
+
+📊 CPER - Unified Forecast Summary (2026-09-29)
+======================================================================
+🔵 Bayesian Forecast: 0.0033 ± 0.2018
+🟠 GP Forecast:       0.0020 ± 0.0053
+🟢 Ensemble Forecast: 0.0020 ± 0.0077
+📈 RSI Signal:        HOLD (RSI: 59.7)
+📊 BB Signal:         HOLD (Z-Score: 0.08)
+🎯 Final Signal:      HOLD (Confidence: 50.0%)
+💰 Recommendation:    HOLD
+
+💰 Next-Day Closing Price Predictions:
+   Current Close:    $39.93
+   Bayesian:         $40.06 ($32.00 - $48.12)
+   GP:               $40.01 ($39.80 - $40.22)
+   Ensemble:         $40.01 ($39.70 - $40.32)
+
 🔵 Running Bayesian Linear Regression for DBB...
 🟠 Running Gaussian Process for DBB...
 
@@ -419,34 +385,34 @@ YF.download() has changed argument auto_adjust default to True
    Bayesian:         $34.81 ($27.70 - $41.92)
    GP:               $35.15 ($34.99 - $35.31)
    Ensemble:         $35.15 ($34.91 - $35.39)
-2026-09-29 22:40:59,523 | INFO | CALIBRATION APPLIED: 15 signal(s), fit on n=24357 (fitted 2026-09-29T22:40:49+00:00) — 14 moved by >5pp
-2026-09-29 22:40:59,528 | INFO | VOL SIZING | symbol=PPLT | predicted_vol=39.8% | scale=x0.63 | ENFORCED | vol 39.8% vs 25% target -> x0.63
-2026-09-29 22:40:59,528 | INFO | SIGNAL FILTER | symbol=WEAT | original=HOLD | normalized=HOLD | confidence=0.4250 | prob_profit=0.5191 | decision=HOLD | reason=explicit HOLD decision retained for logging
-2026-09-29 22:40:59,528 | INFO | SIGNAL FILTER | symbol=CORN | original=HOLD | normalized=HOLD | confidence=0.4250 | prob_profit=0.5146 | decision=HOLD | reason=explicit HOLD decision retained for logging
-2026-09-29 22:40:59,528 | INFO | SIGNAL FILTER | symbol=SOYB | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5322 | decision=HOLD | reason=explicit HOLD decision retained for logging
-2026-09-29 22:40:59,528 | INFO | SIGNAL FILTER | symbol=CANE | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5254 | decision=HOLD | reason=explicit HOLD decision retained for logging
-2026-09-29 22:40:59,528 | INFO | SIGNAL FILTER | symbol=DBA | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5322 | decision=HOLD | reason=explicit HOLD decision retained for logging
-2026-09-29 22:40:59,528 | INFO | SIGNAL FILTER | symbol=UNG | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5322 | decision=HOLD | reason=explicit HOLD decision retained for logging
-2026-09-29 22:40:59,528 | INFO | SIGNAL FILTER | symbol=BNO | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5322 | decision=HOLD | reason=explicit HOLD decision retained for logging
-2026-09-29 22:40:59,528 | INFO | SIGNAL FILTER | symbol=XLE | original=HOLD | normalized=HOLD | confidence=0.4250 | prob_profit=0.5322 | decision=HOLD | reason=explicit HOLD decision retained for logging
-2026-09-29 22:40:59,528 | INFO | SIGNAL FILTER | symbol=SLV | original=HOLD | normalized=HOLD | confidence=0.4250 | prob_profit=0.5146 | decision=HOLD | reason=explicit HOLD decision retained for logging
-2026-09-29 22:40:59,528 | INFO | SIGNAL FILTER | symbol=IAU | original=HOLD | normalized=HOLD | confidence=0.4250 | prob_profit=0.4909 | decision=HOLD | reason=explicit HOLD decision retained for logging
-2026-09-29 22:40:59,529 | INFO | SIGNAL FILTER | symbol=PPLT | original=SELL | normalized=SELL | confidence=0.6375 | prob_profit=0.4891 | p_dir=0.5109 | decision=PASS | reason=meets confidence and probability thresholds
-2026-09-29 22:40:59,529 | INFO | SIGNAL FILTER | symbol=PALL | original=HOLD | normalized=HOLD | confidence=0.4250 | prob_profit=0.4909 | decision=HOLD | reason=explicit HOLD decision retained for logging
-2026-09-29 22:40:59,529 | INFO | SIGNAL FILTER | symbol=DBB | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5322 | decision=HOLD | reason=explicit HOLD decision retained for logging
-2026-09-29 22:40:59,529 | INFO | SIGNAL FILTER | symbol=DBC | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5322 | decision=HOLD | reason=explicit HOLD decision retained for logging
-2026-09-29 22:40:59,529 | INFO | SIGNAL FILTER | symbol=GSG | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5191 | decision=HOLD | reason=explicit HOLD decision retained for logging
-2026-09-29 22:40:59,529 | INFO | EDGE GATE | symbol=PPLT | move=1.040% | p_dir=0.511 | cost=0.300% | EV=-0.277% | decision=REJECT | reason=predicted move 1.040% at 51.1% does not cover 0.300% round-trip cost (EV -0.277%)
-2026-09-29 22:40:59,529 | ERROR | rejection_reason: edge gate PPLT: predicted move 1.040% at 51.1% does not cover 0.300% round-trip cost (EV -0.277%)
-2026-09-29 22:40:59,529 | INFO | EDGE GATE SUMMARY: 1 directional signal(s) evaluated, 1 demoted to HOLD (enforcing)
-2026-09-29 22:40:59,529 | INFO | SIGNALS GENERATED: 15 total, 0 directional candidates, 15 hold decisions
-2026-09-29 22:40:59,531 | INFO | THESES SHADOW-LOGGED: 15
-2026-09-29 22:40:59,531 | INFO | OPTIONS CANDIDATES FOR TODAY: none
-2026-09-29 22:40:59,531 | INFO | Loading portfolio state...
-2026-09-29 22:40:59,593 | INFO | INVERSE ROUTING: nothing to route
+2026-09-29 22:43:25,221 | INFO | CALIBRATION APPLIED: 15 signal(s), fit on n=24357 (fitted 2026-09-29T22:43:14+00:00) — 14 moved by >5pp
+2026-09-29 22:43:25,226 | INFO | VOL SIZING | symbol=PPLT | predicted_vol=39.8% | scale=x0.63 | ENFORCED | vol 39.8% vs 25% target -> x0.63
+2026-09-29 22:43:25,226 | INFO | SIGNAL FILTER | symbol=WEAT | original=HOLD | normalized=HOLD | confidence=0.4250 | prob_profit=0.5191 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-09-29 22:43:25,226 | INFO | SIGNAL FILTER | symbol=CORN | original=HOLD | normalized=HOLD | confidence=0.4250 | prob_profit=0.5146 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-09-29 22:43:25,226 | INFO | SIGNAL FILTER | symbol=SOYB | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5322 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-09-29 22:43:25,226 | INFO | SIGNAL FILTER | symbol=CANE | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5254 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-09-29 22:43:25,226 | INFO | SIGNAL FILTER | symbol=UNG | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5322 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-09-29 22:43:25,226 | INFO | SIGNAL FILTER | symbol=BNO | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5322 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-09-29 22:43:25,226 | INFO | SIGNAL FILTER | symbol=XLE | original=HOLD | normalized=HOLD | confidence=0.4250 | prob_profit=0.5322 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-09-29 22:43:25,226 | INFO | SIGNAL FILTER | symbol=SLV | original=HOLD | normalized=HOLD | confidence=0.4250 | prob_profit=0.5146 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-09-29 22:43:25,226 | INFO | SIGNAL FILTER | symbol=IAU | original=HOLD | normalized=HOLD | confidence=0.4250 | prob_profit=0.4909 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-09-29 22:43:25,226 | INFO | SIGNAL FILTER | symbol=PPLT | original=SELL | normalized=SELL | confidence=0.6375 | prob_profit=0.4891 | p_dir=0.5109 | decision=PASS | reason=meets confidence and probability thresholds
+2026-09-29 22:43:25,226 | INFO | SIGNAL FILTER | symbol=PALL | original=HOLD | normalized=HOLD | confidence=0.4250 | prob_profit=0.4909 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-09-29 22:43:25,226 | INFO | SIGNAL FILTER | symbol=CPER | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5322 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-09-29 22:43:25,226 | INFO | SIGNAL FILTER | symbol=DBB | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5322 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-09-29 22:43:25,226 | INFO | SIGNAL FILTER | symbol=DBC | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5322 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-09-29 22:43:25,227 | INFO | SIGNAL FILTER | symbol=GSG | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5191 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-09-29 22:43:25,227 | INFO | EDGE GATE | symbol=PPLT | move=1.040% | p_dir=0.511 | cost=0.300% | EV=-0.277% | decision=REJECT | reason=predicted move 1.040% at 51.1% does not cover 0.300% round-trip cost (EV -0.277%)
+2026-09-29 22:43:25,227 | ERROR | rejection_reason: edge gate PPLT: predicted move 1.040% at 51.1% does not cover 0.300% round-trip cost (EV -0.277%)
+2026-09-29 22:43:25,227 | INFO | EDGE GATE SUMMARY: 1 directional signal(s) evaluated, 1 demoted to HOLD (enforcing)
+2026-09-29 22:43:25,227 | INFO | SIGNALS GENERATED: 15 total, 0 directional candidates, 15 hold decisions
+2026-09-29 22:43:25,228 | INFO | THESES SHADOW-LOGGED: 15
+2026-09-29 22:43:25,228 | INFO | OPTIONS CANDIDATES FOR TODAY: none
+2026-09-29 22:43:25,228 | INFO | Loading portfolio state...
+2026-09-29 22:43:25,340 | INFO | INVERSE ROUTING: nothing to route
   (no directional signals to route)
-2026-09-29 22:40:59,593 | INFO | EDGE GATE SUMMARY: 0 directional signal(s) evaluated, 0 demoted to HOLD (enforcing)
-2026-09-29 22:40:59,593 | INFO | Executing trading cycle...
+2026-09-29 22:43:25,341 | INFO | EDGE GATE SUMMARY: 0 directional signal(s) evaluated, 0 demoted to HOLD (enforcing)
+2026-09-29 22:43:25,341 | INFO | Executing trading cycle...
 
 📋 Pre-trade snapshot:
    Equity source: broker_live
@@ -456,7 +422,7 @@ YF.download() has changed argument auto_adjust default to True
    Daily return: -0.0005
    Risk config: exposure=0.3, max_pos=0.2, max_trades/day=3, daily_loss_limit=0.02, paper_mode=True
 [INFO] PAPER TRADING MODE: True — executing in paper mode with guardrails enabled.
-2026-09-29 22:40:59,744 | INFO | ORDERS ATTEMPTED: 0
-2026-09-29 22:40:59,744 | INFO | ORDERS SUBMITTED: 0
-2026-09-29 22:40:59,746 | INFO | Decision summary: {'hold': 15}
-2026-09-29 22:40:59,747 | INFO | END DAILY TRADING RUN
+2026-09-29 22:43:25,855 | INFO | ORDERS ATTEMPTED: 0
+2026-09-29 22:43:25,856 | INFO | ORDERS SUBMITTED: 0
+2026-09-29 22:43:25,857 | INFO | Decision summary: {'hold': 15}
+2026-09-29 22:43:25,857 | INFO | END DAILY TRADING RUN
