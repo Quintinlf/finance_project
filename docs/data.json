@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-02T18:52:36+00:00",
+  "generated_at": "2026-10-04T01:06:16+00:00",
   "equity_curve": [
     {
       "time": "2026-08-13",
@@ -3804,174 +3804,14 @@
     }
   ],
   "latest_run": {
-    "date": "20261002",
-    "account": {
-      "equity": 493.8,
-      "equity_source": "broker_live",
-      "cash": 469.03,
-      "exposure": 0.05
-    },
-    "signals": [
-      {
-        "symbol": "WEAT",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.425,
-        "prob_profit": 0.5191,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
-      },
-      {
-        "symbol": "CORN",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.425,
-        "prob_profit": 0.5319,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
-      },
-      {
-        "symbol": "SOYB",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.425,
-        "prob_profit": 0.5237,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
-      },
-      {
-        "symbol": "CANE",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.425,
-        "prob_profit": 0.5319,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
-      },
-      {
-        "symbol": "DBA",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.5,
-        "prob_profit": 0.5319,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
-      },
-      {
-        "symbol": "UNG",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.5,
-        "prob_profit": 0.5138,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
-      },
-      {
-        "symbol": "BNO",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.5,
-        "prob_profit": 0.5319,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
-      },
-      {
-        "symbol": "XLE",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.5,
-        "prob_profit": 0.5319,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
-      },
-      {
-        "symbol": "SLV",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.425,
-        "prob_profit": 0.4903,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
-      },
-      {
-        "symbol": "IAU",
-        "signal": "BUY",
-        "original": "BUY",
-        "confidence": 0.8625,
-        "prob_profit": 0.5319,
-        "decision": "PASS",
-        "reason": "meets confidence and probability thresholds"
-      },
-      {
-        "symbol": "PPLT",
-        "signal": "SELL",
-        "original": "SELL",
-        "confidence": 0.6375,
-        "prob_profit": 0.4878,
-        "decision": "PASS",
-        "reason": "meets confidence and probability thresholds"
-      },
-      {
-        "symbol": "PALL",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.425,
-        "prob_profit": 0.5319,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
-      },
-      {
-        "symbol": "CPER",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.5,
-        "prob_profit": 0.5319,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
-      },
-      {
-        "symbol": "DBB",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.425,
-        "prob_profit": 0.5319,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
-      },
-      {
-        "symbol": "DBC",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.5,
-        "prob_profit": 0.5319,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
-      },
-      {
-        "symbol": "GSG",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.5,
-        "prob_profit": 0.5319,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
-      }
-    ],
-    "positions": [
-      {
-        "symbol": "WEAT",
-        "qty": 1.0,
-        "entry": 24.99,
-        "since": "2026-09-29"
-      }
-    ],
-    "blockers": [
-      "rejection_reason: edge gate IAU: predicted move 0.190% at 53.2% does not cover 0.130% round-trip cost (EV -0.118%)",
-      "rejection_reason: edge gate PPLT: predicted move 1.419% at 51.2% does not cover 0.300% round-trip cost (EV -0.265%)"
-    ],
-    "eos_available": false,
-    "orders_submitted": 0,
-    "orders_attempted": 0
+    "date": "20261004",
+    "account": {},
+    "signals": [],
+    "positions": [],
+    "blockers": [],
+    "eos_available": true,
+    "orders_submitted": null,
+    "orders_attempted": null
   },
   "backtests": [
     {
@@ -4464,7 +4304,7 @@
     "target_sample": 300,
     "min_sample_met": true,
     "predictions_per_run_day": 24.2,
-    "target_ready_date": "2026-10-02"
+    "target_ready_date": "2026-10-04"
   },
   "news": {
     "events": [

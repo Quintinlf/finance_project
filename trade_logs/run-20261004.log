@@ -1,0 +1,6 @@
+2026-10-04 01:06:14,997 | INFO | EOS FINANCE DOMAINS AVAILABLE at /home/runner/work/_temp/eos/mcp_server
+2026-10-04 01:06:15,415 | INFO | Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Non-scalable fonts are not supported
+2026-10-04 01:06:15,545 | INFO | generated new fontManager
+2026-10-04 01:06:15,703 | INFO | START DAILY TRADING RUN
+2026-10-04 01:06:15,703 | INFO | DATE/TIME: 2026-10-03T21:06:15.703765-04:00
+2026-10-04 01:06:15,868 | INFO | Not a US market day. Skipping run.
