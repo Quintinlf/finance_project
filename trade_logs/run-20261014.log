@@ -1,0 +1,577 @@
+2026-10-14 18:15:14,241 | INFO | EOS FINANCE DOMAINS AVAILABLE at /home/runner/work/_temp/eos/mcp_server
+2026-10-14 18:15:14,577 | INFO | Failed to extract font properties from /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf: Non-scalable fonts are not supported
+2026-10-14 18:15:14,582 | INFO | generated new fontManager
+2026-10-14 18:15:14,796 | INFO | START DAILY TRADING RUN
+2026-10-14 18:15:14,796 | INFO | DATE/TIME: 2026-10-14T14:15:14.796723-04:00
+2026-10-14 18:15:15,064 | INFO | ACCOUNT: equity=$492.29 (source=broker_live) | cash=$149.39 | exposure=69.7%
+2026-10-14 18:15:15,164 | INFO | FILL RECONCILE: 40 fills -> 20 round trips, realized P&L $-5.90 (7W/13L, 35.0% win rate), 1 lots still open, 20 rows written
+2026-10-14 18:15:15,164 | INFO |   TSLA     1.00 sh  2026-03-24 -> 2026-07-23  $379.74 -> $337.00  P&L $-42.74 (-11.26%, 120d)
+2026-10-14 18:15:15,164 | INFO |   BAC      1.00 sh  2026-03-24 -> 2026-09-09  $47.38 -> $62.79  P&L $+15.41 (+32.52%, 169d)
+2026-10-14 18:15:15,164 | INFO |   BAC      1.00 sh  2026-03-24 -> 2026-09-11  $47.38 -> $62.54  P&L $+15.16 (+32.00%, 171d)
+2026-10-14 18:15:15,164 | INFO |   CORN     1.00 sh  2026-09-09 -> 2026-09-11  $19.91 -> $19.89  P&L $-0.02 (-0.10%, 1d)
+2026-10-14 18:15:15,164 | INFO |   KOLD     1.00 sh  2026-09-15 -> 2026-09-15  $28.63 -> $28.34  P&L $-0.29 (-1.01%, 0d)
+2026-10-14 18:15:15,164 | INFO |   CPER     1.00 sh  2026-09-11 -> 2026-09-17  $39.27 -> $39.89  P&L $+0.62 (+1.58%, 6d)
+2026-10-14 18:15:15,165 | INFO |   BNO      1.00 sh  2026-08-13 -> 2026-09-17  $49.60 -> $61.30  P&L $+11.70 (+23.59%, 35d)
+2026-10-14 18:15:15,165 | INFO |   KOLD     1.00 sh  2026-09-16 -> 2026-09-18  $29.39 -> $28.97  P&L $-0.42 (-1.43%, 1d)
+2026-10-14 18:15:15,165 | INFO |   GSG      1.00 sh  2026-09-16 -> 2026-09-21  $36.72 -> $35.97  P&L $-0.75 (-2.04%, 4d)
+2026-10-14 18:15:15,165 | INFO |   DBC      1.00 sh  2026-09-16 -> 2026-09-21  $33.27 -> $32.54  P&L $-0.73 (-2.19%, 4d)
+2026-10-14 18:15:15,165 | INFO |   PALL     1.00 sh  2026-09-17 -> 2026-09-21  $23.36 -> $23.57  P&L $+0.21 (+0.90%, 3d)
+2026-10-14 18:15:15,165 | INFO |   PPLT     1.00 sh  2026-09-17 -> 2026-09-23  $16.17 -> $15.99  P&L $-0.18 (-1.11%, 5d)
+2026-10-14 18:15:15,165 | INFO |   SLV      1.00 sh  2026-09-22 -> 2026-09-24  $59.76 -> $57.24  P&L $-2.52 (-4.22%, 1d)
+2026-10-14 18:15:15,165 | INFO |   PALL     1.00 sh  2026-09-22 -> 2026-09-25  $23.48 -> $22.67  P&L $-0.81 (-3.45%, 2d)
+2026-10-14 18:15:15,165 | INFO |   KOLD     1.00 sh  2026-09-24 -> 2026-09-25  $22.92 -> $24.80  P&L $+1.88 (+8.20%, 1d)
+2026-10-14 18:15:15,165 | INFO |   IAU      1.00 sh  2026-09-24 -> 2026-09-28  $80.04 -> $77.93  P&L $-2.11 (-2.64%, 3d)
+2026-10-14 18:15:15,165 | INFO |   SCO      1.00 sh  2026-09-29 -> 2026-09-29  $20.40 -> $20.37  P&L $-0.03 (-0.15%, 0d)
+2026-10-14 18:15:15,165 | INFO |   GLL      1.00 sh  2026-09-29 -> 2026-09-29  $24.89 -> $24.93  P&L $+0.04 (+0.16%, 0d)
+2026-10-14 18:15:15,165 | INFO |   ZSL      1.00 sh  2026-09-29 -> 2026-09-29  $27.20 -> $26.92  P&L $-0.28 (-1.03%, 0d)
+2026-10-14 18:15:15,165 | INFO |   WEAT     1.00 sh  2026-09-29 -> 2026-10-07  $24.99 -> $24.95  P&L $-0.04 (-0.16%, 8d)
+2026-10-14 18:15:15,165 | INFO |   OPEN AAPL     1.00 sh @ $344.57 since 2026-10-14
+2026-10-14 18:15:15,175 | INFO | CURRENTLY HELD: AAPL
+2026-10-14 18:15:17,248 | INFO | UNIVERSE SCREEN: scope=all | 16/24 affordable at $98.46/position (20% of $492.29 equity)
+  OK UNG        $11.02  up to 8 share(s) at $11.02
+  OK CANE       $12.34  up to 7 share(s) at $12.34
+  OK PPLT       $14.53  up to 6 share(s) at $14.53
+  OK CORN       $18.40  up to 5 share(s) at $18.40
+  OK PALL       $19.84  up to 4 share(s) at $19.84
+  OK WEAT       $24.38  up to 4 share(s) at $24.38
+  OK DBB        $24.81  up to 3 share(s) at $24.81
+  OK SOYB       $27.19  up to 3 share(s) at $27.19
+  OK DBA        $28.26  up to 3 share(s) at $28.26
+  OK DBC        $33.33  up to 2 share(s) at $33.33
+  OK GSG        $36.65  up to 2 share(s) at $36.65
+  OK CPER       $39.85  up to 2 share(s) at $39.85
+  OK SLV        $50.24  up to 1 share(s) at $50.24
+  OK BNO        $65.24  up to 1 share(s) at $65.24
+  OK XLE        $67.63  up to 1 share(s) at $67.63
+  OK IAU        $76.88  up to 1 share(s) at $76.88
+  -- UGA       $146.06  1 share costs $146.06 but the cap is $98.46 (20% of $492.29)
+  -- USO       $153.88  1 share costs $153.88 but the cap is $98.46 (20% of $492.29)
+  -- NVDA      $220.85  1 share costs $220.85 but the cap is $98.46 (20% of $492.29)
+  -- AMZN      $253.66  1 share costs $253.66 but the cap is $98.46 (20% of $492.29)
+  -- AAPL      $342.90  1 share costs $342.90 but the cap is $98.46 (20% of $492.29)
+  -- GOOGL     $347.83  1 share costs $347.83 but the cap is $98.46 (20% of $492.29)
+  -- GLD       $374.99  1 share costs $374.99 but the cap is $98.46 (20% of $492.29)
+  -- MSFT      $534.28  1 share costs $534.28 but the cap is $98.46 (20% of $492.29)
+2026-10-14 18:15:17,248 | INFO | TRADING UNIVERSE (17): WEAT, CORN, SOYB, CANE, DBA, UNG, BNO, XLE, SLV, IAU, PPLT, PALL, CPER, DBB, DBC, GSG, AAPL
+2026-10-14 18:15:17,248 | INFO | EXPOSURE TRIM: 69.7% exposed against a 30% cap — freeing $219.83 to reach 25%
+2026-10-14 18:15:17,293 | INFO | EXPOSURE TRIM | AAPL | TRIMMED | sell 1/1 sh @ $342.93 frees $342.93
+2026-10-14 18:15:17,293 | INFO | EXPOSURE TRIM SUMMARY: 1 position(s) acted on, 1 share(s) sold
+2026-10-14 18:15:17,747 | INFO | ACCOUNT (post-trim): equity=$492.29 | cash=$492.29 | exposure=0.0%
+2026-10-14 18:15:17,769 | INFO | EXIT RECONCILE SUMMARY: 0 positions checked, 0 exits attached
+2026-10-14 18:15:17,781 | WARNING | Price cache for WEAT does not cover 2026-10-05..2026-10-26 with a date index; refetching.
+2026-10-14 18:15:17,872 | INFO | scored WEAT: 1 row(s)
+2026-10-14 18:15:17,876 | WARNING | Price cache for CORN does not cover 2026-10-05..2026-10-26 with a date index; refetching.
+2026-10-14 18:15:17,994 | INFO | scored CORN: 1 row(s)
+2026-10-14 18:15:17,998 | WARNING | Price cache for SOYB does not cover 2026-10-05..2026-10-26 with a date index; refetching.
+2026-10-14 18:15:18,114 | INFO | scored SOYB: 1 row(s)
+2026-10-14 18:15:18,118 | WARNING | Price cache for DBA does not cover 2026-10-05..2026-10-26 with a date index; refetching.
+2026-10-14 18:15:18,275 | INFO | scored DBA: 1 row(s)
+2026-10-14 18:15:18,279 | WARNING | Price cache for UNG does not cover 2026-10-05..2026-10-26 with a date index; refetching.
+2026-10-14 18:15:18,447 | INFO | scored UNG: 1 row(s)
+2026-10-14 18:15:18,451 | WARNING | Price cache for BNO does not cover 2026-10-05..2026-10-26 with a date index; refetching.
+2026-10-14 18:15:18,576 | INFO | scored BNO: 1 row(s)
+2026-10-14 18:15:18,580 | WARNING | Price cache for SLV does not cover 2026-10-05..2026-10-26 with a date index; refetching.
+2026-10-14 18:15:18,690 | INFO | scored SLV: 1 row(s)
+2026-10-14 18:15:18,694 | WARNING | Price cache for IAU does not cover 2026-10-05..2026-10-26 with a date index; refetching.
+2026-10-14 18:15:18,835 | INFO | scored IAU: 1 row(s)
+2026-10-14 18:15:18,839 | WARNING | Price cache for PPLT does not cover 2026-10-05..2026-10-26 with a date index; refetching.
+2026-10-14 18:15:19,012 | INFO | scored PPLT: 1 row(s)
+2026-10-14 18:15:19,016 | WARNING | Price cache for PALL does not cover 2026-10-05..2026-10-26 with a date index; refetching.
+2026-10-14 18:15:19,137 | INFO | scored PALL: 1 row(s)
+2026-10-14 18:15:19,141 | WARNING | Price cache for CPER does not cover 2026-10-05..2026-10-26 with a date index; refetching.
+2026-10-14 18:15:19,249 | INFO | scored CPER: 1 row(s)
+2026-10-14 18:15:19,253 | WARNING | Price cache for DBB does not cover 2026-10-05..2026-10-26 with a date index; refetching.
+2026-10-14 18:15:19,380 | INFO | scored DBB: 1 row(s)
+2026-10-14 18:15:19,384 | WARNING | Price cache for DBC does not cover 2026-10-05..2026-10-26 with a date index; refetching.
+2026-10-14 18:15:19,519 | INFO | scored DBC: 1 row(s)
+2026-10-14 18:15:19,524 | WARNING | Price cache for GSG does not cover 2026-10-05..2026-10-26 with a date index; refetching.
+2026-10-14 18:15:19,632 | INFO | scored GSG: 1 row(s)
+2026-10-14 18:15:19,634 | INFO | MODEL SCORING: 14 prediction(s) graded against realized returns
+2026-10-14 18:15:19,658 | INFO | COMPONENT ACCURACY (all history):
+  base rate: the market rose on 51.6% of 24547 scored observations — beat this, not 50%
+  component         n     acc            95% CI  verdict
+  --------------------------------------------------------------
+  Bollinger      6816   49.9%   [ 48.7%,  51.1%]  indistinguishable from a coin flip
+  Bayesian      24547   49.3%   [ 48.6%,  49.9%]  WORSE than chance
+  GaussianProc  24547   50.9%   [ 50.3%,  51.5%]  beats 50% but NOT the 51.6% base rate
+  RSI            5886   51.4%   [ 50.2%,  52.7%]  beats 50% but NOT the 51.6% base rate
+  ENSEMBLE       4663   51.0%   [ 49.6%,  52.4%]  indistinguishable from a coin flip
+2026-10-14 18:15:19,915 | INFO | CALIBRATION: refit from 24538 matched prediction(s), saved to trade_logs/calibration.json
+2026-10-14 18:15:21,109 | INFO | NEWS SCORING: 13 event(s) graded against realized returns
+2026-10-14 18:15:21,110 | INFO | NEWS DIFFUSION ACCURACY (all history):
+  base rate: the market rose on 48.9% of 423 scored news-linked observations
+  match_type    n     acc            95% CI  verdict
+  ----------------------------------------------------------
+  explicit     47   34.0%   [ 20.5%,  47.6%]  WORSE than chance
+  theme       109   38.5%   [ 29.4%,  47.7%]  WORSE than chance
+2026-10-14 18:15:21,214 | INFO | NEWS DIFFUSION: 39 event(s) across 14 symbol(s)
+2026-10-14 18:15:21,214 | INFO | NEWS EVENT | symbol=AAPL | match=explicit | polarity=bearish (-1.00) | themes=- | ASML Earnings Signal Strong AI Demand Yet Stock Falls, Emphasizing Market Character Shift—CPI Squashes Hopium
+2026-10-14 18:15:21,214 | INFO | NEWS EVENT | symbol=UNG | match=explicit | polarity=neutral (0.00) | themes=- | President Trump, On Social Media, Announces U.S. Secures Offtake Commitment From Taiwan For $70B - $80B For Alaska LNG; 
+2026-10-14 18:15:21,214 | INFO | NEWS EVENT | symbol=AAPL | match=explicit | polarity=neutral (0.00) | themes=- | Apple Has a $299 Smart-Home Bet: The Real Money May Be in Subscriptions
+2026-10-14 18:15:21,214 | INFO | NEWS EVENT | symbol=AAPL | match=explicit | polarity=bearish (-1.00) | themes=- | Nasdaq 100 Drops 1% on Hot CPI, SOXX Falls 7th Day: Stock Market Today
+2026-10-14 18:15:21,214 | INFO | NEWS EVENT | symbol=XLE | match=explicit | polarity=bearish (-1.00) | themes=- | Nasdaq 100 Drops 1% on Hot CPI, SOXX Falls 7th Day: Stock Market Today
+2026-10-14 18:15:21,214 | INFO | NEWS EVENT | symbol=AAPL | match=explicit | polarity=neutral (0.00) | themes=- | Apple Has Found No Evidence To Support OpenAI's Allegations; Says Apple Has Searched For The One File That OpenAI Has Id
+2026-10-14 18:15:21,214 | INFO | NEWS EVENT | symbol=AAPL | match=explicit | polarity=neutral (0.00) | themes=- | OpenAI Brief In Apple Vs OpenAI Lawsuit Say Files Leaked Include Detailed Unreleased Device Images, Engineering Data, Su
+2026-10-14 18:15:21,214 | INFO | NEWS EVENT | symbol=XLE | match=explicit | polarity=neutral (0.00) | themes=- | 8 Of 11 Sectors Fall Wednesday As Defensives Lead
+2026-10-14 18:15:21,214 | INFO | NEWS EVENT | symbol=AAPL | match=explicit | polarity=neutral (0.00) | themes=- | OpenAI Brief In Apple Vs OpenAI Lawsuit Say OpenAI Employee Who Left For Apple Sent Over 100 Files About Unrelased OpenA
+2026-10-14 18:15:21,214 | INFO | NEWS EVENT | symbol=AAPL | match=explicit | polarity=neutral (0.00) | themes=- | Apple Stock Hits 52-Week High — What's Going On?
+2026-10-14 18:15:21,214 | INFO | NEWS EVENT | symbol=AAPL | match=explicit | polarity=neutral (0.00) | themes=- | Mexico President Says She Will Sign Decree On Wednesday To Order Digital Platforms To Protect Minors From Violent And Se
+2026-10-14 18:15:21,214 | INFO | NEWS EVENT | symbol=AAPL | match=explicit | polarity=neutral (0.00) | themes=- | Wall Street’s ‘Last Men Standing’: The Mag 7 Are Propping Up the S&P 500, Then Why Are Your ETFs at Risk?
+2026-10-14 18:15:21,214 | INFO | NEWS EVENT | symbol=AAPL | match=explicit | polarity=bullish (1.00) | themes=geopolitical_supply_shock | AAPL Stock Pulls Back From All-Time Highs: Gene Munster Says Apple Is Moving Faster on Hardware But Still Missing Tech's
+2026-10-14 18:15:21,214 | INFO | NEWS EVENT | symbol=WEAT | match=theme | polarity=bullish (1.00) | themes=geopolitical_supply_shock | AAPL Stock Pulls Back From All-Time Highs: Gene Munster Says Apple Is Moving Faster on Hardware But Still Missing Tech's
+2026-10-14 18:15:21,214 | INFO | NEWS EVENT | symbol=CORN | match=theme | polarity=bullish (1.00) | themes=geopolitical_supply_shock | AAPL Stock Pulls Back From All-Time Highs: Gene Munster Says Apple Is Moving Faster on Hardware But Still Missing Tech's
+2026-10-14 18:15:21,214 | INFO | NEWS EVENT | symbol=UNG | match=theme | polarity=bullish (1.00) | themes=geopolitical_supply_shock | AAPL Stock Pulls Back From All-Time Highs: Gene Munster Says Apple Is Moving Faster on Hardware But Still Missing Tech's
+2026-10-14 18:15:21,214 | INFO | NEWS EVENT | symbol=BNO | match=theme | polarity=bullish (1.00) | themes=geopolitical_supply_shock | AAPL Stock Pulls Back From All-Time Highs: Gene Munster Says Apple Is Moving Faster on Hardware But Still Missing Tech's
+2026-10-14 18:15:21,214 | INFO | NEWS EVENT | symbol=IAU | match=theme | polarity=bullish (1.00) | themes=geopolitical_supply_shock | AAPL Stock Pulls Back From All-Time Highs: Gene Munster Says Apple Is Moving Faster on Hardware But Still Missing Tech's
+2026-10-14 18:15:21,214 | INFO | NEWS EVENT | symbol=AAPL | match=explicit | polarity=neutral (0.00) | themes=- | 'Apple, OpenAI Head to Court in High-Stakes AI Trade Secret Fight' - Bloomberg
+2026-10-14 18:15:21,214 | INFO | NEWS EVENT | symbol=AAPL | match=explicit | polarity=neutral (0.00) | themes=geopolitical_supply_shock | Investigating Apple's Standing In Technology Hardware, Storage &amp; Peripherals Industry Compared To Competitors
+2026-10-14 18:15:21,214 | INFO | NEWS EVENT | symbol=WEAT | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock | Investigating Apple's Standing In Technology Hardware, Storage &amp; Peripherals Industry Compared To Competitors
+2026-10-14 18:15:21,214 | INFO | NEWS EVENT | symbol=CORN | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock | Investigating Apple's Standing In Technology Hardware, Storage &amp; Peripherals Industry Compared To Competitors
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=UNG | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock | Investigating Apple's Standing In Technology Hardware, Storage &amp; Peripherals Industry Compared To Competitors
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=BNO | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock | Investigating Apple's Standing In Technology Hardware, Storage &amp; Peripherals Industry Compared To Competitors
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=IAU | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock | Investigating Apple's Standing In Technology Hardware, Storage &amp; Peripherals Industry Compared To Competitors
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=AAPL | match=explicit | polarity=neutral (0.00) | themes=- | Forget NVIDIA: Jim Cramer Says US Chip Stocks Are 'Joined at the Hip' With SK hynix
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=AAPL | match=explicit | polarity=neutral (0.00) | themes=- | Micron Stock Gets Hammered Over China Fears — Jim Cramer Calls the Selloff 'Nonsense'
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=AAPL | match=explicit | polarity=neutral (0.00) | themes=- | ‘Another Screen?’ Ross Gerber Pushes Back on $299 HomeView: ‘Thanks but Not Thanks Apple’
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=UNG | match=explicit | polarity=neutral (0.00) | themes=- | Taiwan Says CPC Makes Significant Progress With US Developer On Alaska LNG, Plans 6M Tonnes Annual Purchases And Up To $
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=AAPL | match=explicit | polarity=neutral (0.00) | themes=- | 100 Million Siri Users Paying $20 A Month Could Generate $24 Billion A Year For Apple, Analyst Says: 'That's a Low-End E
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=AAPL | match=explicit | polarity=bearish (-1.00) | themes=- | Apple Stock Hits All-Time Highs — And There Could Be Good News About iPhone Duo
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=AAPL | match=explicit | polarity=neutral (0.00) | themes=- | Someone Bugged OpenAI's Boardroom: ChatGPT's Maker Says its Own AI Found Out Who
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=AAPL | match=explicit | polarity=neutral (0.00) | themes=- | 10 Information Technology Stocks With Whale Alerts In Today’s Session
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=XLE | match=explicit | polarity=bearish (-1.00) | themes=- | Chip Stocks Slide as South Korea's KOSPI Plunges, J&J Sinks 6%: Stock Market Today
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=AAPL | match=explicit | polarity=neutral (0.00) | themes=- | Samsung, SK Hynix Fall In Seoul On China Memory Threat—Broadcom CEO Compares AI Investors To Casino Gamblers—JPM Whipsaw
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=XLE | match=explicit | polarity=neutral (0.00) | themes=- | Cyclicals Lead Sectors In Tuesday Trading As Health Care Trails
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=AAPL | match=explicit | polarity=neutral (0.00) | themes=- | Google, Amazon and Apple Are in AI's Inner Circle. These 15 Domains Made the Cut
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=AAPL | match=explicit | polarity=neutral (0.00) | themes=- | Apple Stock Rises to New 52-Week High: What's Happening?
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=AAPL | match=explicit | polarity=neutral (0.00) | themes=weather_drought | Apple Home Collection Available Starting December, Select Accessories Early 2027; LG Video Doorbell Wired Starts At $249
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=WEAT | match=theme | polarity=neutral (0.00) | themes=weather_drought | Apple Home Collection Available Starting December, Select Accessories Early 2027; LG Video Doorbell Wired Starts At $249
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=CORN | match=theme | polarity=neutral (0.00) | themes=weather_drought | Apple Home Collection Available Starting December, Select Accessories Early 2027; LG Video Doorbell Wired Starts At $249
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=SOYB | match=theme | polarity=neutral (0.00) | themes=weather_drought | Apple Home Collection Available Starting December, Select Accessories Early 2027; LG Video Doorbell Wired Starts At $249
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=CANE | match=theme | polarity=neutral (0.00) | themes=weather_drought | Apple Home Collection Available Starting December, Select Accessories Early 2027; LG Video Doorbell Wired Starts At $249
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=UNG | match=theme | polarity=neutral (0.00) | themes=weather_drought | Apple Home Collection Available Starting December, Select Accessories Early 2027; LG Video Doorbell Wired Starts At $249
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=AAPL | match=explicit | polarity=neutral (0.00) | themes=- | SpaceX's Wireless Push Sparks Wall Street Skepticism: Is the Stock Getting Ahead of Itself?
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=AAPL | match=explicit | polarity=neutral (0.00) | themes=- | Apple Unveils The New Apple TV 4K, Supercharged By Siri Apple Intelligence; Available For $299; Pre-Orders Start Today; 
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=AAPL | match=explicit | polarity=neutral (0.00) | themes=- | Apple Introduces Apple HomeView For Entertainment And Smart Home Management; Pre-Orders For Apple HomeView Start Today, 
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=AAPL | match=explicit | polarity=neutral (0.00) | themes=inflation_hedge | JPMorgan Earnings Prediction Market Preview: What Will Jamie Dimon Say?
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=DBA | match=theme | polarity=neutral (0.00) | themes=inflation_hedge | JPMorgan Earnings Prediction Market Preview: What Will Jamie Dimon Say?
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=SLV | match=theme | polarity=neutral (0.00) | themes=inflation_hedge | JPMorgan Earnings Prediction Market Preview: What Will Jamie Dimon Say?
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=IAU | match=theme | polarity=neutral (0.00) | themes=inflation_hedge | JPMorgan Earnings Prediction Market Preview: What Will Jamie Dimon Say?
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=PPLT | match=theme | polarity=neutral (0.00) | themes=inflation_hedge | JPMorgan Earnings Prediction Market Preview: What Will Jamie Dimon Say?
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=DBC | match=theme | polarity=neutral (0.00) | themes=inflation_hedge | JPMorgan Earnings Prediction Market Preview: What Will Jamie Dimon Say?
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=GSG | match=theme | polarity=neutral (0.00) | themes=inflation_hedge | JPMorgan Earnings Prediction Market Preview: What Will Jamie Dimon Say?
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=AAPL | match=explicit | polarity=neutral (0.00) | themes=geopolitical_supply_shock | In-Depth Analysis: Apple Versus Competitors In Technology Hardware, Storage &amp; Peripherals Industry
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=WEAT | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock | In-Depth Analysis: Apple Versus Competitors In Technology Hardware, Storage &amp; Peripherals Industry
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=CORN | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock | In-Depth Analysis: Apple Versus Competitors In Technology Hardware, Storage &amp; Peripherals Industry
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=UNG | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock | In-Depth Analysis: Apple Versus Competitors In Technology Hardware, Storage &amp; Peripherals Industry
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=BNO | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock | In-Depth Analysis: Apple Versus Competitors In Technology Hardware, Storage &amp; Peripherals Industry
+2026-10-14 18:15:21,215 | INFO | NEWS EVENT | symbol=IAU | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock | In-Depth Analysis: Apple Versus Competitors In Technology Hardware, Storage &amp; Peripherals Industry
+2026-10-14 18:15:21,216 | INFO | NEWS EVENT | symbol=XLE | match=explicit | polarity=bullish (1.00) | themes=geopolitical_supply_shock,inflation_hedge | Charlie Bilello Says Iran War Inflation Is 'Rewarding Big Oil,' Flags a 56% Spread Between XLE and XLY
+2026-10-14 18:15:21,216 | INFO | NEWS EVENT | symbol=WEAT | match=theme | polarity=bullish (1.00) | themes=geopolitical_supply_shock,inflation_hedge | Charlie Bilello Says Iran War Inflation Is 'Rewarding Big Oil,' Flags a 56% Spread Between XLE and XLY
+2026-10-14 18:15:21,216 | INFO | NEWS EVENT | symbol=CORN | match=theme | polarity=bullish (1.00) | themes=geopolitical_supply_shock,inflation_hedge | Charlie Bilello Says Iran War Inflation Is 'Rewarding Big Oil,' Flags a 56% Spread Between XLE and XLY
+2026-10-14 18:15:21,216 | INFO | NEWS EVENT | symbol=UNG | match=theme | polarity=bullish (1.00) | themes=geopolitical_supply_shock,inflation_hedge | Charlie Bilello Says Iran War Inflation Is 'Rewarding Big Oil,' Flags a 56% Spread Between XLE and XLY
+2026-10-14 18:15:21,216 | INFO | NEWS EVENT | symbol=BNO | match=theme | polarity=bullish (1.00) | themes=geopolitical_supply_shock,inflation_hedge | Charlie Bilello Says Iran War Inflation Is 'Rewarding Big Oil,' Flags a 56% Spread Between XLE and XLY
+2026-10-14 18:15:21,216 | INFO | NEWS EVENT | symbol=IAU | match=theme | polarity=bullish (1.00) | themes=geopolitical_supply_shock,inflation_hedge | Charlie Bilello Says Iran War Inflation Is 'Rewarding Big Oil,' Flags a 56% Spread Between XLE and XLY
+2026-10-14 18:15:21,216 | INFO | NEWS EVENT | symbol=DBA | match=theme | polarity=bullish (1.00) | themes=geopolitical_supply_shock,inflation_hedge | Charlie Bilello Says Iran War Inflation Is 'Rewarding Big Oil,' Flags a 56% Spread Between XLE and XLY
+2026-10-14 18:15:21,216 | INFO | NEWS EVENT | symbol=SLV | match=theme | polarity=bullish (1.00) | themes=geopolitical_supply_shock,inflation_hedge | Charlie Bilello Says Iran War Inflation Is 'Rewarding Big Oil,' Flags a 56% Spread Between XLE and XLY
+2026-10-14 18:15:21,216 | INFO | NEWS EVENT | symbol=PPLT | match=theme | polarity=bullish (1.00) | themes=geopolitical_supply_shock,inflation_hedge | Charlie Bilello Says Iran War Inflation Is 'Rewarding Big Oil,' Flags a 56% Spread Between XLE and XLY
+2026-10-14 18:15:21,216 | INFO | NEWS EVENT | symbol=DBC | match=theme | polarity=bullish (1.00) | themes=geopolitical_supply_shock,inflation_hedge | Charlie Bilello Says Iran War Inflation Is 'Rewarding Big Oil,' Flags a 56% Spread Between XLE and XLY
+2026-10-14 18:15:21,216 | INFO | NEWS EVENT | symbol=GSG | match=theme | polarity=bullish (1.00) | themes=geopolitical_supply_shock,inflation_hedge | Charlie Bilello Says Iran War Inflation Is 'Rewarding Big Oil,' Flags a 56% Spread Between XLE and XLY
+2026-10-14 18:15:21,216 | INFO | NEWS EVENT | symbol=AAPL | match=explicit | polarity=neutral (0.00) | themes=geopolitical_supply_shock | Gene Munster Warns Apple Can Sell Millions of iPhones and Still Lose the AI Game as Users Could Lock Into Muse and Grok
+2026-10-14 18:15:21,216 | INFO | NEWS EVENT | symbol=WEAT | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock | Gene Munster Warns Apple Can Sell Millions of iPhones and Still Lose the AI Game as Users Could Lock Into Muse and Grok
+2026-10-14 18:15:21,216 | INFO | NEWS EVENT | symbol=CORN | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock | Gene Munster Warns Apple Can Sell Millions of iPhones and Still Lose the AI Game as Users Could Lock Into Muse and Grok
+2026-10-14 18:15:21,216 | INFO | NEWS EVENT | symbol=UNG | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock | Gene Munster Warns Apple Can Sell Millions of iPhones and Still Lose the AI Game as Users Could Lock Into Muse and Grok
+2026-10-14 18:15:21,216 | INFO | NEWS EVENT | symbol=BNO | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock | Gene Munster Warns Apple Can Sell Millions of iPhones and Still Lose the AI Game as Users Could Lock Into Muse and Grok
+2026-10-14 18:15:21,216 | INFO | NEWS EVENT | symbol=IAU | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock | Gene Munster Warns Apple Can Sell Millions of iPhones and Still Lose the AI Game as Users Could Lock Into Muse and Grok
+2026-10-14 18:15:21,216 | INFO | NEWS EVENT | symbol=AAPL | match=explicit | polarity=neutral (0.00) | themes=- | S&P 500 Dominated by AI Stocks, Adding SpaceX Would Create History Last Seen in 1880s
+2026-10-14 18:15:21,216 | INFO | NEWS EVENT | symbol=AAPL | match=explicit | polarity=neutral (0.00) | themes=- | Google Comes for Apple’s Health Data Advantage. Here’s What Changes
+2026-10-14 18:15:21,216 | INFO | NEWS EVENT | symbol=AAPL | match=explicit | polarity=neutral (0.00) | themes=- | JP Morgan Maintains Overweight on Apple, Raises Price Target to $360
+2026-10-14 18:15:21,216 | INFO | NEWS EVENT | symbol=AAPL | match=explicit | polarity=neutral (0.00) | themes=geopolitical_supply_shock | China’s 4F² Threat To Micron—Houthis' Deadly Attack On Saudi Arabia Eclipses Trump’s Russian Diesel Deal
+2026-10-14 18:15:21,216 | INFO | NEWS EVENT | symbol=WEAT | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock | China’s 4F² Threat To Micron—Houthis' Deadly Attack On Saudi Arabia Eclipses Trump’s Russian Diesel Deal
+2026-10-14 18:15:21,216 | INFO | NEWS EVENT | symbol=CORN | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock | China’s 4F² Threat To Micron—Houthis' Deadly Attack On Saudi Arabia Eclipses Trump’s Russian Diesel Deal
+2026-10-14 18:15:21,216 | INFO | NEWS EVENT | symbol=UNG | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock | China’s 4F² Threat To Micron—Houthis' Deadly Attack On Saudi Arabia Eclipses Trump’s Russian Diesel Deal
+2026-10-14 18:15:21,216 | INFO | NEWS EVENT | symbol=BNO | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock | China’s 4F² Threat To Micron—Houthis' Deadly Attack On Saudi Arabia Eclipses Trump’s Russian Diesel Deal
+2026-10-14 18:15:21,216 | INFO | NEWS EVENT | symbol=IAU | match=theme | polarity=neutral (0.00) | themes=geopolitical_supply_shock | China’s 4F² Threat To Micron—Houthis' Deadly Attack On Saudi Arabia Eclipses Trump’s Russian Diesel Deal
+2026-10-14 18:15:21,220 | INFO | NEWS DIFFUSION: 73 new event(s) persisted for scoring
+2026-10-14 18:15:21,220 | INFO | Generating signals...
+YF.download() has changed argument auto_adjust default to True
+
+🔵 Running Bayesian Linear Regression for WEAT...
+🟠 Running Gaussian Process for WEAT...
+
+📊 WEAT - Unified Forecast Summary (2026-10-14)
+======================================================================
+🔵 Bayesian Forecast: -0.0083 ± 0.2014
+🟠 GP Forecast:       -0.0071 ± 0.0047
+🟢 Ensemble Forecast: -0.0071 ± 0.0069
+📈 RSI Signal:        BUY (RSI: 29.8)
+📊 BB Signal:         HOLD (Z-Score: -1.20)
+🎯 Final Signal:      SELL (Confidence: 75.0%)
+💰 Recommendation:    SELL
+
+💰 Next-Day Closing Price Predictions:
+   Current Close:    $24.38
+   Bayesian:         $24.18 ($19.27 - $29.09)
+   GP:               $24.21 ($24.09 - $24.32)
+   Ensemble:         $24.21 ($24.04 - $24.38)
+
+🔵 Running Bayesian Linear Regression for CORN...
+🟠 Running Gaussian Process for CORN...
+
+📊 CORN - Unified Forecast Summary (2026-10-14)
+======================================================================
+🔵 Bayesian Forecast: -0.0065 ± 0.2027
+🟠 GP Forecast:       -0.0016 ± 0.0070
+🟢 Ensemble Forecast: -0.0016 ± 0.0101
+📈 RSI Signal:        BUY (RSI: 20.3)
+📊 BB Signal:         HOLD (Z-Score: -1.49)
+🎯 Final Signal:      HOLD (Confidence: 50.0%)
+💰 Recommendation:    HOLD
+
+💰 Next-Day Closing Price Predictions:
+   Current Close:    $18.40
+   Bayesian:         $18.28 ($14.55 - $22.01)
+   GP:               $18.37 ($18.24 - $18.50)
+   Ensemble:         $18.37 ($18.18 - $18.56)
+
+🔵 Running Bayesian Linear Regression for SOYB...
+🟠 Running Gaussian Process for SOYB...
+
+📊 SOYB - Unified Forecast Summary (2026-10-14)
+======================================================================
+🔵 Bayesian Forecast: -0.0051 ± 0.2016
+🟠 GP Forecast:       0.0015 ± 0.0044
+🟢 Ensemble Forecast: 0.0015 ± 0.0066
+📈 RSI Signal:        BUY (RSI: 23.3)
+📊 BB Signal:         HOLD (Z-Score: -1.36)
+🎯 Final Signal:      HOLD (Confidence: 50.0%)
+💰 Recommendation:    HOLD
+
+💰 Next-Day Closing Price Predictions:
+   Current Close:    $27.19
+   Bayesian:         $27.05 ($21.57 - $32.53)
+   GP:               $27.23 ($27.11 - $27.35)
+   Ensemble:         $27.23 ($27.05 - $27.41)
+
+🔵 Running Bayesian Linear Regression for CANE...
+🟠 Running Gaussian Process for CANE...
+
+📊 CANE - Unified Forecast Summary (2026-10-14)
+======================================================================
+🔵 Bayesian Forecast: 0.0060 ± 0.2020
+🟠 GP Forecast:       0.0024 ± 0.0075
+🟢 Ensemble Forecast: 0.0024 ± 0.0108
+📈 RSI Signal:        SELL (RSI: 74.2)
+📊 BB Signal:         HOLD (Z-Score: 1.35)
+🎯 Final Signal:      HOLD (Confidence: 50.0%)
+💰 Recommendation:    HOLD
+
+💰 Next-Day Closing Price Predictions:
+   Current Close:    $12.34
+   Bayesian:         $12.41 ($9.92 - $14.91)
+   GP:               $12.37 ($12.28 - $12.46)
+   Ensemble:         $12.37 ($12.24 - $12.50)
+
+🔵 Running Bayesian Linear Regression for DBA...
+🟠 Running Gaussian Process for DBA...
+
+📊 DBA - Unified Forecast Summary (2026-10-14)
+======================================================================
+🔵 Bayesian Forecast: -0.0029 ± 0.2012
+🟠 GP Forecast:       0.0007 ± 0.0047
+🟢 Ensemble Forecast: 0.0007 ± 0.0070
+📈 RSI Signal:        HOLD (RSI: 34.7)
+📊 BB Signal:         HOLD (Z-Score: -0.74)
+🎯 Final Signal:      HOLD (Confidence: 50.0%)
+💰 Recommendation:    HOLD
+
+💰 Next-Day Closing Price Predictions:
+   Current Close:    $28.26
+   Bayesian:         $28.18 ($22.49 - $33.86)
+   GP:               $28.28 ($28.14 - $28.41)
+   Ensemble:         $28.28 ($28.08 - $28.48)
+
+🔵 Running Bayesian Linear Regression for UNG...
+🟠 Running Gaussian Process for UNG...
+
+📊 UNG - Unified Forecast Summary (2026-10-14)
+======================================================================
+🔵 Bayesian Forecast: -0.0038 ± 0.2021
+🟠 GP Forecast:       -0.0087 ± 0.0074
+🟢 Ensemble Forecast: -0.0087 ± 0.0107
+📈 RSI Signal:        HOLD (RSI: 62.0)
+📊 BB Signal:         HOLD (Z-Score: 0.68)
+🎯 Final Signal:      HOLD (Confidence: 50.0%)
+💰 Recommendation:    HOLD
+
+💰 Next-Day Closing Price Predictions:
+   Current Close:    $11.01
+   Bayesian:         $10.97 ($8.75 - $13.20)
+   GP:               $10.92 ($10.84 - $11.00)
+   Ensemble:         $10.92 ($10.80 - $11.03)
+
+🔵 Running Bayesian Linear Regression for BNO...
+🟠 Running Gaussian Process for BNO...
+
+📊 BNO - Unified Forecast Summary (2026-10-14)
+======================================================================
+🔵 Bayesian Forecast: 0.0202 ± 0.2016
+🟠 GP Forecast:       -0.0096 ± 0.0055
+🟢 Ensemble Forecast: -0.0096 ± 0.0082
+📈 RSI Signal:        HOLD (RSI: 69.0)
+📊 BB Signal:         SELL (Z-Score: 1.62)
+🎯 Final Signal:      STRONG SELL (Confidence: 90.0%)
+💰 Recommendation:    STRONG SELL
+
+💰 Next-Day Closing Price Predictions:
+   Current Close:    $65.24
+   Bayesian:         $66.56 ($53.40 - $79.71)
+   GP:               $64.61 ($64.25 - $64.97)
+   Ensemble:         $64.61 ($64.08 - $65.15)
+2026-10-14 18:15:25,539 | INFO | SIGNAL NORMALIZED | symbol=BNO | original=STRONG SELL | normalized=SELL | confidence=1.0000 | prob_profit=0.0096
+
+🔵 Running Bayesian Linear Regression for XLE...
+🟠 Running Gaussian Process for XLE...
+
+📊 XLE - Unified Forecast Summary (2026-10-14)
+======================================================================
+🔵 Bayesian Forecast: 0.0108 ± 0.2024
+🟠 GP Forecast:       0.0011 ± 0.0051
+🟢 Ensemble Forecast: 0.0011 ± 0.0075
+📈 RSI Signal:        SELL (RSI: 77.0)
+📊 BB Signal:         SELL (Z-Score: 2.23)
+🎯 Final Signal:      SELL (Confidence: 75.0%)
+💰 Recommendation:    SELL
+
+💰 Next-Day Closing Price Predictions:
+   Current Close:    $67.62
+   Bayesian:         $68.35 ($54.67 - $82.03)
+   GP:               $67.69 ($67.35 - $68.04)
+   Ensemble:         $67.70 ($67.19 - $68.20)
+
+🔵 Running Bayesian Linear Regression for SLV...
+🟠 Running Gaussian Process for SLV...
+
+📊 SLV - Unified Forecast Summary (2026-10-14)
+======================================================================
+🔵 Bayesian Forecast: -0.0343 ± 0.2025
+🟠 GP Forecast:       0.0037 ± 0.0037
+🟢 Ensemble Forecast: 0.0037 ± 0.0058
+📈 RSI Signal:        BUY (RSI: 14.3)
+📊 BB Signal:         BUY (Z-Score: -2.15)
+🎯 Final Signal:      STRONG BUY (Confidence: 90.0%)
+💰 Recommendation:    STRONG BUY
+
+💰 Next-Day Closing Price Predictions:
+   Current Close:    $50.24
+   Bayesian:         $48.51 ($38.34 - $58.68)
+   GP:               $50.42 ($50.24 - $50.61)
+   Ensemble:         $50.42 ($50.13 - $50.71)
+2026-10-14 18:15:26,823 | INFO | SIGNAL NORMALIZED | symbol=SLV | original=STRONG BUY | normalized=BUY | confidence=1.0000 | prob_profit=0.8983
+
+🔵 Running Bayesian Linear Regression for IAU...
+🟠 Running Gaussian Process for IAU...
+
+📊 IAU - Unified Forecast Summary (2026-10-14)
+======================================================================
+🔵 Bayesian Forecast: -0.0085 ± 0.2013
+🟠 GP Forecast:       -0.0024 ± 0.0031
+🟢 Ensemble Forecast: -0.0024 ± 0.0048
+📈 RSI Signal:        HOLD (RSI: 32.2)
+📊 BB Signal:         HOLD (Z-Score: -1.30)
+🎯 Final Signal:      HOLD (Confidence: 50.0%)
+💰 Recommendation:    HOLD
+
+💰 Next-Day Closing Price Predictions:
+   Current Close:    $76.88
+   Bayesian:         $76.22 ($60.75 - $91.70)
+   GP:               $76.69 ($76.45 - $76.93)
+   Ensemble:         $76.69 ($76.32 - $77.06)
+
+🔵 Running Bayesian Linear Regression for PPLT...
+🟠 Running Gaussian Process for PPLT...
+
+📊 PPLT - Unified Forecast Summary (2026-10-14)
+======================================================================
+🔵 Bayesian Forecast: -0.0188 ± 0.2028
+🟠 GP Forecast:       0.0098 ± 0.0044
+🟢 Ensemble Forecast: 0.0098 ± 0.0067
+📈 RSI Signal:        BUY (RSI: 27.6)
+📊 BB Signal:         BUY (Z-Score: -1.87)
+🎯 Final Signal:      STRONG BUY (Confidence: 90.0%)
+💰 Recommendation:    STRONG BUY
+
+💰 Next-Day Closing Price Predictions:
+   Current Close:    $14.54
+   Bayesian:         $14.27 ($11.32 - $17.22)
+   GP:               $14.68 ($14.62 - $14.75)
+   Ensemble:         $14.68 ($14.59 - $14.78)
+2026-10-14 18:15:28,556 | INFO | SIGNAL NORMALIZED | symbol=PPLT | original=STRONG BUY | normalized=BUY | confidence=1.0000 | prob_profit=0.9984
+
+🔵 Running Bayesian Linear Regression for PALL...
+🟠 Running Gaussian Process for PALL...
+
+📊 PALL - Unified Forecast Summary (2026-10-14)
+======================================================================
+🔵 Bayesian Forecast: -0.0102 ± 0.2024
+🟠 GP Forecast:       0.0043 ± 0.0042
+🟢 Ensemble Forecast: 0.0043 ± 0.0063
+📈 RSI Signal:        BUY (RSI: 23.2)
+📊 BB Signal:         BUY (Z-Score: -1.57)
+🎯 Final Signal:      STRONG BUY (Confidence: 90.0%)
+💰 Recommendation:    STRONG BUY
+
+💰 Next-Day Closing Price Predictions:
+   Current Close:    $19.85
+   Bayesian:         $19.64 ($15.63 - $23.66)
+   GP:               $19.93 ($19.85 - $20.01)
+   Ensemble:         $19.93 ($19.81 - $20.05)
+2026-10-14 18:15:29,601 | INFO | SIGNAL NORMALIZED | symbol=PALL | original=STRONG BUY | normalized=BUY | confidence=1.0000 | prob_profit=0.9124
+
+🔵 Running Bayesian Linear Regression for CPER...
+🟠 Running Gaussian Process for CPER...
+
+📊 CPER - Unified Forecast Summary (2026-10-14)
+======================================================================
+🔵 Bayesian Forecast: -0.0050 ± 0.2010
+🟠 GP Forecast:       0.0023 ± 0.0033
+🟢 Ensemble Forecast: 0.0023 ± 0.0051
+📈 RSI Signal:        HOLD (RSI: 32.0)
+📊 BB Signal:         HOLD (Z-Score: -0.54)
+🎯 Final Signal:      HOLD (Confidence: 50.0%)
+💰 Recommendation:    HOLD
+
+💰 Next-Day Closing Price Predictions:
+   Current Close:    $39.85
+   Bayesian:         $39.66 ($31.65 - $47.67)
+   GP:               $39.95 ($39.82 - $40.08)
+   Ensemble:         $39.95 ($39.74 - $40.15)
+
+🔵 Running Bayesian Linear Regression for DBB...
+🟠 Running Gaussian Process for DBB...
+
+📊 DBB - Unified Forecast Summary (2026-10-14)
+======================================================================
+🔵 Bayesian Forecast: -0.0061 ± 0.2016
+🟠 GP Forecast:       0.0001 ± 0.0042
+🟢 Ensemble Forecast: 0.0001 ± 0.0062
+📈 RSI Signal:        BUY (RSI: 22.1)
+📊 BB Signal:         HOLD (Z-Score: -1.34)
+🎯 Final Signal:      HOLD (Confidence: 50.0%)
+💰 Recommendation:    HOLD
+
+💰 Next-Day Closing Price Predictions:
+   Current Close:    $24.81
+   Bayesian:         $24.66 ($19.66 - $29.66)
+   GP:               $24.81 ($24.71 - $24.92)
+   Ensemble:         $24.81 ($24.66 - $24.97)
+
+🔵 Running Bayesian Linear Regression for DBC...
+🟠 Running Gaussian Process for DBC...
+
+📊 DBC - Unified Forecast Summary (2026-10-14)
+======================================================================
+🔵 Bayesian Forecast: 0.0079 ± 0.2014
+🟠 GP Forecast:       -0.0006 ± 0.0032
+🟢 Ensemble Forecast: -0.0006 ± 0.0050
+📈 RSI Signal:        HOLD (RSI: 61.4)
+📊 BB Signal:         HOLD (Z-Score: 1.48)
+🎯 Final Signal:      HOLD (Confidence: 50.0%)
+💰 Recommendation:    HOLD
+
+💰 Next-Day Closing Price Predictions:
+   Current Close:    $33.33
+   Bayesian:         $33.60 ($26.88 - $40.31)
+   GP:               $33.32 ($33.21 - $33.42)
+   Ensemble:         $33.32 ($33.15 - $33.48)
+
+🔵 Running Bayesian Linear Regression for GSG...
+🟠 Running Gaussian Process for GSG...
+
+📊 GSG - Unified Forecast Summary (2026-10-14)
+======================================================================
+🔵 Bayesian Forecast: 0.0107 ± 0.2018
+🟠 GP Forecast:       0.0011 ± 0.0032
+🟢 Ensemble Forecast: 0.0011 ± 0.0049
+📈 RSI Signal:        HOLD (RSI: 69.8)
+📊 BB Signal:         HOLD (Z-Score: 1.50)
+🎯 Final Signal:      HOLD (Confidence: 50.0%)
+💰 Recommendation:    HOLD
+
+💰 Next-Day Closing Price Predictions:
+   Current Close:    $36.64
+   Bayesian:         $37.03 ($29.64 - $44.43)
+   GP:               $36.68 ($36.56 - $36.80)
+   Ensemble:         $36.68 ($36.50 - $36.86)
+
+🔵 Running Bayesian Linear Regression for AAPL...
+🟠 Running Gaussian Process for AAPL...
+
+📊 AAPL - Unified Forecast Summary (2026-10-14)
+======================================================================
+🔵 Bayesian Forecast: 0.0095 ± 0.2020
+🟠 GP Forecast:       0.0012 ± 0.0031
+🟢 Ensemble Forecast: 0.0012 ± 0.0049
+📈 RSI Signal:        HOLD (RSI: 57.9)
+📊 BB Signal:         SELL (Z-Score: 1.63)
+🎯 Final Signal:      HOLD (Confidence: 50.0%)
+💰 Recommendation:    HOLD
+
+💰 Next-Day Closing Price Predictions:
+   Current Close:    $342.95
+   Bayesian:         $346.21 ($276.93 - $415.48)
+   GP:               $343.35 ($342.28 - $344.43)
+   Ensemble:         $343.35 ($341.68 - $345.02)
+2026-10-14 18:15:33,770 | INFO | CALIBRATION APPLIED: 17 signal(s), fit on n=24538 (fitted 2026-10-14T18:15:19+00:00) — 16 moved by >5pp
+2026-10-14 18:15:33,782 | INFO | VOL SIZING | symbol=BNO | predicted_vol=36.8% | scale=x0.68 | ENFORCED | vol 36.8% vs 25% target -> x0.68
+2026-10-14 18:15:33,793 | INFO | VOL SIZING | symbol=SLV | predicted_vol=40.1% | scale=x0.62 | ENFORCED | vol 40.1% vs 25% target -> x0.62
+2026-10-14 18:15:33,799 | INFO | VOL SIZING | symbol=PPLT | predicted_vol=32.7% | scale=x0.76 | ENFORCED | vol 32.7% vs 25% target -> x0.76
+2026-10-14 18:15:33,804 | INFO | VOL SIZING | symbol=PALL | predicted_vol=28.2% | scale=x0.89 | ENFORCED | vol 28.2% vs 25% target -> x0.89
+2026-10-14 18:15:33,804 | INFO | SIGNAL FILTER | symbol=WEAT | original=SELL | normalized=SELL | confidence=0.7500 | prob_profit=0.4885 | p_dir=0.5115 | decision=PASS | reason=meets confidence and probability thresholds
+2026-10-14 18:15:33,804 | INFO | SIGNAL FILTER | symbol=CORN | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5127 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-10-14 18:15:33,804 | INFO | SIGNAL FILTER | symbol=SOYB | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5325 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-10-14 18:15:33,805 | INFO | SIGNAL FILTER | symbol=CANE | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5325 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-10-14 18:15:33,805 | INFO | SIGNAL FILTER | symbol=DBA | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5194 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-10-14 18:15:33,805 | INFO | SIGNAL FILTER | symbol=UNG | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.4900 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-10-14 18:15:33,805 | INFO | SIGNAL FILTER | symbol=BNO | original=STRONG SELL | normalized=SELL | confidence=1.0000 | prob_profit=0.4885 | p_dir=0.5115 | decision=PASS | reason=meets confidence and probability thresholds
+2026-10-14 18:15:33,805 | INFO | SIGNAL FILTER | symbol=XLE | original=SELL | normalized=SELL | confidence=0.8625 | prob_profit=0.5194 | p_dir=0.4806 | decision=REJECT | reason=P(down) 0.4806 < 0.5000
+2026-10-14 18:15:33,805 | INFO | SIGNAL FILTER | symbol=SLV | original=STRONG BUY | normalized=BUY | confidence=1.0000 | prob_profit=0.5325 | p_dir=0.5325 | decision=PASS | reason=meets confidence and probability thresholds
+2026-10-14 18:15:33,805 | INFO | SIGNAL FILTER | symbol=IAU | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.4900 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-10-14 18:15:33,805 | INFO | SIGNAL FILTER | symbol=PPLT | original=STRONG BUY | normalized=BUY | confidence=1.0000 | prob_profit=0.5325 | p_dir=0.5325 | decision=PASS | reason=meets confidence and probability thresholds
+2026-10-14 18:15:33,805 | INFO | SIGNAL FILTER | symbol=PALL | original=STRONG BUY | normalized=BUY | confidence=1.0000 | prob_profit=0.5325 | p_dir=0.5325 | decision=PASS | reason=meets confidence and probability thresholds
+2026-10-14 18:15:33,805 | INFO | SIGNAL FILTER | symbol=CPER | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5325 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-10-14 18:15:33,805 | INFO | SIGNAL FILTER | symbol=DBB | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5190 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-10-14 18:15:33,805 | INFO | SIGNAL FILTER | symbol=DBC | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5127 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-10-14 18:15:33,805 | INFO | SIGNAL FILTER | symbol=GSG | original=HOLD | normalized=HOLD | confidence=0.5000 | prob_profit=0.5325 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-10-14 18:15:33,805 | INFO | SIGNAL FILTER | symbol=AAPL | original=HOLD | normalized=HOLD | confidence=0.4250 | prob_profit=0.5325 | decision=HOLD | reason=explicit HOLD decision retained for logging
+2026-10-14 18:15:33,805 | INFO | EDGE GATE | symbol=WEAT | move=0.706% | p_dir=0.511 | cost=0.300% | EV=-0.284% | decision=REJECT | reason=predicted move 0.706% at 51.1% does not cover 0.300% round-trip cost (EV -0.284%)
+2026-10-14 18:15:33,805 | ERROR | rejection_reason: edge gate WEAT: predicted move 0.706% at 51.1% does not cover 0.300% round-trip cost (EV -0.284%)
+2026-10-14 18:15:33,805 | INFO | EDGE GATE | symbol=BNO | move=0.959% | p_dir=0.511 | cost=0.250% | EV=-0.228% | decision=REJECT | reason=predicted move 0.959% at 51.1% does not cover 0.250% round-trip cost (EV -0.228%)
+2026-10-14 18:15:33,805 | ERROR | rejection_reason: edge gate BNO: predicted move 0.959% at 51.1% does not cover 0.250% round-trip cost (EV -0.228%)
+2026-10-14 18:15:33,805 | INFO | EDGE GATE | symbol=SLV | move=0.371% | p_dir=0.533 | cost=0.130% | EV=-0.106% | decision=REJECT | reason=predicted move 0.371% at 53.3% does not cover 0.130% round-trip cost (EV -0.106%)
+2026-10-14 18:15:33,805 | ERROR | rejection_reason: edge gate SLV: predicted move 0.371% at 53.3% does not cover 0.130% round-trip cost (EV -0.106%)
+2026-10-14 18:15:33,806 | INFO | EDGE GATE | symbol=PPLT | move=0.979% | p_dir=0.533 | cost=0.300% | EV=-0.236% | decision=REJECT | reason=predicted move 0.979% at 53.3% does not cover 0.300% round-trip cost (EV -0.236%)
+2026-10-14 18:15:33,806 | ERROR | rejection_reason: edge gate PPLT: predicted move 0.979% at 53.3% does not cover 0.300% round-trip cost (EV -0.236%)
+2026-10-14 18:15:33,806 | INFO | EDGE GATE | symbol=PALL | move=0.425% | p_dir=0.533 | cost=0.400% | EV=-0.372% | decision=REJECT | reason=predicted move 0.425% at 53.3% does not cover 0.400% round-trip cost (EV -0.372%)
+2026-10-14 18:15:33,806 | ERROR | rejection_reason: edge gate PALL: predicted move 0.425% at 53.3% does not cover 0.400% round-trip cost (EV -0.372%)
+2026-10-14 18:15:33,806 | INFO | EDGE GATE SUMMARY: 5 directional signal(s) evaluated, 5 demoted to HOLD (enforcing)
+2026-10-14 18:15:33,806 | INFO | SIGNALS GENERATED: 17 total, 0 directional candidates, 16 hold decisions
+2026-10-14 18:15:33,808 | INFO | THESES SHADOW-LOGGED: 17
+2026-10-14 18:15:33,808 | INFO | OPTIONS CANDIDATES FOR TODAY: none
+2026-10-14 18:15:33,808 | INFO | Loading portfolio state...
+2026-10-14 18:15:33,827 | INFO | INVERSE ROUTING: nothing to route
+  (no directional signals to route)
+2026-10-14 18:15:33,827 | INFO | EDGE GATE SUMMARY: 0 directional signal(s) evaluated, 0 demoted to HOLD (enforcing)
+2026-10-14 18:15:33,827 | INFO | Executing trading cycle...
+
+📋 Pre-trade snapshot:
+   Equity source: broker_live
+   Account equity: $492.29
+   Exposure (invested fraction): 0.0000
+   Trades today (executed): 0
+   Daily return: -0.0034
+   Risk config: exposure=0.3, max_pos=0.2, max_trades/day=3, daily_loss_limit=0.02, paper_mode=True
+[INFO] PAPER TRADING MODE: True — executing in paper mode with guardrails enabled.
+2026-10-14 18:15:33,942 | INFO | ORDERS ATTEMPTED: 0
+2026-10-14 18:15:33,942 | INFO | ORDERS SUBMITTED: 0
+2026-10-14 18:15:33,944 | INFO | Decision summary: {'hold': 16}
+2026-10-14 18:15:33,944 | INFO | END DAILY TRADING RUN
