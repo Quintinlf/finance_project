@@ -99,14 +99,69 @@ def test_cheap_symbol_is_affordable_and_expensive_one_is_not():
     assert "cap is" in verdicts["GLD"].reason
 
 
-def test_share_priced_exactly_at_the_cap_is_affordable():
+def test_shares_priced_exactly_at_the_cap_are_affordable():
+    """Boundary arithmetic is inclusive: exactly min_shares fits."""
+    (verdict,) = screen_affordability(
+        ["X"],
+        account_equity=1000.0,
+        max_position_fraction=0.10,
+        price_lookup=_fixed_prices({"X": 50.0}),
+    )
+    assert verdict.affordable and verdict.max_shares == 2
+
+
+def test_one_share_only_is_rejected_for_lack_of_sizing_resolution():
+    """A symbol that can only ever be one share defeats every risk control.
+
+    _size_quantity computes int(base_qty * minimax * vol_scale) and floors up
+    to 1, so at base_qty=1 a 0.25x volatility scale and a 1.0x scale submit the
+    same order. Such a position is not risk-managed, it is merely small.
+    """
     (verdict,) = screen_affordability(
         ["X"],
         account_equity=1000.0,
         max_position_fraction=0.10,
         price_lookup=_fixed_prices({"X": 100.0}),
     )
+    assert not verdict.affordable
+    assert verdict.max_shares == 1          # priced, not a lookup failure
+    assert "sizing resolution" in verdict.reason
+
+
+def test_min_shares_is_tunable_for_a_larger_account():
+    """The floor is a parameter, not a constant — a funded account can relax it."""
+    (verdict,) = screen_affordability(
+        ["X"],
+        account_equity=1000.0,
+        max_position_fraction=0.10,
+        min_shares=1,
+        price_lookup=_fixed_prices({"X": 100.0}),
+    )
     assert verdict.affordable and verdict.max_shares == 1
+
+
+def test_a_held_one_share_position_can_still_be_sold():
+    """The floor gates opening a position, never closing one."""
+    syms, _ = build_tradeable_universe(
+        scope="metals",
+        account_equity=1000.0,
+        max_position_fraction=0.10,
+        always_include=["IAU"],
+        price_lookup=_fixed_prices({"IAU": 100.0}),
+    )
+    assert "IAU" in syms
+
+
+def test_mega_caps_are_retired_from_the_universe():
+    """Removed 2026-10-16: unreachable at this account size, and no capacity
+    advantage even when reachable."""
+    symbols = {a.symbol for a in ALL_ASSETS}
+    assert not ({"AAPL", "MSFT", "AMZN", "NVDA", "GOOGL"} & symbols)
+
+
+def test_equities_scope_survives_as_empty_rather_than_raising():
+    """UNIVERSE_SCOPE=equities is still a valid configuration value."""
+    assert list(get_symbols("equities")) == []
 
 
 def test_share_one_cent_over_the_cap_is_not():

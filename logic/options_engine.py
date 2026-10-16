@@ -204,10 +204,17 @@ def _select_by_moneyness(
 ) -> Optional[Dict[str, Any]]:
     """Pick a contract by distance out-of-the-money when greeks are missing.
 
-    The INDICATIVE (free) feed returns no greeks, so delta-based selection
-    silently fell through to ``chain[0]`` -- an arbitrary strike. Approximating
-    the target delta by moneyness is far from exact, but it selects a contract
-    in the right region of the chain instead of an arbitrary one.
+    The INDICATIVE (free) feed populates greeks only PARTIALLY -- measured
+    2026-10-16 on UNG, 349 of 768 contracts carried both delta and implied
+    volatility, concentrated in the liquid near-the-money strikes; the rest came
+    back null. Delta-based selection therefore silently fell through to
+    ``chain[0]``, an arbitrary strike, whenever the chosen region happened to be
+    unpopulated. Approximating the target delta by moneyness is far from exact,
+    but it selects a contract in the right region instead of an arbitrary one.
+
+    (An earlier version of this docstring claimed the feed returns no greeks at
+    all. That is wrong, and it matters: roughly half the chain is usable without
+    an OPRA subscription. See docs/VOL_OPTIONS_SCOPE.md.)
     """
     if spot <= 0:
         return None

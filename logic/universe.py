@@ -140,19 +140,23 @@ _BROAD_COMMODITY: Tuple[Asset, ...] = (
           ("inflation_hedge", "crude", "grains")),
 )
 
-# --- Equities (the pre-existing default universe) --------------------------
-_EQUITIES: Tuple[Asset, ...] = (
-    Asset("AAPL", "Apple Inc.", "equity", "technology", "consumer hardware",
-          ("mega_cap_tech", "consumer_demand", "china_demand")),
-    Asset("MSFT", "Microsoft Corp.", "equity", "technology", "software and cloud",
-          ("mega_cap_tech", "ai_capex")),
-    Asset("AMZN", "Amazon.com Inc.", "equity", "technology", "e-commerce and cloud",
-          ("mega_cap_tech", "ai_capex", "consumer_demand")),
-    Asset("NVDA", "NVIDIA Corp.", "equity", "technology", "AI accelerators",
-          ("mega_cap_tech", "ai_capex", "china_demand")),
-    Asset("GOOGL", "Alphabet Inc.", "equity", "technology", "search and cloud",
-          ("mega_cap_tech", "ai_capex")),
-)
+# --- Equities --------------------------------------------------------------
+# Retired 2026-10-16. The five mega-caps (AAPL, MSFT, AMZN, NVDA, GOOGL) were
+# removed for two independent reasons, either of which is sufficient:
+#
+# 1. Unreachable. At $494 equity and a 20% position cap the budget is $98.80 a
+#    position. The cheapest of them was $214. The affordability screen dropped
+#    all five on every run; they produced signals that could never fill.
+# 2. No advantage even when reachable. A small account's one structural edge is
+#    capacity — being able to trade what a large fund cannot. Mega-cap tech is
+#    the opposite: the most analysed, most efficiently priced instruments on the
+#    market, where being small buys nothing and costs liquidity. Measured
+#    component accuracy on this universe never separated from the base rate.
+#
+# The scope key stays so UNIVERSE_SCOPE=equities remains valid and returns
+# empty rather than raising. Re-populate it with a deliberate thesis, not with
+# whatever is famous.
+_EQUITIES: Tuple[Asset, ...] = ()
 
 COMMODITIES: Tuple[Asset, ...] = _AGRICULTURE + _ENERGY + _METALS + _BROAD_COMMODITY
 EQUITIES: Tuple[Asset, ...] = _EQUITIES
@@ -369,6 +373,16 @@ def resolve_inverse(
 # ========================================================================
 
 
+# A position that can only ever be one share has no sizing resolution. Every
+# risk control downstream is multiplicative: _size_quantity computes
+# int(base_qty * minimax * vol_scale) and floors up to 1, so on a one-share
+# symbol a 0.5x volatility scale and a 1.0x scale produce the identical order.
+# Volatility sizing, confidence weighting and risk budgeting are all silently
+# inert there. Requiring two shares means the controls can at least express
+# "less".
+DEFAULT_MIN_SHARES = 2
+
+
 @dataclass(frozen=True)
 class AffordabilityVerdict:
     """Why a symbol can or cannot be bought at the current account size."""
@@ -436,9 +450,10 @@ def screen_affordability(
     *,
     account_equity: float,
     max_position_fraction: float,
+    min_shares: int = DEFAULT_MIN_SHARES,
     price_lookup: Optional[Callable[[Sequence[str]], Mapping[str, Optional[float]]]] = None,
 ) -> List[AffordabilityVerdict]:
-    """Decide, per symbol, whether one share fits inside the position cap.
+    """Decide, per symbol, whether a sizeable position fits inside the cap.
 
     This mirrors the arithmetic in ``build_order_plan`` and
     ``enforce_risk_limits`` (``max_dollar_position = equity * max_position_size``)
@@ -472,18 +487,26 @@ def screen_affordability(
             continue
 
         max_shares = int(budget / price)
-        if max_shares < 1:
+        floor = max(1, int(min_shares))
+        if max_shares < floor:
+            if max_shares < 1:
+                reason = (
+                    f"1 share costs ${price:,.2f} but the cap is "
+                    f"${budget:,.2f} ({fraction:.0%} of ${equity:,.2f})"
+                )
+            else:
+                reason = (
+                    f"only {max_shares} share at ${price:,.2f} inside a "
+                    f"${budget:,.2f} cap; needs {floor} for sizing resolution"
+                )
             verdicts.append(
                 AffordabilityVerdict(
                     symbol=symbol,
                     price=price,
                     max_position_dollars=budget,
-                    max_shares=0,
+                    max_shares=max_shares,
                     affordable=False,
-                    reason=(
-                        f"1 share costs ${price:,.2f} but the cap is "
-                        f"${budget:,.2f} ({fraction:.0%} of ${equity:,.2f})"
-                    ),
+                    reason=reason,
                 )
             )
             continue
@@ -507,6 +530,7 @@ def build_tradeable_universe(
     scope: str = "all",
     account_equity: float,
     max_position_fraction: float,
+    min_shares: int = DEFAULT_MIN_SHARES,
     always_include: Iterable[str] = (),
     price_lookup: Optional[Callable[[Sequence[str]], Mapping[str, Optional[float]]]] = None,
 ) -> Tuple[List[str], List[AffordabilityVerdict]]:
@@ -526,6 +550,7 @@ def build_tradeable_universe(
         scope_symbols,
         account_equity=account_equity,
         max_position_fraction=max_position_fraction,
+        min_shares=min_shares,
         price_lookup=price_lookup,
     )
 
