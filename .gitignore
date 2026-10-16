@@ -12,3 +12,5 @@ non_algo_data/*.json
 
 # Notebook local artifacts
 .ipynb_checkpoints/
+# Agent debug instrumentation must never ship to production
+debug-*.log

@@ -17,6 +17,7 @@ from typing import List, Dict, Optional, Tuple, Union
 from datetime import datetime
 from pathlib import Path
 import logging
+import math
 import uuid
 from zoneinfo import ZoneInfo
 from datetime import timezone
@@ -49,53 +50,6 @@ from logic.sqlite_store import (
 )
 from logic.model_performance_tracker import init_model_performance_tracker, log_model_decision
 
-DEBUG_LOG_PATH = Path("debug-73ea0c.log")
-DEBUG_SESSION_ID = "73ea0c"
-# #region agent log
-_AGENT_DEBUG_LOG_PATH = Path("debug-384872.log")
-_AGENT_DEBUG_SESSION_ID = "384872"
-try:
-    with _AGENT_DEBUG_LOG_PATH.open("a", encoding="utf-8") as _fh:
-        _fh.write(
-            json.dumps(
-                {
-                    "sessionId": _AGENT_DEBUG_SESSION_ID,
-                    "timestamp": int(datetime.now(timezone.utc).timestamp() * 1000),
-                    "location": "execution_engine.py:module_import",
-                    "message": "execution_engine imported successfully",
-                    "data": {
-                        "AccountEquityContext": AccountEquityContext.__name__,
-                        "AccountEquityContext_module": AccountEquityContext.__module__,
-                    },
-                    "runId": "post-fix",
-                    "hypothesisId": "H1_import_order",
-                },
-                ensure_ascii=True,
-            )
-            + "\n"
-        )
-except Exception:
-    pass
-# #endregion
-
-
-def _debug_risk_log(*, run_id: str, hypothesis_id: str, location: str, message: str, data: dict) -> None:
-    # #region agent log
-    payload = {
-        "sessionId": DEBUG_SESSION_ID,
-        "timestamp": int(datetime.now(timezone.utc).timestamp() * 1000),
-        "location": location,
-        "message": message,
-        "data": data,
-        "runId": run_id,
-        "hypothesisId": hypothesis_id,
-    }
-    try:
-        with DEBUG_LOG_PATH.open("a", encoding="utf-8") as fh:
-            fh.write(json.dumps(payload, ensure_ascii=True) + "\n")
-    except Exception:
-        pass
-    # #endregion
 
 
 def _print_risk_trace(*, symbol: str, trace: dict, verbose: bool) -> None:
@@ -382,6 +336,28 @@ def resolve_exit_pcts(signal: Signal, config: ExecutionConfig) -> Tuple[float, f
     return tp_pct, sl_pct
 
 
+# Alpaca's fractional minimum. Below this the order is refused, so sizing
+# to it only produces a rejection.
+MIN_FRACTIONAL_NOTIONAL = 1.0
+
+
+def _size_quantity(raw_shares: float, *, max_shares: float, price: float, fractional: bool) -> float:
+    """Whole shares by default. Paper mode may use a fraction above $1 notional."""
+    if fractional:
+        qty = math.floor(float(raw_shares) * 1_000_000) / 1_000_000
+        qty = min(max(qty, 0.0), float(max_shares))
+        if qty <= 0 or qty * float(price) < MIN_FRACTIONAL_NOTIONAL:
+            return 0.0
+        return qty
+    max_whole = int(max_shares)
+    qty = int(raw_shares)
+    if max_whole < 1:
+        return 0
+    if qty < 1:
+        return 1
+    return min(qty, max_whole)
+
+
 def build_order_plan(
     signal: Signal,
     position_state: PositionState,
@@ -439,9 +415,9 @@ def build_order_plan(
         )
         
         # Cap at max position size (planner fraction aligned with risk layer)
-        max_shares = int((sizing_equity * risk_cap_fraction) / current_price)
+        max_shares = (sizing_equity * risk_cap_fraction) / current_price
         base_qty = min(base_qty, max_shares)
-        
+
         # Apply minimax confidence multiplier (hybrid mode)
         mm = calculate_minimax_multiplier(signal)
         # Volatility scaling. A flat 2%-of-equity position is four times the
@@ -451,13 +427,12 @@ def build_order_plan(
         vol_scale = float(signal.meta.get('vol_scale', 1.0) or 1.0)
         if not signal.meta.get('vol_sizing_enforced', False):
             vol_scale = 1.0
-        quantity = int(base_qty * mm * vol_scale)
-        if max_shares < 1:
-            quantity = 0
-        elif quantity < 1:
-            quantity = 1
-        else:
-            quantity = min(quantity, max_shares)
+        quantity = _size_quantity(
+            base_qty * mm * vol_scale,
+            max_shares=max_shares,
+            price=current_price,
+            fractional=bool(getattr(config, "fractional_shares", False)),
+        )
         
         # Store multipliers in signal metadata for audit trail
         signal.meta['minimax_applied_multiplier'] = mm
@@ -469,8 +444,13 @@ def build_order_plan(
         
     else:  # sell
         if position_state.side == 'long':
-            # Closing long position: sell what we own
-            quantity = int(abs(position_state.quantity))
+            # Closing long position: sell what we own. A fractional paper
+            # position has to be closed in full or a stub is left behind.
+            owned = abs(float(position_state.quantity))
+            if getattr(config, "fractional_shares", False) or owned != int(owned):
+                quantity = round(owned, 6)
+            else:
+                quantity = int(owned)
             
             # TP/SL for closing don't apply in same way
             # (we're exiting, not entering a new position)
@@ -486,18 +466,17 @@ def build_order_plan(
                 stop_loss_pct=effective_sl_pct * 100,
                 price=current_price
             )
-            max_shares = int((sizing_equity * risk_cap_fraction) / current_price)
+            max_shares = (sizing_equity * risk_cap_fraction) / current_price
             base_qty = min(base_qty, max_shares)
-            
+
             # Apply minimax confidence multiplier (hybrid mode)
             mm = calculate_minimax_multiplier(signal)
-            quantity = int(base_qty * mm)
-            if max_shares < 1:
-                quantity = 0
-            elif quantity < 1:
-                quantity = 1
-            else:
-                quantity = min(quantity, max_shares)
+            quantity = _size_quantity(
+                base_qty * mm,
+                max_shares=max_shares,
+                price=current_price,
+                fractional=bool(getattr(config, "fractional_shares", False)),
+            )
             
             # Store minimax multiplier in signal metadata for audit trail
             signal.meta['minimax_applied_multiplier'] = mm
@@ -761,6 +740,7 @@ def enforce_risk_limits(
     db_path: Union[str, Path],
     current_price: float,
     account_equity: float,
+    fractional: bool = False,
 ) -> Tuple[bool, Optional[OrderPlan], Optional[str], str]:
     """Return (allowed, possibly_modified_plan, reason, outcome).
 
@@ -815,7 +795,17 @@ def enforce_risk_limits(
                 'max_position_size' if max_dollar_position <= exposure_headroom else 'exposure headroom'
             )
             proposed_notional = float(order_plan.quantity) * float(current_price)
-            capped_qty = int(notional_ceiling / float(current_price)) if current_price > 0 else 0
+            if fractional:
+                capped_qty = (
+                    math.floor((notional_ceiling / float(current_price)) * 1_000_000) / 1_000_000
+                    if current_price > 0 else 0.0
+                )
+                minimum_text = f"${MIN_FRACTIONAL_NOTIONAL:.2f} notional"
+                below_minimum = capped_qty * float(current_price) < MIN_FRACTIONAL_NOTIONAL
+            else:
+                capped_qty = int(notional_ceiling / float(current_price)) if current_price > 0 else 0
+                minimum_text = "1-share minimum"
+                below_minimum = capped_qty < 1
 
             if order_plan.quantity <= 0 or proposed_notional <= 0:
                 return (
@@ -823,13 +813,13 @@ def enforce_risk_limits(
                     None,
                     (
                         f"position_below_minimum: planned {order_plan.quantity} shares "
-                        f"at ${current_price:.2f} below 1-share minimum"
+                        f"at ${current_price:.2f} below {minimum_text}"
                     ),
                     'skip',
                 )
 
             if proposed_notional > notional_ceiling:
-                if capped_qty < 1:
+                if below_minimum:
                     return (
                         False,
                         None,
@@ -839,7 +829,7 @@ def enforce_risk_limits(
                             f"(max_position_size ${max_dollar_position:.2f}, "
                             f"exposure headroom ${exposure_headroom:.2f} at {exposure:.1%} "
                             f"of a {max_exposure:.0%} cap) "
-                            f"but 1 share costs ${current_price:.2f}"
+                            f"but {minimum_text} is not met at ${current_price:.2f}"
                         ),
                         'skip',
                     )
@@ -949,7 +939,6 @@ def run_trading_cycle(
     trades_today = _get_trades_executed_today(snapshot_db_path)
     daily_return = equity_ctx.daily_return
     exposure = equity_ctx.exposure_fraction
-    risk_run_id = f"risk-{uuid.uuid4().hex[:8]}"
 
     # Pre-trade snapshot logging
     snapshot_path = Path("trade_logs") / "run_snapshots.csv"
@@ -1000,20 +989,6 @@ def run_trading_cycle(
         else:
             print("   Daily return: N/A (last_equity unavailable)")
         print(f"   Risk config: exposure={risk_cfg.max_portfolio_exposure}, max_pos={risk_cfg.max_position_size}, max_trades/day={risk_cfg.max_trades_per_day}, daily_loss_limit={risk_cfg.daily_loss_limit}, paper_mode={risk_cfg.paper_trading_mode}")
-        _debug_risk_log(
-            run_id=risk_run_id,
-            hypothesis_id="H1",
-            location="execution_engine.py:run_trading_cycle",
-            message="Pre-trade equity context resolved",
-            data={
-                "equity_source": equity_ctx.equity_source,
-                "equity": equity_ctx.equity,
-                "cash": equity_ctx.cash,
-                "portfolio_value": equity_ctx.portfolio_value,
-                "exposure_fraction": exposure,
-                "daily_return": daily_return,
-            },
-        )
 
     # If paper trading mode is enabled, print a clear warning
     if risk_cfg.paper_trading_mode and verbose:
@@ -1252,13 +1227,6 @@ def run_trading_cycle(
                         rejection_reason=skip_reason,
                     )
                     _print_risk_trace(symbol=symbol, trace=trace, verbose=verbose)
-                    _debug_risk_log(
-                        run_id=risk_run_id,
-                        hypothesis_id="H2",
-                        location="execution_engine.py:run_trading_cycle",
-                        message="Order skipped at planning stage",
-                        data={"symbol": symbol, **trace},
-                    )
                     log_entry.action = 'skipped'
                     log_entry.reason = skip_reason
                     signal.meta['risk_trace'] = trace
@@ -1280,6 +1248,7 @@ def run_trading_cycle(
                         db_path=snapshot_db_path,
                         current_price=current_price,
                         account_equity=equity_ctx.equity,
+                        fractional=bool(getattr(config, "fractional_shares", False)),
                     )
 
                     trace = _build_risk_trace(
@@ -1291,13 +1260,6 @@ def run_trading_cycle(
                         rejection_reason=block_reason,
                     )
                     _print_risk_trace(symbol=symbol, trace=trace, verbose=verbose)
-                    _debug_risk_log(
-                        run_id=risk_run_id,
-                        hypothesis_id="H3",
-                        location="execution_engine.py:run_trading_cycle",
-                        message="Risk enforcement result",
-                        data={"symbol": symbol, "allowed": allowed, **trace},
-                    )
                     signal.meta['risk_trace'] = trace
 
                     if outcome == 'skip':
