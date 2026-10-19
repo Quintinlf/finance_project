@@ -122,6 +122,25 @@ jobs:
           set -o pipefail
           python run_daily_bot.py 2>&1 | tee trade_logs/run-$(date -u +'%Y%m%d').log
 
+      # Gate 1 of the volatility scope. This cron fires at 14:00 UTC = 10:00 ET,
+      # which is inside regular market hours, so it is the only place this
+      # measurement can be taken automatically -- after-hours option books quote
+      # several times their intraday width and would fail the gate for the wrong
+      # reason. Measuring here means Gate 1 answers itself daily instead of
+      # waiting on someone to remember to run it at the right time of day.
+      - name: Measure option spreads (Gate 1)
+        if: always()
+        continue-on-error: true
+        run: python scripts/measure_option_spreads.py || true
+
+      # Reports INSUFFICIENT SAMPLE, with no number attached, until the
+      # effective N supports one. Logged daily so the countdown is visible
+      # rather than something to be remembered.
+      - name: Gate 0 status
+        if: always()
+        continue-on-error: true
+        run: python scripts/analyze_vol_edge.py || true
+
       # Refreshes docs/data.json, which the commit step below pushes. GitHub
       # Pages serves docs/ straight off the branch (Settings > Pages > Deploy
       # from a branch > main > /docs), so no separate deploy job is needed.
