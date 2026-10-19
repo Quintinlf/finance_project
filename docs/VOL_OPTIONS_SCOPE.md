@@ -86,6 +86,67 @@ cannot be backtested at all.* That leaves two paths:
 There is no third option. This is the single most important thing to decide,
 because it sets the timeline for everything else.
 
+## Measured 2026-10-18/19 — Gates 1 and 2, before any waiting
+
+Gate 1 and Gate 2 turned out to be answerable immediately, which changes the
+order of the plan: there was no need to accumulate six months of data to find
+out whether costs and size permit this at all.
+
+**Gate 1 — option spreads.** Measured off-hours (so diagnostic, not a verdict —
+re-run `scripts/measure_option_spreads.py` during market hours), near-the-money,
+7–60 DTE. Break-even vol edge is `sigma x spread_fraction`, derived in that
+script's docstring: an ATM option is ~`0.4·S·sigma·sqrt(T)`, so
+`dprice/dsigma ~= price/sigma`, and crossing the spread costs `spread x price`.
+
+| symbol | median IV | spread (% of mid) | break-even edge |
+|---|---|---|---|
+| GLD | 22.9% | 5.3% | **1.2 vol pts** |
+| SLV | 37.9% | 5.2% | **2.0 vol pts** |
+| USO | 49.4% | 9.1% | 4.5 vol pts |
+| CORN | 16.4% | 48.5% | 7.9 vol pts |
+| WEAT | 23.0% | 38.0% | 8.8 vol pts |
+| UNG | 55.3% | 21.2% | 11.7 vol pts |
+| DBC | 29.8% | 67.1% | 20.0 vol pts |
+| XLE | 29.0% | 78.6% | 22.8 vol pts |
+
+Gate 1 does **not** fail outright. That was the expected outcome and it did not
+happen: GLD and SLV quote tightly enough that a 1–2 vol point advantage would
+clear costs. That is a low bar by the standards of this project, where every
+previous bar has been 7 to 35 points out of reach.
+
+**Gate 2 — does one contract fit?** Options carry a 100x multiplier, so premium,
+not share price, is the constraint. ATM, 20–45 DTE:
+
+| symbol | 1 contract | vs $98.80 cap | break-even edge |
+|---|---|---|---|
+| GLD | $1,041 | no | 1.2 pts |
+| USO | $829 | no | 4.5 pts |
+| IAU | $232 | no (47% of equity) | — |
+| XLE | $219 | no | 22.8 pts |
+| SLV | $207 | no (42% of equity) | 2.0 pts |
+| UNG | $84.50 | **yes** | 11.7 pts |
+| WEAT | $65.50 | **yes** | 8.8 pts |
+| CORN | $42.50 | **yes** | 7.9 pts |
+
+**The same inverse correlation as the share book, in a new costume.** The names
+with tradeable spreads (GLD 1.2 pts, SLV 2.0 pts) cost $200–$1,041 a contract.
+The names that fit the account (UNG, WEAT, CORN at $43–85) demand 8–12 vol
+points.
+
+### What this means for funding, specifically
+
+This is the one place where capital changes the question rather than the scale
+of the answer. For shares, funding moved the bar from 88% to ~60% directional
+accuracy against 53% delivered — still unreachable. For options it moves the bar
+from **11.7 vol points to 2.0**, because it moves you from UNG to SLV. That is
+the difference between a bar that is certainly out of reach and one that might
+not be.
+
+Roughly $1,000–1,500 equity puts SLV in range under a 20% cap. Note this is
+still **contingent on Gate 0**, which is unanswered: a 2.0 point bar is worth
+nothing if the forecast's advantage over implied vol is 0.0 points, which
+remains the expected result. Do not fund on the strength of this table alone.
+
 ## What would have to be true
 
 Hard gates, in order. Each one stops the programme if it fails.

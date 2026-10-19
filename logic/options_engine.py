@@ -103,6 +103,9 @@ def get_option_chain(symbol: str) -> List[Dict[str, Any]]:
             if parsed is None:
                 continue
             greeks = getattr(snapshot, "greeks", None)
+            quote = getattr(snapshot, "latest_quote", None)
+            bid = getattr(quote, "bid_price", None) if quote else None
+            ask = getattr(quote, "ask_price", None) if quote else None
             rows.append(
                 {
                     "symbol": str(contract_symbol),
@@ -110,10 +113,26 @@ def get_option_chain(symbol: str) -> List[Dict[str, Any]]:
                     "expiration": parsed["expiration"],
                     "strike": parsed["strike"],
                     "type": parsed["type"],
-                    # Greeks are None on the INDICATIVE feed; selection falls
-                    # back to moneyness when that happens.
+                    # Greeks are populated for only part of the chain on the
+                    # INDICATIVE feed; selection falls back to moneyness when
+                    # they are missing for the region we want.
                     "delta": getattr(greeks, "delta", None) if greeks else None,
+                    "gamma": getattr(greeks, "gamma", None) if greeks else None,
+                    "theta": getattr(greeks, "theta", None) if greeks else None,
+                    "vega": getattr(greeks, "vega", None) if greeks else None,
                     "implied_volatility": getattr(snapshot, "implied_volatility", None),
+                    # Quotes are what Gate 1 turns on: an option that prices
+                    # beautifully and quotes 0.83/1.03 is a 21% round trip, and
+                    # no vol forecast survives that. Carrying bid/ask here means
+                    # the cost question can be asked of the same snapshot that
+                    # answered the signal question.
+                    "bid": float(bid) if bid is not None else None,
+                    "ask": float(ask) if ask is not None else None,
+                    "quote_timestamp": (
+                        getattr(quote, "timestamp", None).isoformat()
+                        if quote is not None and getattr(quote, "timestamp", None) is not None
+                        else None
+                    ),
                 }
             )
         return rows

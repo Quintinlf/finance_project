@@ -193,6 +193,15 @@ def run_daily_trading_cycle(
     except Exception as exc:
         logging.warning("Fill reconciliation failed (%s). Continuing with cycle.", exc)
 
+    try:
+        from logic.prediction_log import fill_realized_returns
+
+        filled = fill_realized_returns()
+        if filled:
+            logging.info("PREDICTION RECORDS: filled realized returns on %s earlier row(s)", filled)
+    except Exception as exc:
+        logging.warning("Prediction outcome fill failed (%s). Continuing with cycle.", exc)
+
     risk_cfg = load_risk_config()
     # The binding cap is whichever of the two limits is tighter: build_order_plan
     # sizes against config.max_position_pct_of_equity, enforce_risk_limits then
@@ -252,6 +261,7 @@ def run_daily_trading_cycle(
         min_prob_up=min_prob_up,
         debug_force_strongest_signal=debug_force_strongest_signal,
         enforce_edge_gate=enforce_edge_gate,
+        fractional_shares=(execution_mode == "paper"),
     )
 
     # Bring the book back inside its exposure cap BEFORE anything else touches
@@ -344,6 +354,29 @@ def run_daily_trading_cycle(
         fit_calibration(db_path=DEFAULT_DB_PATH)
     except Exception as exc:
         logging.warning("Model scoring failed (%s). Continuing with cycle.", exc)
+
+    # Phase 0a of the Tier 2 volatility scope. Alpaca has no historical IV
+    # endpoint, so the data needed to ask "does our vol forecast beat implied
+    # vol?" has to be accumulated going forward -- and the clock only runs once
+    # this is being written daily. The forecast is captured here too, as it
+    # stood today: recomputing it later from price history would fit the
+    # estimator on the period it is being tested against, and the result would
+    # be lookahead-biased in a way that looks exactly like a finding.
+    #
+    # This records rows and nothing else. It does not size, gate, or influence a
+    # single trading decision, so a failure here must never stop the cycle.
+    try:
+        from logic.iv_snapshot import snapshot_universe
+
+        snap = snapshot_universe(db_path=DEFAULT_DB_PATH)
+        logging.info(snap.summary())
+        if not snap.ok:
+            logging.warning(
+                "IV SNAPSHOT recorded nothing usable. Gate 0's sample is not "
+                "growing today -- check the options feed."
+            )
+    except Exception as exc:
+        logging.warning("IV snapshot failed (%s). Continuing with cycle.", exc)
 
     # Same discipline for news: grade yesterday's matured events before
     # fetching today's. A keyword lexicon has even less claim to being trusted
@@ -529,6 +562,15 @@ def run_daily_trading_cycle(
         logging.warning("Decision log persistence failed (%s).", exc)
 
     logging.info("Decision summary: %s", summary)
+
+    try:
+        from logic.prediction_log import append_records, records_from_cycle
+
+        written = append_records(records_from_cycle(all_signals, decision_log))
+        logging.info("PREDICTION RECORDS: %s written (outcomes filled on a later run)", written)
+    except Exception as exc:
+        logging.warning("Prediction record write failed (%s).", exc)
+
     logging.info("END DAILY TRADING RUN")
 
     _save_last_run_date(today_str)
