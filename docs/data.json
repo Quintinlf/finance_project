@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-20T18:14:19+00:00",
+  "generated_at": "2026-10-21T18:20:17+00:00",
   "equity_curve": [
     {
       "time": "2026-08-13",
@@ -297,6 +297,12 @@
     },
     {
       "time": "2026-10-20",
+      "value": 491.77,
+      "exposure": 0.0,
+      "daily_return": 0.0
+    },
+    {
+      "time": "2026-10-21",
       "value": 491.77,
       "exposure": 0.0,
       "daily_return": 0.0
@@ -1313,6 +1319,214 @@
     "win_rate": 31.8
   },
   "decisions": [
+    {
+      "timestamp": "2026-10-21T18:20:17.432567",
+      "symbol": "GSG",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5124894751613813,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-21T18:20:17.429261",
+      "symbol": "DBC",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5189547294810454,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-21T18:20:17.425800",
+      "symbol": "DBB",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5172413793103446,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-21T18:20:17.421781",
+      "symbol": "CPER",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5317762085822926,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-21T18:20:17.418392",
+      "symbol": "PALL",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5317762085822926,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-21T18:20:17.415147",
+      "symbol": "PPLT",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.4956268221574344,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-21T18:20:17.411679",
+      "symbol": "IAU",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5124894751613813,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-21T18:20:17.408393",
+      "symbol": "SLV",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5124894751613813,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-21T18:20:17.404793",
+      "symbol": "XLE",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5124894751613813,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-21T18:20:17.401469",
+      "symbol": "BNO",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.48966515088879703,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-21T18:20:17.398201",
+      "symbol": "UNG",
+      "signal_type": "hold",
+      "confidence": 0.425,
+      "prob_profit": 0.5317762085822926,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-21T18:20:17.394738",
+      "symbol": "DBA",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.48966515088879703,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-21T18:20:17.391235",
+      "symbol": "CANE",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5317762085822926,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-21T18:20:17.387642",
+      "symbol": "SOYB",
+      "signal_type": "hold",
+      "confidence": 0.8624999999999999,
+      "prob_profit": 0.5124894751613813,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-21T18:20:17.384355",
+      "symbol": "CORN",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5317762085822926,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-21T18:20:17.376467",
+      "symbol": "WEAT",
+      "signal_type": "hold",
+      "confidence": 0.8624999999999999,
+      "prob_profit": 0.5317762085822926,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
     {
       "timestamp": "2026-10-20T18:14:18.831250",
       "symbol": "GSG",
@@ -3704,218 +3918,10 @@
       "planned_quantity": null,
       "planned_entry_price": null,
       "error_message": null
-    },
-    {
-      "timestamp": "2026-10-02T18:52:36.257749",
-      "symbol": "BNO",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.5319079306207048,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-02T18:52:36.254036",
-      "symbol": "UNG",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.5138418079096042,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-02T18:52:36.249377",
-      "symbol": "DBA",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.5319079306207048,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-02T18:52:36.245767",
-      "symbol": "CANE",
-      "signal_type": "hold",
-      "confidence": 0.425,
-      "prob_profit": 0.5319079306207048,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-02T18:52:36.242037",
-      "symbol": "SOYB",
-      "signal_type": "hold",
-      "confidence": 0.425,
-      "prob_profit": 0.5236641221374045,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-02T18:52:36.237827",
-      "symbol": "CORN",
-      "signal_type": "hold",
-      "confidence": 0.425,
-      "prob_profit": 0.5319079306207048,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-02T18:52:36.228844",
-      "symbol": "WEAT",
-      "signal_type": "hold",
-      "confidence": 0.425,
-      "prob_profit": 0.519090909090909,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-01T19:11:45.409788",
-      "symbol": "GSG",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.5319079306207048,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-01T19:11:45.406794",
-      "symbol": "DBC",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.5319079306207048,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-01T19:11:45.403758",
-      "symbol": "DBB",
-      "signal_type": "hold",
-      "confidence": 0.425,
-      "prob_profit": 0.5319079306207048,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-01T19:11:45.400864",
-      "symbol": "CPER",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.5319079306207048,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-01T19:11:45.397866",
-      "symbol": "PALL",
-      "signal_type": "hold",
-      "confidence": 0.425,
-      "prob_profit": 0.5236641221374045,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-01T19:11:45.393946",
-      "symbol": "PPLT",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.519090909090909,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-01T19:11:45.386688",
-      "symbol": "IAU",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.5319079306207048,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-01T19:11:45.383555",
-      "symbol": "SLV",
-      "signal_type": "hold",
-      "confidence": 0.8624999999999999,
-      "prob_profit": 0.5319079306207048,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-01T19:11:45.380507",
-      "symbol": "XLE",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.519090909090909,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
     }
   ],
   "latest_run": {
-    "date": "20261020",
+    "date": "20261021",
     "account": {
       "equity": 491.77,
       "equity_source": "broker_live",
@@ -3928,25 +3934,25 @@
         "signal": "BUY",
         "original": "BUY",
         "confidence": 0.8625,
-        "prob_profit": 0.5323,
+        "prob_profit": 0.5318,
         "decision": "PASS",
         "reason": "meets confidence and probability thresholds"
       },
       {
         "symbol": "CORN",
-        "signal": "BUY",
-        "original": "BUY",
-        "confidence": 0.8625,
-        "prob_profit": 0.4956,
-        "decision": "REJECT",
-        "reason": "P(up) 0.4956 < 0.5000"
+        "signal": "HOLD",
+        "original": "HOLD",
+        "confidence": 0.5,
+        "prob_profit": 0.5318,
+        "decision": "HOLD",
+        "reason": "explicit HOLD decision retained for logging"
       },
       {
         "symbol": "SOYB",
         "signal": "BUY",
         "original": "BUY",
         "confidence": 0.8625,
-        "prob_profit": 0.5323,
+        "prob_profit": 0.5125,
         "decision": "PASS",
         "reason": "meets confidence and probability thresholds"
       },
@@ -3964,7 +3970,7 @@
         "signal": "HOLD",
         "original": "HOLD",
         "confidence": 0.5,
-        "prob_profit": 0.5173,
+        "prob_profit": 0.4897,
         "decision": "HOLD",
         "reason": "explicit HOLD decision retained for logging"
       },
@@ -3972,8 +3978,8 @@
         "symbol": "UNG",
         "signal": "HOLD",
         "original": "HOLD",
-        "confidence": 0.5,
-        "prob_profit": 0.5124,
+        "confidence": 0.425,
+        "prob_profit": 0.5318,
         "decision": "HOLD",
         "reason": "explicit HOLD decision retained for logging"
       },
@@ -3982,7 +3988,7 @@
         "signal": "HOLD",
         "original": "HOLD",
         "confidence": 0.5,
-        "prob_profit": 0.5323,
+        "prob_profit": 0.4897,
         "decision": "HOLD",
         "reason": "explicit HOLD decision retained for logging"
       },
@@ -3991,7 +3997,7 @@
         "signal": "HOLD",
         "original": "HOLD",
         "confidence": 0.5,
-        "prob_profit": 0.5323,
+        "prob_profit": 0.5125,
         "decision": "HOLD",
         "reason": "explicit HOLD decision retained for logging"
       },
@@ -4000,7 +4006,7 @@
         "signal": "HOLD",
         "original": "HOLD",
         "confidence": 0.5,
-        "prob_profit": 0.5323,
+        "prob_profit": 0.5125,
         "decision": "HOLD",
         "reason": "explicit HOLD decision retained for logging"
       },
@@ -4009,7 +4015,7 @@
         "signal": "HOLD",
         "original": "HOLD",
         "confidence": 0.5,
-        "prob_profit": 0.5173,
+        "prob_profit": 0.5125,
         "decision": "HOLD",
         "reason": "explicit HOLD decision retained for logging"
       },
@@ -4018,25 +4024,25 @@
         "signal": "HOLD",
         "original": "HOLD",
         "confidence": 0.5,
-        "prob_profit": 0.4897,
+        "prob_profit": 0.4956,
         "decision": "HOLD",
         "reason": "explicit HOLD decision retained for logging"
       },
       {
         "symbol": "PALL",
-        "signal": "SELL",
-        "original": "SELL",
-        "confidence": 0.75,
-        "prob_profit": 0.4866,
-        "decision": "PASS",
-        "reason": "meets confidence and probability thresholds"
+        "signal": "HOLD",
+        "original": "HOLD",
+        "confidence": 0.5,
+        "prob_profit": 0.5318,
+        "decision": "HOLD",
+        "reason": "explicit HOLD decision retained for logging"
       },
       {
         "symbol": "CPER",
         "signal": "HOLD",
         "original": "HOLD",
         "confidence": 0.5,
-        "prob_profit": 0.5191,
+        "prob_profit": 0.5318,
         "decision": "HOLD",
         "reason": "explicit HOLD decision retained for logging"
       },
@@ -4045,7 +4051,7 @@
         "signal": "HOLD",
         "original": "HOLD",
         "confidence": 0.5,
-        "prob_profit": 0.5124,
+        "prob_profit": 0.5172,
         "decision": "HOLD",
         "reason": "explicit HOLD decision retained for logging"
       },
@@ -4054,7 +4060,7 @@
         "signal": "HOLD",
         "original": "HOLD",
         "confidence": 0.5,
-        "prob_profit": 0.5323,
+        "prob_profit": 0.519,
         "decision": "HOLD",
         "reason": "explicit HOLD decision retained for logging"
       },
@@ -4063,16 +4069,15 @@
         "signal": "HOLD",
         "original": "HOLD",
         "confidence": 0.5,
-        "prob_profit": 0.5323,
+        "prob_profit": 0.5125,
         "decision": "HOLD",
         "reason": "explicit HOLD decision retained for logging"
       }
     ],
     "positions": [],
     "blockers": [
-      "rejection_reason: edge gate PALL: predicted move 1.004% at 51.3% does not cover 0.400% round-trip cost (EV -0.373%)",
-      "rejection_reason: edge gate SOYB: predicted move 0.355% at 53.2% does not cover 0.450% round-trip cost (EV -0.427%)",
-      "rejection_reason: edge gate WEAT: predicted move 0.242% at 53.2% does not cover 0.300% round-trip cost (EV -0.284%)"
+      "rejection_reason: edge gate SOYB: predicted move 0.123% at 51.2% does not cover 0.450% round-trip cost (EV -0.447%)",
+      "rejection_reason: edge gate WEAT: predicted move 0.211% at 53.2% does not cover 0.300% round-trip cost (EV -0.287%)"
     ],
     "eos_available": true,
     "orders_submitted": 0,
@@ -4422,49 +4427,49 @@
   ],
   "component_accuracy": {
     "base_rate": 51.5,
-    "base_n": 24605,
+    "base_n": 24634,
     "components": [
       {
         "name": "Bollinger",
-        "n": 6831,
+        "n": 6837,
         "accuracy": 49.9,
         "ci_low": 48.7,
         "ci_high": 51.1
       },
       {
         "name": "Bayesian",
-        "n": 24605,
+        "n": 24634,
         "accuracy": 49.3,
         "ci_low": 48.7,
         "ci_high": 49.9
       },
       {
         "name": "Gaussian Process",
-        "n": 24605,
+        "n": 24634,
         "accuracy": 50.9,
         "ci_low": 50.3,
         "ci_high": 51.5
       },
       {
         "name": "RSI",
-        "n": 5918,
-        "accuracy": 51.4,
+        "n": 5930,
+        "accuracy": 51.3,
         "ci_low": 50.1,
-        "ci_high": 52.7
+        "ci_high": 52.6
       },
       {
         "name": "Ensemble",
-        "n": 4677,
+        "n": 4685,
         "accuracy": 51.0,
-        "ci_low": 49.6,
+        "ci_low": 49.5,
         "ci_high": 52.4
       }
     ]
   },
   "calibration": {
     "fitted": true,
-    "fitted_at": "2026-10-20T18:14:08+00:00",
-    "n": 24596,
+    "fitted_at": "2026-10-21T18:20:06+00:00",
+    "n": 24625,
     "curve": [
       [
         2.4269017251384753e-13,
@@ -4488,19 +4493,19 @@
       ],
       [
         3.703601660509862e-05,
-        0.48655913978494625
+        0.48525469168900803
       ],
       [
         0.029686344168574248,
-        0.48655913978494625
+        0.48525469168900803
       ],
       [
         0.029788610771625132,
-        0.48965659908978065
+        0.48966515088879703
       ],
       [
         0.285997297533677,
-        0.48965659908978065
+        0.48966515088879703
       ],
       [
         0.2860795896336623,
@@ -4512,11 +4517,11 @@
       ],
       [
         0.33149023294650604,
-        0.5123664980326025
+        0.5124894751613813
       ],
       [
         0.47123493875264366,
-        0.5123664980326025
+        0.5124894751613813
       ],
       [
         0.47132275355387576,
@@ -4528,19 +4533,19 @@
       ],
       [
         0.4772647112609849,
-        0.5172855313700382
+        0.5172413793103446
       ],
       [
         0.534795509095358,
-        0.5172855313700382
+        0.5172413793103446
       ],
       [
         0.5348200720881915,
-        0.5191458026509576
+        0.5189547294810454
       ],
       [
         0.6350302481700383,
-        0.5191458026509576
+        0.5189547294810454
       ],
       [
         0.6350997420427936,
@@ -4560,19 +4565,19 @@
       ],
       [
         0.6574259607753754,
-        0.5317585301837271
+        0.5317252228631358
       ],
       [
         0.7270179331277156,
-        0.5317585301837271
+        0.5317252228631358
       ],
       [
         0.7270210286884442,
-        0.5322997416020672
+        0.5317762085822926
       ],
       [
         0.9999999079901679,
-        0.5322997416020672
+        0.5317762085822926
       ],
       [
         0.999999926434373,
@@ -4595,16 +4600,236 @@
         1.0
       ]
     ],
-    "scored_n": 24605,
-    "logged_n": 24634,
+    "scored_n": 24634,
+    "logged_n": 24650,
     "min_sample": 30,
     "target_sample": 300,
     "min_sample_met": true,
     "predictions_per_run_day": 24.1,
-    "target_ready_date": "2026-10-20"
+    "target_ready_date": "2026-10-21"
   },
   "news": {
     "events": [
+      {
+        "published_at": "2026-10-21T15:00:39+00:00",
+        "headline": "Cyclicals Top Sectors In Wednesday Trading As Defensives Trail",
+        "source": "benzinga",
+        "symbol": "XLE",
+        "match_type": "explicit",
+        "matched_themes": "",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-21T14:31:01+00:00",
+        "headline": "USA Gasoline Inventories 2.952M Barrel Draw Vs 0.400M Barrel Draw Est.",
+        "source": "benzinga",
+        "symbol": "UNG",
+        "match_type": "explicit",
+        "matched_themes": "crude",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-21T14:31:01+00:00",
+        "headline": "USA Gasoline Inventories 2.952M Barrel Draw Vs 0.400M Barrel Draw Est.",
+        "source": "benzinga",
+        "symbol": "BNO",
+        "match_type": "theme",
+        "matched_themes": "crude",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-21T14:31:01+00:00",
+        "headline": "USA Gasoline Inventories 2.952M Barrel Draw Vs 0.400M Barrel Draw Est.",
+        "source": "benzinga",
+        "symbol": "XLE",
+        "match_type": "theme",
+        "matched_themes": "crude",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-21T14:31:01+00:00",
+        "headline": "USA Gasoline Inventories 2.952M Barrel Draw Vs 0.400M Barrel Draw Est.",
+        "source": "benzinga",
+        "symbol": "DBC",
+        "match_type": "theme",
+        "matched_themes": "crude",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-21T14:31:01+00:00",
+        "headline": "USA Gasoline Inventories 2.952M Barrel Draw Vs 0.400M Barrel Draw Est.",
+        "source": "benzinga",
+        "symbol": "GSG",
+        "match_type": "theme",
+        "matched_themes": "crude",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-21T14:30:38+00:00",
+        "headline": "EIA Weekly Distillates Stocks 1.675M Barrel Build Vs 1.200M Barrel Draw Est.",
+        "source": "benzinga",
+        "symbol": "UNG",
+        "match_type": "explicit",
+        "matched_themes": "crude",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-21T14:30:38+00:00",
+        "headline": "EIA Weekly Distillates Stocks 1.675M Barrel Build Vs 1.200M Barrel Draw Est.",
+        "source": "benzinga",
+        "symbol": "BNO",
+        "match_type": "theme",
+        "matched_themes": "crude",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-21T14:30:38+00:00",
+        "headline": "EIA Weekly Distillates Stocks 1.675M Barrel Build Vs 1.200M Barrel Draw Est.",
+        "source": "benzinga",
+        "symbol": "XLE",
+        "match_type": "theme",
+        "matched_themes": "crude",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-21T14:30:38+00:00",
+        "headline": "EIA Weekly Distillates Stocks 1.675M Barrel Build Vs 1.200M Barrel Draw Est.",
+        "source": "benzinga",
+        "symbol": "DBC",
+        "match_type": "theme",
+        "matched_themes": "crude",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-21T14:30:38+00:00",
+        "headline": "EIA Weekly Distillates Stocks 1.675M Barrel Build Vs 1.200M Barrel Draw Est.",
+        "source": "benzinga",
+        "symbol": "GSG",
+        "match_type": "theme",
+        "matched_themes": "crude",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-21T10:43:50+00:00",
+        "headline": "'France\u2019s Macron Secures Qatar LNG Supplies for Winter Period' - Bloomberg",
+        "source": "benzinga",
+        "symbol": "UNG",
+        "match_type": "explicit",
+        "matched_themes": "",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-21T10:27:49+00:00",
+        "headline": "'Iran FM: We are ready for diplomacy, but will defend ourselves; A way forward can only materialize once the US administration genuinely accepts that it has no military options' - FT Op Ed",
+        "source": "benzinga",
+        "symbol": "UNG",
+        "match_type": "explicit",
+        "matched_themes": "geopolitical_supply_shock",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-21T10:27:49+00:00",
+        "headline": "'Iran FM: We are ready for diplomacy, but will defend ourselves; A way forward can only materialize once the US administration genuinely accepts that it has no military options' - FT Op Ed",
+        "source": "benzinga",
+        "symbol": "WEAT",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-21T10:27:49+00:00",
+        "headline": "'Iran FM: We are ready for diplomacy, but will defend ourselves; A way forward can only materialize once the US administration genuinely accepts that it has no military options' - FT Op Ed",
+        "source": "benzinga",
+        "symbol": "CORN",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-21T10:27:49+00:00",
+        "headline": "'Iran FM: We are ready for diplomacy, but will defend ourselves; A way forward can only materialize once the US administration genuinely accepts that it has no military options' - FT Op Ed",
+        "source": "benzinga",
+        "symbol": "BNO",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-21T10:27:49+00:00",
+        "headline": "'Iran FM: We are ready for diplomacy, but will defend ourselves; A way forward can only materialize once the US administration genuinely accepts that it has no military options' - FT Op Ed",
+        "source": "benzinga",
+        "symbol": "IAU",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-21T05:59:07+00:00",
+        "headline": "Kamala Harris Says 'Choices Made' by Trump Are Hitting Wallets, Calls Midterms a Chance to Elect Leaders Who \u2018Fight for the People\u2019",
+        "source": "benzinga",
+        "symbol": "BNO",
+        "match_type": "explicit",
+        "matched_themes": "geopolitical_supply_shock",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-21T05:59:07+00:00",
+        "headline": "Kamala Harris Says 'Choices Made' by Trump Are Hitting Wallets, Calls Midterms a Chance to Elect Leaders Who \u2018Fight for the People\u2019",
+        "source": "benzinga",
+        "symbol": "WEAT",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-21T05:59:07+00:00",
+        "headline": "Kamala Harris Says 'Choices Made' by Trump Are Hitting Wallets, Calls Midterms a Chance to Elect Leaders Who \u2018Fight for the People\u2019",
+        "source": "benzinga",
+        "symbol": "CORN",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-21T05:59:07+00:00",
+        "headline": "Kamala Harris Says 'Choices Made' by Trump Are Hitting Wallets, Calls Midterms a Chance to Elect Leaders Who \u2018Fight for the People\u2019",
+        "source": "benzinga",
+        "symbol": "UNG",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-21T05:59:07+00:00",
+        "headline": "Kamala Harris Says 'Choices Made' by Trump Are Hitting Wallets, Calls Midterms a Chance to Elect Leaders Who \u2018Fight for the People\u2019",
+        "source": "benzinga",
+        "symbol": "IAU",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
       {
         "published_at": "2026-10-20T16:58:54+00:00",
         "headline": "Health Care Stocks Hit Record Highs, GM Drops Nearly 8%: Stock Market Today",
@@ -4684,237 +4909,17 @@
         "matched_themes": "",
         "polarity": "neutral",
         "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-20T15:31:13+00:00",
-        "headline": "Energy Secretary Chris Wright Says U.S. Is Pushing Domestic Refiners To Expand Capacity",
-        "source": "benzinga",
-        "symbol": "UNG",
-        "match_type": "explicit",
-        "matched_themes": "",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-20T15:00:42+00:00",
-        "headline": "Energy Only Sector Lower In Tuesday Trading As Defensives Lead",
-        "source": "benzinga",
-        "symbol": "XLE",
-        "match_type": "explicit",
-        "matched_themes": "",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-20T13:54:11+00:00",
-        "headline": "U.S. Energy Under Secretary Kyle Haustveit Says Diesel Prices Are Higher Than Anyone Wants Right Now, Working With Refiners To Seek Ways To Produce More",
-        "source": "benzinga",
-        "symbol": "UNG",
-        "match_type": "explicit",
-        "matched_themes": "",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-19T20:05:15+00:00",
-        "headline": "U.S. Energy Secretary Wright Says Yet To Be Seen If Russia Will Release Diesel",
-        "source": "benzinga",
-        "symbol": "UNG",
-        "match_type": "explicit",
-        "matched_themes": "",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-19T17:35:12+00:00",
-        "headline": "10 Information Technology Stocks With Whale Alerts In Today\u2019s Session",
-        "source": "benzinga",
-        "symbol": "AAPL",
-        "match_type": "explicit",
-        "matched_themes": "",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-19T16:58:22+00:00",
-        "headline": "Stock Market Today: Nasdaq 100 Rises as AI Chip Rout Reverses, SanDisk Jumps 7%",
-        "source": "benzinga",
-        "symbol": "XLE",
-        "match_type": "explicit",
-        "matched_themes": "",
-        "polarity": "bullish",
-        "polarity_score": 1.0
-      },
-      {
-        "published_at": "2026-10-19T16:49:59+00:00",
-        "headline": "'Apple Announces Oct. 28 Event for Touch-Screen MacBook Pro' - Bloomberg",
-        "source": "benzinga",
-        "symbol": "AAPL",
-        "match_type": "explicit",
-        "matched_themes": "",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-19T16:40:25+00:00",
-        "headline": "Apple SVP Marketing Greg Joswiak, On Social Media, Hints At New Product Announcement Next Week",
-        "source": "benzinga",
-        "symbol": "AAPL",
-        "match_type": "explicit",
-        "matched_themes": "",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-19T16:07:41+00:00",
-        "headline": "Apple iPhone Duo Has 82-Day Lead Time: Analyst Names Tech Giant 'Eventual' AI Winner",
-        "source": "benzinga",
-        "symbol": "AAPL",
-        "match_type": "explicit",
-        "matched_themes": "",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-19T15:31:43+00:00",
-        "headline": "Putin\u2019s Proposed Trump-Xi Summit In China Could Hurt US Stocks Long Term; Meta And Tesla Earnings Ahead",
-        "source": "benzinga",
-        "symbol": "AAPL",
-        "match_type": "explicit",
-        "matched_themes": "",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-19T15:00:30+00:00",
-        "headline": "9 Of 11 Sectors Fall As Growth Leads",
-        "source": "benzinga",
-        "symbol": "XLE",
-        "match_type": "explicit",
-        "matched_themes": "",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-19T14:18:46+00:00",
-        "headline": "'Trump Administration Commits Up To $42M To Revive Stalled Northeast Natural Gas Pipeline' - Fox Business",
-        "source": "benzinga",
-        "symbol": "UNG",
-        "match_type": "explicit",
-        "matched_themes": "",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-19T09:58:59+00:00",
-        "headline": "Analyzing Apple In Comparison To Competitors In Technology Hardware, Storage &amp; Peripherals Industry",
-        "source": "benzinga",
-        "symbol": "AAPL",
-        "match_type": "explicit",
-        "matched_themes": "geopolitical_supply_shock",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-19T09:58:59+00:00",
-        "headline": "Analyzing Apple In Comparison To Competitors In Technology Hardware, Storage &amp; Peripherals Industry",
-        "source": "benzinga",
-        "symbol": "WEAT",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-19T09:58:59+00:00",
-        "headline": "Analyzing Apple In Comparison To Competitors In Technology Hardware, Storage &amp; Peripherals Industry",
-        "source": "benzinga",
-        "symbol": "CORN",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-19T09:58:59+00:00",
-        "headline": "Analyzing Apple In Comparison To Competitors In Technology Hardware, Storage &amp; Peripherals Industry",
-        "source": "benzinga",
-        "symbol": "UNG",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-19T09:58:59+00:00",
-        "headline": "Analyzing Apple In Comparison To Competitors In Technology Hardware, Storage &amp; Peripherals Industry",
-        "source": "benzinga",
-        "symbol": "BNO",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-19T09:58:59+00:00",
-        "headline": "Analyzing Apple In Comparison To Competitors In Technology Hardware, Storage &amp; Peripherals Industry",
-        "source": "benzinga",
-        "symbol": "IAU",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-19T09:55:57+00:00",
-        "headline": "What's Going On With Intel Stock Monday?",
-        "source": "benzinga",
-        "symbol": "AAPL",
-        "match_type": "explicit",
-        "matched_themes": "",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-19T01:29:06+00:00",
-        "headline": "The Wall Street Journal Reported Earlier, Putin Proposes Summit With Trump, Xi To Discuss Ukraine Deal",
-        "source": "benzinga",
-        "symbol": "WEAT",
-        "match_type": "explicit",
-        "matched_themes": "",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-19T01:29:06+00:00",
-        "headline": "The Wall Street Journal Reported Earlier, Putin Proposes Summit With Trump, Xi To Discuss Ukraine Deal",
-        "source": "benzinga",
-        "symbol": "UNG",
-        "match_type": "explicit",
-        "matched_themes": "",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-18T16:55:09+00:00",
-        "headline": "Trump\u2019s Russia Tariff Waiver Helps Apple, Eliminates Tariff Advantage for CF and CVR Partners",
-        "source": "benzinga",
-        "symbol": "AAPL",
-        "match_type": "explicit",
-        "matched_themes": "geopolitical_supply_shock",
-        "polarity": "neutral",
-        "polarity_score": 0.0
       }
     ],
-    "scored_n": 598,
-    "base_rate": 47.0,
+    "scored_n": 610,
+    "base_rate": 46.9,
     "accuracy_by_match_type": [
       {
         "match_type": "explicit",
-        "n": 56,
-        "accuracy": 35.7,
-        "ci_low": 23.2,
-        "ci_high": 48.3
+        "n": 57,
+        "accuracy": 36.8,
+        "ci_low": 24.3,
+        "ci_high": 49.4
       },
       {
         "match_type": "theme",
