@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-26T19:41:16+00:00",
+  "generated_at": "2026-10-27T19:09:49+00:00",
   "equity_curve": [
     {
       "time": "2026-08-13",
@@ -321,6 +321,12 @@
     },
     {
       "time": "2026-10-26",
+      "value": 491.77,
+      "exposure": 0.0,
+      "daily_return": 0.0
+    },
+    {
+      "time": "2026-10-27",
       "value": 491.77,
       "exposure": 0.0,
       "daily_return": 0.0
@@ -1337,6 +1343,188 @@
     "win_rate": 31.8
   },
   "decisions": [
+    {
+      "timestamp": "2026-10-27T19:09:49.366820",
+      "symbol": "GSG",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5168897386870618,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-27T19:09:49.363472",
+      "symbol": "DBC",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5227272727272729,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-27T19:09:49.359802",
+      "symbol": "DBB",
+      "signal_type": "hold",
+      "confidence": 0.425,
+      "prob_profit": 0.5121882880358641,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-27T19:09:49.355866",
+      "symbol": "CPER",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5227272727272729,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-27T19:09:49.352543",
+      "symbol": "PALL",
+      "signal_type": "hold",
+      "confidence": 0.425,
+      "prob_profit": 0.48525469168900803,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-27T19:09:49.349331",
+      "symbol": "PPLT",
+      "signal_type": "hold",
+      "confidence": 0.425,
+      "prob_profit": 0.5168897386870618,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-27T19:09:49.345803",
+      "symbol": "IAU",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.4895682710183846,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-27T19:09:49.341736",
+      "symbol": "SLV",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.4895682710183846,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-27T19:09:49.337554",
+      "symbol": "XLE",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5121882880358641,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-27T19:09:49.330226",
+      "symbol": "BNO",
+      "signal_type": "hold",
+      "confidence": 0.9,
+      "prob_profit": 0.48525469168900803,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-27T19:09:49.326558",
+      "symbol": "UNG",
+      "signal_type": "hold",
+      "confidence": 0.425,
+      "prob_profit": 0.4895682710183846,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-27T19:09:49.322641",
+      "symbol": "DBA",
+      "signal_type": "hold",
+      "confidence": 0.8624999999999999,
+      "prob_profit": 0.5121882880358641,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-27T19:09:49.319079",
+      "symbol": "CANE",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.4895682710183846,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-27T19:09:49.312652",
+      "symbol": "SOYB",
+      "signal_type": "hold",
+      "confidence": 0.425,
+      "prob_profit": 0.5315325010761944,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
     {
       "timestamp": "2026-10-26T19:41:15.738218",
       "symbol": "GSG",
@@ -3754,192 +3942,10 @@
       "planned_quantity": null,
       "planned_entry_price": null,
       "error_message": null
-    },
-    {
-      "timestamp": "2026-10-07T19:41:04.074395",
-      "symbol": "GSG",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.5318987066623192,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-07T19:41:04.070356",
-      "symbol": "DBC",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.5318987066623192,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-07T19:41:04.066690",
-      "symbol": "DBB",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.5318987066623192,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-07T19:41:04.063103",
-      "symbol": "CPER",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.5318987066623192,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-07T19:41:04.059260",
-      "symbol": "PALL",
-      "signal_type": "hold",
-      "confidence": 0.425,
-      "prob_profit": 0.5235920852359207,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-07T19:41:04.054946",
-      "symbol": "PPLT",
-      "signal_type": "hold",
-      "confidence": 0.8624999999999999,
-      "prob_profit": 0.5318987066623192,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-07T19:41:04.050846",
-      "symbol": "IAU",
-      "signal_type": "hold",
-      "confidence": 0.425,
-      "prob_profit": 0.4903426791277258,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-07T19:41:04.047098",
-      "symbol": "SLV",
-      "signal_type": "hold",
-      "confidence": 0.425,
-      "prob_profit": 0.519501133786848,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-07T19:41:04.043028",
-      "symbol": "XLE",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.5318987066623192,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-07T19:41:04.039025",
-      "symbol": "BNO",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.5318987066623192,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-07T19:41:04.035354",
-      "symbol": "UNG",
-      "signal_type": "hold",
-      "confidence": 0.75,
-      "prob_profit": 0.4903426791277258,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-07T19:41:04.031658",
-      "symbol": "DBA",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.519501133786848,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-07T19:41:04.025459",
-      "symbol": "SOYB",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.519501133786848,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-07T19:41:04.021878",
-      "symbol": "CORN",
-      "signal_type": "hold",
-      "confidence": 0.75,
-      "prob_profit": 0.4891891891891892,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
     }
   ],
   "latest_run": {
-    "date": "20261026",
+    "date": "20261027",
     "account": {
       "equity": 491.77,
       "equity_source": "broker_live",
@@ -3952,9 +3958,9 @@
         "signal": "BUY",
         "original": "BUY",
         "confidence": 0.8625,
-        "prob_profit": 0.5169,
-        "decision": "PASS",
-        "reason": "meets confidence and probability thresholds"
+        "prob_profit": 0.4951,
+        "decision": "REJECT",
+        "reason": "P(up) 0.4951 < 0.5000"
       },
       {
         "symbol": "CORN",
@@ -3970,102 +3976,12 @@
         "signal": "HOLD",
         "original": "HOLD",
         "confidence": 0.425,
-        "prob_profit": 0.5122,
+        "prob_profit": 0.5315,
         "decision": "HOLD",
         "reason": "explicit HOLD decision retained for logging"
       },
       {
         "symbol": "CANE",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.425,
-        "prob_profit": 0.5169,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
-      },
-      {
-        "symbol": "DBA",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.425,
-        "prob_profit": 0.5315,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
-      },
-      {
-        "symbol": "UNG",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.425,
-        "prob_profit": 0.5315,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
-      },
-      {
-        "symbol": "BNO",
-        "signal": "BUY",
-        "original": "BUY",
-        "confidence": 0.6375,
-        "prob_profit": 0.5315,
-        "decision": "PASS",
-        "reason": "meets confidence and probability thresholds"
-      },
-      {
-        "symbol": "XLE",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.5,
-        "prob_profit": 0.5187,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
-      },
-      {
-        "symbol": "SLV",
-        "signal": "SELL",
-        "original": "SELL",
-        "confidence": 0.6375,
-        "prob_profit": 0.4853,
-        "decision": "PASS",
-        "reason": "meets confidence and probability thresholds"
-      },
-      {
-        "symbol": "IAU",
-        "signal": "BUY",
-        "original": "BUY",
-        "confidence": 0.8625,
-        "prob_profit": 0.4853,
-        "decision": "REJECT",
-        "reason": "P(up) 0.4853 < 0.5000"
-      },
-      {
-        "symbol": "PPLT",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.425,
-        "prob_profit": 0.5315,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
-      },
-      {
-        "symbol": "PALL",
-        "signal": "BUY",
-        "original": "BUY",
-        "confidence": 0.8625,
-        "prob_profit": 0.5315,
-        "decision": "PASS",
-        "reason": "meets confidence and probability thresholds"
-      },
-      {
-        "symbol": "CPER",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.5,
-        "prob_profit": 0.5122,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
-      },
-      {
-        "symbol": "DBB",
         "signal": "HOLD",
         "original": "HOLD",
         "confidence": 0.5,
@@ -4074,11 +3990,101 @@
         "reason": "explicit HOLD decision retained for logging"
       },
       {
+        "symbol": "DBA",
+        "signal": "BUY",
+        "original": "BUY",
+        "confidence": 0.8625,
+        "prob_profit": 0.5122,
+        "decision": "PASS",
+        "reason": "meets confidence and probability thresholds"
+      },
+      {
+        "symbol": "UNG",
+        "signal": "HOLD",
+        "original": "HOLD",
+        "confidence": 0.425,
+        "prob_profit": 0.4896,
+        "decision": "HOLD",
+        "reason": "explicit HOLD decision retained for logging"
+      },
+      {
+        "symbol": "BNO",
+        "signal": "SELL",
+        "original": "STRONG SELL",
+        "confidence": 0.9,
+        "prob_profit": 0.4853,
+        "decision": "PASS",
+        "reason": "meets confidence and probability thresholds"
+      },
+      {
+        "symbol": "XLE",
+        "signal": "HOLD",
+        "original": "HOLD",
+        "confidence": 0.5,
+        "prob_profit": 0.5122,
+        "decision": "HOLD",
+        "reason": "explicit HOLD decision retained for logging"
+      },
+      {
+        "symbol": "SLV",
+        "signal": "HOLD",
+        "original": "HOLD",
+        "confidence": 0.5,
+        "prob_profit": 0.4896,
+        "decision": "HOLD",
+        "reason": "explicit HOLD decision retained for logging"
+      },
+      {
+        "symbol": "IAU",
+        "signal": "HOLD",
+        "original": "HOLD",
+        "confidence": 0.5,
+        "prob_profit": 0.4896,
+        "decision": "HOLD",
+        "reason": "explicit HOLD decision retained for logging"
+      },
+      {
+        "symbol": "PPLT",
+        "signal": "HOLD",
+        "original": "HOLD",
+        "confidence": 0.425,
+        "prob_profit": 0.5169,
+        "decision": "HOLD",
+        "reason": "explicit HOLD decision retained for logging"
+      },
+      {
+        "symbol": "PALL",
+        "signal": "HOLD",
+        "original": "HOLD",
+        "confidence": 0.425,
+        "prob_profit": 0.4853,
+        "decision": "HOLD",
+        "reason": "explicit HOLD decision retained for logging"
+      },
+      {
+        "symbol": "CPER",
+        "signal": "HOLD",
+        "original": "HOLD",
+        "confidence": 0.5,
+        "prob_profit": 0.5227,
+        "decision": "HOLD",
+        "reason": "explicit HOLD decision retained for logging"
+      },
+      {
+        "symbol": "DBB",
+        "signal": "HOLD",
+        "original": "HOLD",
+        "confidence": 0.425,
+        "prob_profit": 0.5122,
+        "decision": "HOLD",
+        "reason": "explicit HOLD decision retained for logging"
+      },
+      {
         "symbol": "DBC",
         "signal": "HOLD",
         "original": "HOLD",
         "confidence": 0.5,
-        "prob_profit": 0.5315,
+        "prob_profit": 0.5227,
         "decision": "HOLD",
         "reason": "explicit HOLD decision retained for logging"
       },
@@ -4087,17 +4093,15 @@
         "signal": "HOLD",
         "original": "HOLD",
         "confidence": 0.5,
-        "prob_profit": 0.5315,
+        "prob_profit": 0.5169,
         "decision": "HOLD",
         "reason": "explicit HOLD decision retained for logging"
       }
     ],
     "positions": [],
     "blockers": [
-      "rejection_reason: edge gate BNO: predicted move 0.880% at 53.2% does not cover 0.250% round-trip cost (EV -0.195%)",
-      "rejection_reason: edge gate PALL: predicted move 0.195% at 53.2% does not cover 0.400% round-trip cost (EV -0.388%)",
-      "rejection_reason: edge gate SLV: predicted move 1.439% at 51.5% does not cover 0.130% round-trip cost (EV -0.088%)",
-      "rejection_reason: edge gate WEAT: predicted move 0.001% at 51.7% does not cover 0.300% round-trip cost (EV -0.300%)"
+      "rejection_reason: edge gate BNO: predicted move 0.797% at 51.5% does not cover 0.250% round-trip cost (EV -0.227%)",
+      "rejection_reason: edge gate DBA: predicted move 0.090% at 51.2% does not cover 0.180% round-trip cost (EV -0.178%)"
     ],
     "eos_available": true,
     "orders_submitted": 0,
@@ -4488,7 +4492,7 @@
   },
   "calibration": {
     "fitted": true,
-    "fitted_at": "2026-10-26T19:41:04+00:00",
+    "fitted_at": "2026-10-27T19:09:38+00:00",
     "n": 24666,
     "curve": [
       [
@@ -4605,15 +4609,55 @@
       ]
     ],
     "scored_n": 24675,
-    "logged_n": 24689,
+    "logged_n": 24703,
     "min_sample": 30,
     "target_sample": 300,
     "min_sample_met": true,
     "predictions_per_run_day": 24.1,
-    "target_ready_date": "2026-10-26"
+    "target_ready_date": "2026-10-27"
   },
   "news": {
     "events": [
+      {
+        "published_at": "2026-10-27T17:01:35+00:00",
+        "headline": "Nasdaq 100 Climbs on Chip Rally, Boeing Sinks 10%: Stock Market Today",
+        "source": "benzinga",
+        "symbol": "XLE",
+        "match_type": "explicit",
+        "matched_themes": "",
+        "polarity": "bullish",
+        "polarity_score": 1.0
+      },
+      {
+        "published_at": "2026-10-27T15:00:23+00:00",
+        "headline": "Growth Leads Sectors In Tuesday Trading As Defensives Trail",
+        "source": "benzinga",
+        "symbol": "XLE",
+        "match_type": "explicit",
+        "matched_themes": "",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-27T11:15:51+00:00",
+        "headline": "'Another Golden Asteroid Story': Why Lab-Made Gold Won't Crash Bullion",
+        "source": "benzinga",
+        "symbol": "IAU",
+        "match_type": "explicit",
+        "matched_themes": "",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-26T23:30:20+00:00",
+        "headline": "Here's How Much $100 Invested In iShares Gold Trust Shares 5 Years Ago Would Be Worth Today",
+        "source": "benzinga",
+        "symbol": "IAU",
+        "match_type": "explicit",
+        "matched_themes": "",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
       {
         "published_at": "2026-10-26T15:00:28+00:00",
         "headline": "Growth Leads Sectors In Monday Trading As Defensives Trail",
@@ -4873,50 +4917,10 @@
         "matched_themes": "geopolitical_supply_shock",
         "polarity": "neutral",
         "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-22T16:54:23+00:00",
-        "headline": "Is A War Imminent? Concerns Overshadow Strong Meta, Tesla Earnings",
-        "source": "benzinga",
-        "symbol": "CORN",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-22T16:54:23+00:00",
-        "headline": "Is A War Imminent? Concerns Overshadow Strong Meta, Tesla Earnings",
-        "source": "benzinga",
-        "symbol": "UNG",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-22T16:54:23+00:00",
-        "headline": "Is A War Imminent? Concerns Overshadow Strong Meta, Tesla Earnings",
-        "source": "benzinga",
-        "symbol": "BNO",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-22T16:54:23+00:00",
-        "headline": "Is A War Imminent? Concerns Overshadow Strong Meta, Tesla Earnings",
-        "source": "benzinga",
-        "symbol": "IAU",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock",
-        "polarity": "neutral",
-        "polarity_score": 0.0
       }
     ],
-    "scored_n": 655,
-    "base_rate": 46.0,
+    "scored_n": 666,
+    "base_rate": 45.6,
     "accuracy_by_match_type": [
       {
         "match_type": "explicit",
