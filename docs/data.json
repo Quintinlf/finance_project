@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-27T19:09:49+00:00",
+  "generated_at": "2026-10-28T19:14:27+00:00",
   "equity_curve": [
     {
       "time": "2026-08-13",
@@ -327,6 +327,12 @@
     },
     {
       "time": "2026-10-27",
+      "value": 491.77,
+      "exposure": 0.0,
+      "daily_return": 0.0
+    },
+    {
+      "time": "2026-10-28",
       "value": 491.77,
       "exposure": 0.0,
       "daily_return": 0.0
@@ -1343,6 +1349,201 @@
     "win_rate": 31.8
   },
   "decisions": [
+    {
+      "timestamp": "2026-10-28T19:14:27.019227",
+      "symbol": "GSG",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5312903225806448,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-28T19:14:27.012614",
+      "symbol": "DBC",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5312903225806448,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-28T19:14:27.008844",
+      "symbol": "DBB",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.49514563106796106,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-28T19:14:27.005098",
+      "symbol": "CPER",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5185457216305545,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-28T19:14:27.001314",
+      "symbol": "PALL",
+      "signal_type": "hold",
+      "confidence": 0.425,
+      "prob_profit": 0.5185457216305545,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-28T19:14:26.997033",
+      "symbol": "PPLT",
+      "signal_type": "hold",
+      "confidence": 0.425,
+      "prob_profit": 0.5312903225806448,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-28T19:14:26.993083",
+      "symbol": "IAU",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.48947585637639274,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-28T19:14:26.988933",
+      "symbol": "SLV",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.48947585637639274,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-28T19:14:26.985279",
+      "symbol": "XLE",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5312903225806448,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-28T19:14:26.981629",
+      "symbol": "BNO",
+      "signal_type": "hold",
+      "confidence": 0.6375,
+      "prob_profit": 0.5555555555555556,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-28T19:14:26.977320",
+      "symbol": "UNG",
+      "signal_type": "hold",
+      "confidence": 0.425,
+      "prob_profit": 0.5312903225806448,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-28T19:14:26.968532",
+      "symbol": "DBA",
+      "signal_type": "hold",
+      "confidence": 0.8624999999999999,
+      "prob_profit": 0.516846789574062,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-28T19:14:26.958526",
+      "symbol": "CANE",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5120313374370448,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-28T19:14:26.949604",
+      "symbol": "SOYB",
+      "signal_type": "hold",
+      "confidence": 0.8624999999999999,
+      "prob_profit": 0.5185457216305545,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-10-28T19:14:26.934107",
+      "symbol": "CORN",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5120313374370448,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
     {
       "timestamp": "2026-10-27T19:09:49.366820",
       "symbol": "GSG",
@@ -3747,205 +3948,10 @@
       "planned_quantity": null,
       "planned_entry_price": null,
       "error_message": null
-    },
-    {
-      "timestamp": "2026-10-08T19:36:37.148382",
-      "symbol": "GSG",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.5318987066623192,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-08T19:36:37.144258",
-      "symbol": "DBC",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.5318987066623192,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-08T19:36:37.139692",
-      "symbol": "DBB",
-      "signal_type": "hold",
-      "confidence": 0.8624999999999999,
-      "prob_profit": 0.5318987066623192,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-08T19:36:37.135506",
-      "symbol": "CPER",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.5318987066623192,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-08T19:36:37.130889",
-      "symbol": "PALL",
-      "signal_type": "hold",
-      "confidence": 1.0,
-      "prob_profit": 0.5318987066623192,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-08T19:36:37.126486",
-      "symbol": "PPLT",
-      "signal_type": "hold",
-      "confidence": 1.0,
-      "prob_profit": 0.5318987066623192,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-08T19:36:37.121728",
-      "symbol": "IAU",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.4903426791277258,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-08T19:36:37.117502",
-      "symbol": "SLV",
-      "signal_type": "hold",
-      "confidence": 0.425,
-      "prob_profit": 0.5318987066623192,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-08T19:36:37.113333",
-      "symbol": "BNO",
-      "signal_type": "hold",
-      "confidence": 0.425,
-      "prob_profit": 0.5318987066623192,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-08T19:36:37.108814",
-      "symbol": "UNG",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.4903426791277258,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-08T19:36:37.104561",
-      "symbol": "DBA",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.519501133786848,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-08T19:36:37.099820",
-      "symbol": "CANE",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.5318987066623192,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-08T19:36:37.095536",
-      "symbol": "SOYB",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.5318987066623192,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-08T19:36:37.090673",
-      "symbol": "CORN",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.4903426791277258,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-08T19:36:37.065575",
-      "symbol": "WEAT",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.5318987066623192,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
     }
   ],
   "latest_run": {
-    "date": "20261027",
+    "date": "20261028",
     "account": {
       "equity": 491.77,
       "equity_source": "broker_live",
@@ -3958,34 +3964,34 @@
         "signal": "BUY",
         "original": "BUY",
         "confidence": 0.8625,
-        "prob_profit": 0.4951,
+        "prob_profit": 0.4895,
         "decision": "REJECT",
-        "reason": "P(up) 0.4951 < 0.5000"
+        "reason": "P(up) 0.4895 < 0.5000"
       },
       {
         "symbol": "CORN",
-        "signal": "BUY",
-        "original": "BUY",
-        "confidence": 0.8625,
-        "prob_profit": 0.4896,
-        "decision": "REJECT",
-        "reason": "P(up) 0.4896 < 0.5000"
+        "signal": "HOLD",
+        "original": "HOLD",
+        "confidence": 0.5,
+        "prob_profit": 0.512,
+        "decision": "HOLD",
+        "reason": "explicit HOLD decision retained for logging"
       },
       {
         "symbol": "SOYB",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.425,
-        "prob_profit": 0.5315,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
+        "signal": "BUY",
+        "original": "BUY",
+        "confidence": 0.8625,
+        "prob_profit": 0.5185,
+        "decision": "PASS",
+        "reason": "meets confidence and probability thresholds"
       },
       {
         "symbol": "CANE",
         "signal": "HOLD",
         "original": "HOLD",
         "confidence": 0.5,
-        "prob_profit": 0.4896,
+        "prob_profit": 0.512,
         "decision": "HOLD",
         "reason": "explicit HOLD decision retained for logging"
       },
@@ -3994,7 +4000,7 @@
         "signal": "BUY",
         "original": "BUY",
         "confidence": 0.8625,
-        "prob_profit": 0.5122,
+        "prob_profit": 0.5168,
         "decision": "PASS",
         "reason": "meets confidence and probability thresholds"
       },
@@ -4003,16 +4009,16 @@
         "signal": "HOLD",
         "original": "HOLD",
         "confidence": 0.425,
-        "prob_profit": 0.4896,
+        "prob_profit": 0.5313,
         "decision": "HOLD",
         "reason": "explicit HOLD decision retained for logging"
       },
       {
         "symbol": "BNO",
-        "signal": "SELL",
-        "original": "STRONG SELL",
-        "confidence": 0.9,
-        "prob_profit": 0.4853,
+        "signal": "BUY",
+        "original": "BUY",
+        "confidence": 0.6375,
+        "prob_profit": 0.5556,
         "decision": "PASS",
         "reason": "meets confidence and probability thresholds"
       },
@@ -4021,7 +4027,7 @@
         "signal": "HOLD",
         "original": "HOLD",
         "confidence": 0.5,
-        "prob_profit": 0.5122,
+        "prob_profit": 0.5313,
         "decision": "HOLD",
         "reason": "explicit HOLD decision retained for logging"
       },
@@ -4030,7 +4036,7 @@
         "signal": "HOLD",
         "original": "HOLD",
         "confidence": 0.5,
-        "prob_profit": 0.4896,
+        "prob_profit": 0.4895,
         "decision": "HOLD",
         "reason": "explicit HOLD decision retained for logging"
       },
@@ -4039,7 +4045,7 @@
         "signal": "HOLD",
         "original": "HOLD",
         "confidence": 0.5,
-        "prob_profit": 0.4896,
+        "prob_profit": 0.4895,
         "decision": "HOLD",
         "reason": "explicit HOLD decision retained for logging"
       },
@@ -4048,7 +4054,7 @@
         "signal": "HOLD",
         "original": "HOLD",
         "confidence": 0.425,
-        "prob_profit": 0.5169,
+        "prob_profit": 0.5313,
         "decision": "HOLD",
         "reason": "explicit HOLD decision retained for logging"
       },
@@ -4057,7 +4063,7 @@
         "signal": "HOLD",
         "original": "HOLD",
         "confidence": 0.425,
-        "prob_profit": 0.4853,
+        "prob_profit": 0.5185,
         "decision": "HOLD",
         "reason": "explicit HOLD decision retained for logging"
       },
@@ -4066,7 +4072,7 @@
         "signal": "HOLD",
         "original": "HOLD",
         "confidence": 0.5,
-        "prob_profit": 0.5227,
+        "prob_profit": 0.5185,
         "decision": "HOLD",
         "reason": "explicit HOLD decision retained for logging"
       },
@@ -4074,8 +4080,8 @@
         "symbol": "DBB",
         "signal": "HOLD",
         "original": "HOLD",
-        "confidence": 0.425,
-        "prob_profit": 0.5122,
+        "confidence": 0.5,
+        "prob_profit": 0.4951,
         "decision": "HOLD",
         "reason": "explicit HOLD decision retained for logging"
       },
@@ -4084,7 +4090,7 @@
         "signal": "HOLD",
         "original": "HOLD",
         "confidence": 0.5,
-        "prob_profit": 0.5227,
+        "prob_profit": 0.5313,
         "decision": "HOLD",
         "reason": "explicit HOLD decision retained for logging"
       },
@@ -4093,15 +4099,16 @@
         "signal": "HOLD",
         "original": "HOLD",
         "confidence": 0.5,
-        "prob_profit": 0.5169,
+        "prob_profit": 0.5313,
         "decision": "HOLD",
         "reason": "explicit HOLD decision retained for logging"
       }
     ],
     "positions": [],
     "blockers": [
-      "rejection_reason: edge gate BNO: predicted move 0.797% at 51.5% does not cover 0.250% round-trip cost (EV -0.227%)",
-      "rejection_reason: edge gate DBA: predicted move 0.090% at 51.2% does not cover 0.180% round-trip cost (EV -0.178%)"
+      "rejection_reason: edge gate BNO: predicted move 1.778% at 55.6% does not cover 0.250% round-trip cost (EV -0.052%)",
+      "rejection_reason: edge gate DBA: predicted move 0.013% at 51.7% does not cover 0.180% round-trip cost (EV -0.180%)",
+      "rejection_reason: edge gate SOYB: predicted move 0.043% at 51.9% does not cover 0.450% round-trip cost (EV -0.448%)"
     ],
     "eos_available": true,
     "orders_submitted": 0,
@@ -4451,49 +4458,49 @@
   ],
   "component_accuracy": {
     "base_rate": 51.5,
-    "base_n": 24675,
+    "base_n": 24703,
     "components": [
       {
         "name": "Bollinger",
-        "n": 6856,
+        "n": 6871,
         "accuracy": 49.8,
         "ci_low": 48.6,
         "ci_high": 51.0
       },
       {
         "name": "Bayesian",
-        "n": 24675,
+        "n": 24703,
         "accuracy": 49.3,
         "ci_low": 48.7,
         "ci_high": 50.0
       },
       {
         "name": "Gaussian Process",
-        "n": 24675,
+        "n": 24703,
         "accuracy": 50.9,
-        "ci_low": 50.3,
+        "ci_low": 50.2,
         "ci_high": 51.5
       },
       {
         "name": "RSI",
-        "n": 5944,
+        "n": 5950,
         "accuracy": 51.3,
         "ci_low": 50.0,
         "ci_high": 52.5
       },
       {
         "name": "Ensemble",
-        "n": 4696,
+        "n": 4702,
         "accuracy": 50.9,
-        "ci_low": 49.5,
-        "ci_high": 52.4
+        "ci_low": 49.4,
+        "ci_high": 52.3
       }
     ]
   },
   "calibration": {
     "fitted": true,
-    "fitted_at": "2026-10-27T19:09:38+00:00",
-    "n": 24666,
+    "fitted_at": "2026-10-28T19:14:14+00:00",
+    "n": 24694,
     "curve": [
       [
         2.4269017251384753e-13,
@@ -4517,19 +4524,19 @@
       ],
       [
         3.703601660509862e-05,
-        0.48525469168900803
+        0.48598130841121495
       ],
       [
         0.029686344168574248,
-        0.48525469168900803
+        0.48598130841121495
       ],
       [
         0.029788610771625132,
-        0.4895682710183846
+        0.48947585637639274
       ],
       [
         0.285997297533677,
-        0.4895682710183846
+        0.48947585637639274
       ],
       [
         0.2860795896336623,
@@ -4541,11 +4548,11 @@
       ],
       [
         0.33149023294650604,
-        0.5121882880358641
+        0.5120313374370448
       ],
       [
         0.47123493875264366,
-        0.5121882880358641
+        0.5120313374370448
       ],
       [
         0.47132275355387576,
@@ -4557,35 +4564,43 @@
       ],
       [
         0.4772647112609849,
-        0.5168897386870618
+        0.516846789574062
       ],
       [
         0.534795509095358,
-        0.5168897386870618
+        0.516846789574062
       ],
       [
         0.5348200720881915,
-        0.5187362233651726
+        0.5185457216305545
       ],
       [
         0.6350302481700383,
-        0.5187362233651726
+        0.5185457216305545
       ],
       [
         0.6350997420427936,
-        0.5227272727272729
+        0.5238095238095238
+      ],
+      [
+        0.6358738828386182,
+        0.5238095238095238
+      ],
+      [
+        0.6359416146358728,
+        0.5241809672386897
       ],
       [
         0.6573962528087895,
-        0.5227272727272729
+        0.5241809672386897
       ],
       [
         0.6574259607753754,
-        0.5315325010761944
+        0.5312903225806448
       ],
       [
         0.9999999079901679,
-        0.5315325010761944
+        0.5312903225806448
       ],
       [
         0.999999926434373,
@@ -4608,16 +4623,286 @@
         1.0
       ]
     ],
-    "scored_n": 24675,
-    "logged_n": 24703,
+    "scored_n": 24703,
+    "logged_n": 24718,
     "min_sample": 30,
     "target_sample": 300,
     "min_sample_met": true,
     "predictions_per_run_day": 24.1,
-    "target_ready_date": "2026-10-27"
+    "target_ready_date": "2026-10-28"
   },
   "news": {
     "events": [
+      {
+        "published_at": "2026-10-28T18:40:45+00:00",
+        "headline": "Fed Holds Rate at 3.75%-4%, Two Officials Push for a Hike (UPDATED)",
+        "source": "benzinga",
+        "symbol": "SLV",
+        "match_type": "explicit",
+        "matched_themes": "",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-28T18:31:33+00:00",
+        "headline": "Fed Just Paused, But Prediction Markets Aren't Buying It\u2014Polymarket Sees 82% December Hike Odds",
+        "source": "benzinga",
+        "symbol": "XLE",
+        "match_type": "explicit",
+        "matched_themes": "",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-28T16:30:24+00:00",
+        "headline": "SK Hynix, Vertiv Rescue AI Trade As Oil Tops $102 Before Fed: Stock Market Today",
+        "source": "benzinga",
+        "symbol": "XLE",
+        "match_type": "explicit",
+        "matched_themes": "",
+        "polarity": "bullish",
+        "polarity_score": 1.0
+      },
+      {
+        "published_at": "2026-10-28T15:00:23+00:00",
+        "headline": "Cyclicals Lead Sectors In Wednesday Trading As Real Estate Trails",
+        "source": "benzinga",
+        "symbol": "XLE",
+        "match_type": "explicit",
+        "matched_themes": "",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-28T14:32:24+00:00",
+        "headline": "EIA Weekly Distillates Stocks 1.462M Barrel Draw Vs 0.600M Barrel Draw Est.",
+        "source": "benzinga",
+        "symbol": "UNG",
+        "match_type": "explicit",
+        "matched_themes": "crude",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-28T14:32:24+00:00",
+        "headline": "EIA Weekly Distillates Stocks 1.462M Barrel Draw Vs 0.600M Barrel Draw Est.",
+        "source": "benzinga",
+        "symbol": "BNO",
+        "match_type": "theme",
+        "matched_themes": "crude",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-28T14:32:24+00:00",
+        "headline": "EIA Weekly Distillates Stocks 1.462M Barrel Draw Vs 0.600M Barrel Draw Est.",
+        "source": "benzinga",
+        "symbol": "XLE",
+        "match_type": "theme",
+        "matched_themes": "crude",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-28T14:32:24+00:00",
+        "headline": "EIA Weekly Distillates Stocks 1.462M Barrel Draw Vs 0.600M Barrel Draw Est.",
+        "source": "benzinga",
+        "symbol": "DBC",
+        "match_type": "theme",
+        "matched_themes": "crude",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-28T14:32:24+00:00",
+        "headline": "EIA Weekly Distillates Stocks 1.462M Barrel Draw Vs 0.600M Barrel Draw Est.",
+        "source": "benzinga",
+        "symbol": "GSG",
+        "match_type": "theme",
+        "matched_themes": "crude",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-28T14:31:59+00:00",
+        "headline": "USA Gasoline Inventories 3.870M Barrel Build Vs 1.400M Barrel Draw Est.",
+        "source": "benzinga",
+        "symbol": "UNG",
+        "match_type": "explicit",
+        "matched_themes": "crude",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-28T14:31:59+00:00",
+        "headline": "USA Gasoline Inventories 3.870M Barrel Build Vs 1.400M Barrel Draw Est.",
+        "source": "benzinga",
+        "symbol": "BNO",
+        "match_type": "theme",
+        "matched_themes": "crude",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-28T14:31:59+00:00",
+        "headline": "USA Gasoline Inventories 3.870M Barrel Build Vs 1.400M Barrel Draw Est.",
+        "source": "benzinga",
+        "symbol": "XLE",
+        "match_type": "theme",
+        "matched_themes": "crude",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-28T14:31:59+00:00",
+        "headline": "USA Gasoline Inventories 3.870M Barrel Build Vs 1.400M Barrel Draw Est.",
+        "source": "benzinga",
+        "symbol": "DBC",
+        "match_type": "theme",
+        "matched_themes": "crude",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-28T14:31:59+00:00",
+        "headline": "USA Gasoline Inventories 3.870M Barrel Build Vs 1.400M Barrel Draw Est.",
+        "source": "benzinga",
+        "symbol": "GSG",
+        "match_type": "theme",
+        "matched_themes": "crude",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-28T13:04:45+00:00",
+        "headline": "CopperCorp Announces the Sale of the Skyline Copper-Gold Project",
+        "source": "fiscal.ai",
+        "symbol": "CPER",
+        "match_type": "explicit",
+        "matched_themes": "",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-28T12:52:33+00:00",
+        "headline": "Reported Earlier, 'Iran sees only unacceptable ideas in latest mediation to end war, official says' - Reuters Exclusive",
+        "source": "benzinga",
+        "symbol": "UNG",
+        "match_type": "explicit",
+        "matched_themes": "geopolitical_supply_shock",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-28T12:52:33+00:00",
+        "headline": "Reported Earlier, 'Iran sees only unacceptable ideas in latest mediation to end war, official says' - Reuters Exclusive",
+        "source": "benzinga",
+        "symbol": "WEAT",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-28T12:52:33+00:00",
+        "headline": "Reported Earlier, 'Iran sees only unacceptable ideas in latest mediation to end war, official says' - Reuters Exclusive",
+        "source": "benzinga",
+        "symbol": "CORN",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-28T12:52:33+00:00",
+        "headline": "Reported Earlier, 'Iran sees only unacceptable ideas in latest mediation to end war, official says' - Reuters Exclusive",
+        "source": "benzinga",
+        "symbol": "BNO",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-28T12:52:33+00:00",
+        "headline": "Reported Earlier, 'Iran sees only unacceptable ideas in latest mediation to end war, official says' - Reuters Exclusive",
+        "source": "benzinga",
+        "symbol": "IAU",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-28T07:13:15+00:00",
+        "headline": "Trump Could Allow More Russian Diesel Into US to Push Putin Toward Peace \u2014 But Energy Secretary Says There\u2019s a Catch",
+        "source": "benzinga",
+        "symbol": "XLE",
+        "match_type": "explicit",
+        "matched_themes": "geopolitical_supply_shock",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-28T07:13:15+00:00",
+        "headline": "Trump Could Allow More Russian Diesel Into US to Push Putin Toward Peace \u2014 But Energy Secretary Says There\u2019s a Catch",
+        "source": "benzinga",
+        "symbol": "WEAT",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-28T07:13:15+00:00",
+        "headline": "Trump Could Allow More Russian Diesel Into US to Push Putin Toward Peace \u2014 But Energy Secretary Says There\u2019s a Catch",
+        "source": "benzinga",
+        "symbol": "CORN",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-28T07:13:15+00:00",
+        "headline": "Trump Could Allow More Russian Diesel Into US to Push Putin Toward Peace \u2014 But Energy Secretary Says There\u2019s a Catch",
+        "source": "benzinga",
+        "symbol": "UNG",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-28T07:13:15+00:00",
+        "headline": "Trump Could Allow More Russian Diesel Into US to Push Putin Toward Peace \u2014 But Energy Secretary Says There\u2019s a Catch",
+        "source": "benzinga",
+        "symbol": "BNO",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-28T07:13:15+00:00",
+        "headline": "Trump Could Allow More Russian Diesel Into US to Push Putin Toward Peace \u2014 But Energy Secretary Says There\u2019s a Catch",
+        "source": "benzinga",
+        "symbol": "IAU",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-10-27T23:45:18+00:00",
+        "headline": "Here's How Much $1000 Invested In iShares Silver Trust 5 Years Ago Would Be Worth Today",
+        "source": "benzinga",
+        "symbol": "SLV",
+        "match_type": "explicit",
+        "matched_themes": "",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
       {
         "published_at": "2026-10-27T17:01:35+00:00",
         "headline": "Nasdaq 100 Climbs on Chip Rally, Boeing Sinks 10%: Stock Market Today",
@@ -4647,287 +4932,17 @@
         "matched_themes": "",
         "polarity": "neutral",
         "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-26T23:30:20+00:00",
-        "headline": "Here's How Much $100 Invested In iShares Gold Trust Shares 5 Years Ago Would Be Worth Today",
-        "source": "benzinga",
-        "symbol": "IAU",
-        "match_type": "explicit",
-        "matched_themes": "",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-26T15:00:28+00:00",
-        "headline": "Growth Leads Sectors In Monday Trading As Defensives Trail",
-        "source": "benzinga",
-        "symbol": "XLE",
-        "match_type": "explicit",
-        "matched_themes": "",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-26T12:58:39+00:00",
-        "headline": "Top Economist Warns 'Oil at 150' Could Deal a 'Significant Blow' to the Global Economy if Iran Conflict Widens: 'We Don't Have These Two Other Things That We Had Before...'",
-        "source": "benzinga",
-        "symbol": "BNO",
-        "match_type": "explicit",
-        "matched_themes": "geopolitical_supply_shock,crude",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-26T12:58:39+00:00",
-        "headline": "Top Economist Warns 'Oil at 150' Could Deal a 'Significant Blow' to the Global Economy if Iran Conflict Widens: 'We Don't Have These Two Other Things That We Had Before...'",
-        "source": "benzinga",
-        "symbol": "WEAT",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock,crude",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-26T12:58:39+00:00",
-        "headline": "Top Economist Warns 'Oil at 150' Could Deal a 'Significant Blow' to the Global Economy if Iran Conflict Widens: 'We Don't Have These Two Other Things That We Had Before...'",
-        "source": "benzinga",
-        "symbol": "CORN",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock,crude",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-26T12:58:39+00:00",
-        "headline": "Top Economist Warns 'Oil at 150' Could Deal a 'Significant Blow' to the Global Economy if Iran Conflict Widens: 'We Don't Have These Two Other Things That We Had Before...'",
-        "source": "benzinga",
-        "symbol": "UNG",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock,crude",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-26T12:58:39+00:00",
-        "headline": "Top Economist Warns 'Oil at 150' Could Deal a 'Significant Blow' to the Global Economy if Iran Conflict Widens: 'We Don't Have These Two Other Things That We Had Before...'",
-        "source": "benzinga",
-        "symbol": "IAU",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock,crude",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-26T12:58:39+00:00",
-        "headline": "Top Economist Warns 'Oil at 150' Could Deal a 'Significant Blow' to the Global Economy if Iran Conflict Widens: 'We Don't Have These Two Other Things That We Had Before...'",
-        "source": "benzinga",
-        "symbol": "XLE",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock,crude",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-26T12:58:39+00:00",
-        "headline": "Top Economist Warns 'Oil at 150' Could Deal a 'Significant Blow' to the Global Economy if Iran Conflict Widens: 'We Don't Have These Two Other Things That We Had Before...'",
-        "source": "benzinga",
-        "symbol": "DBC",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock,crude",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-26T12:58:39+00:00",
-        "headline": "Top Economist Warns 'Oil at 150' Could Deal a 'Significant Blow' to the Global Economy if Iran Conflict Widens: 'We Don't Have These Two Other Things That We Had Before...'",
-        "source": "benzinga",
-        "symbol": "GSG",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock,crude",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-26T10:58:49+00:00",
-        "headline": "What Newmont\u2019s Outperformance and Extreme Short Data Reveal About Gold",
-        "source": "benzinga",
-        "symbol": "SLV",
-        "match_type": "explicit",
-        "matched_themes": "",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-26T10:58:49+00:00",
-        "headline": "What Newmont\u2019s Outperformance and Extreme Short Data Reveal About Gold",
-        "source": "benzinga",
-        "symbol": "IAU",
-        "match_type": "explicit",
-        "matched_themes": "",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-23T17:15:48+00:00",
-        "headline": "Oil Tops $100 on Iran Fears, Energy ETF XLE Hits New Record: Stock Market Today",
-        "source": "benzinga",
-        "symbol": "XLE",
-        "match_type": "explicit",
-        "matched_themes": "geopolitical_supply_shock",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-23T17:15:48+00:00",
-        "headline": "Oil Tops $100 on Iran Fears, Energy ETF XLE Hits New Record: Stock Market Today",
-        "source": "benzinga",
-        "symbol": "WEAT",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-23T17:15:48+00:00",
-        "headline": "Oil Tops $100 on Iran Fears, Energy ETF XLE Hits New Record: Stock Market Today",
-        "source": "benzinga",
-        "symbol": "CORN",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-23T17:15:48+00:00",
-        "headline": "Oil Tops $100 on Iran Fears, Energy ETF XLE Hits New Record: Stock Market Today",
-        "source": "benzinga",
-        "symbol": "UNG",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-23T17:15:48+00:00",
-        "headline": "Oil Tops $100 on Iran Fears, Energy ETF XLE Hits New Record: Stock Market Today",
-        "source": "benzinga",
-        "symbol": "BNO",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-23T17:15:48+00:00",
-        "headline": "Oil Tops $100 on Iran Fears, Energy ETF XLE Hits New Record: Stock Market Today",
-        "source": "benzinga",
-        "symbol": "IAU",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-23T17:02:23+00:00",
-        "headline": "U.S. Baker Hughes Oil Rig Count +1 To 460; U.S. Baker Hughes NatGas Rig Count -1 To 132; U.S. Baker Hughes Total Rig Count 603 Vs 603 Prior",
-        "source": "benzinga",
-        "symbol": "UNG",
-        "match_type": "explicit",
-        "matched_themes": "",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-23T15:00:24+00:00",
-        "headline": "8 Of 11 Sectors Fall In Friday Trading As Energy Leads",
-        "source": "benzinga",
-        "symbol": "XLE",
-        "match_type": "explicit",
-        "matched_themes": "",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-23T14:09:40+00:00",
-        "headline": "Energy Department Authorizes Strategic Petroleum Reserve Exchange To Support Fuel Supply Stability",
-        "source": "benzinga",
-        "symbol": "UNG",
-        "match_type": "explicit",
-        "matched_themes": "",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-23T11:26:13+00:00",
-        "headline": "Strategic Petroleum Reserve Is Emptying, Here\u2019s Why Permian Producers Can\u2019t Fill It Up",
-        "source": "benzinga",
-        "symbol": "BNO",
-        "match_type": "explicit",
-        "matched_themes": "crude",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-23T11:26:13+00:00",
-        "headline": "Strategic Petroleum Reserve Is Emptying, Here\u2019s Why Permian Producers Can\u2019t Fill It Up",
-        "source": "benzinga",
-        "symbol": "XLE",
-        "match_type": "explicit",
-        "matched_themes": "crude",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-23T11:26:13+00:00",
-        "headline": "Strategic Petroleum Reserve Is Emptying, Here\u2019s Why Permian Producers Can\u2019t Fill It Up",
-        "source": "benzinga",
-        "symbol": "DBC",
-        "match_type": "theme",
-        "matched_themes": "crude",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-23T11:26:13+00:00",
-        "headline": "Strategic Petroleum Reserve Is Emptying, Here\u2019s Why Permian Producers Can\u2019t Fill It Up",
-        "source": "benzinga",
-        "symbol": "GSG",
-        "match_type": "theme",
-        "matched_themes": "crude",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-22T16:54:23+00:00",
-        "headline": "Is A War Imminent? Concerns Overshadow Strong Meta, Tesla Earnings",
-        "source": "benzinga",
-        "symbol": "SLV",
-        "match_type": "explicit",
-        "matched_themes": "geopolitical_supply_shock",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-10-22T16:54:23+00:00",
-        "headline": "Is A War Imminent? Concerns Overshadow Strong Meta, Tesla Earnings",
-        "source": "benzinga",
-        "symbol": "WEAT",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock",
-        "polarity": "neutral",
-        "polarity_score": 0.0
       }
     ],
-    "scored_n": 666,
-    "base_rate": 45.6,
+    "scored_n": 670,
+    "base_rate": 45.8,
     "accuracy_by_match_type": [
       {
         "match_type": "explicit",
-        "n": 57,
-        "accuracy": 36.8,
-        "ci_low": 24.3,
-        "ci_high": 49.4
+        "n": 58,
+        "accuracy": 37.9,
+        "ci_low": 25.4,
+        "ci_high": 50.4
       },
       {
         "match_type": "theme",
