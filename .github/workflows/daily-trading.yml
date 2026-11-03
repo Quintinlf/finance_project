@@ -122,6 +122,33 @@ jobs:
           set -o pipefail
           python run_daily_bot.py 2>&1 | tee trade_logs/run-$(date -u +'%Y%m%d').log
 
+      # The IV snapshot runs as its own step, NOT only inside the trading
+      # cycle, because the cycle has two early returns that would skip it --
+      # and one of them ("No affordable symbols and no open positions") is the
+      # account's current state exactly. Gate 0's sample must not depend on
+      # whether there happened to be anything worth trading that day;
+      # measurement and execution are different jobs. Idempotent per date, so
+      # the in-cycle call doing it first is harmless.
+      #
+      # Phase 0a lost its first two weeks to a silent gap of this shape. One
+      # explicit step is cheaper than discovering another one in December.
+      - name: Snapshot implied vol and vol forecasts (Gate 0 sample)
+        if: always()
+        continue-on-error: true
+        run: |
+          python - <<'PY'
+          import logging
+          logging.basicConfig(level=logging.INFO, format="%(message)s")
+          from logic.iv_snapshot import snapshot_universe, coverage
+          r = snapshot_universe()
+          print(r.summary())
+          c = coverage()
+          print(f"Gate 0 countdown: day {c['iv_days']} of {c['days_required']} "
+                f"({c['days_remaining']} remaining)")
+          if not r.ok:
+              raise SystemExit("IV snapshot recorded nothing usable")
+          PY
+
       # Gate 1 of the volatility scope. This cron fires at 14:00 UTC = 10:00 ET,
       # which is inside regular market hours, so it is the only place this
       # measurement can be taken automatically -- after-hours option books quote
