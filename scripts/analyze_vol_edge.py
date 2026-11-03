@@ -115,8 +115,40 @@ def _ols_with_r2(y, xs):
     return beta, r2, resid_var, n
 
 
-def load_pairs(horizon: int, db_path=DEFAULT_DB_PATH):
-    """(implied, forecast, realized) triples, one per symbol-date with forward data."""
+def available_series(db_path=DEFAULT_DB_PATH):
+    """The (feed, forecast_method) pairs actually present in the database.
+
+    Each combination is a distinct measurement process. Live INDICATIVE
+    snapshots are taken mid-session with vendor IV; purchased EOD history is
+    taken at the 17:15 report with IV we inverted ourselves. Regressing them
+    together would pool two samples and call the result one number, so the
+    caller analyses each combination separately rather than guessing.
+    """
+    init_iv_tables(db_path)
+    with connect(db_path) as conn:
+        rows = conn.execute(
+            """
+            SELECT DISTINCT s.feed AS feed, f.forecast_method AS method,
+                   COUNT(*) AS n
+            FROM iv_snapshots s
+            JOIN vol_forecasts f
+              ON f.snapshot_date = s.snapshot_date AND f.symbol = s.underlying
+            GROUP BY s.feed, f.forecast_method
+            ORDER BY n DESC
+            """
+        ).fetchall()
+    return [(r["feed"], r["method"], int(r["n"] or 0)) for r in rows]
+
+
+def load_pairs(horizon: int, db_path=DEFAULT_DB_PATH, *, feed=None, forecast_method=None):
+    """(implied, forecast, realized) triples, one per symbol-date with forward data.
+
+    ``feed`` and ``forecast_method`` are not optional refinements. Without them
+    the join fans out across every forecast method stored for a date, and the
+    GROUP BY then collapses that fan-out by picking an arbitrary row -- so once
+    a backfilled series exists alongside the live one, an unfiltered call
+    silently mixes them and the mixture is not reproducible between runs.
+    """
     init_iv_tables(db_path)
     with connect(db_path) as conn:
         rows = conn.execute(
@@ -132,10 +164,13 @@ def load_pairs(horizon: int, db_path=DEFAULT_DB_PATH):
               AND f.forecast_vol IS NOT NULL
               AND s.dte BETWEEN ? AND ?
               AND ABS(s.moneyness) <= 0.05
+              AND (? IS NULL OR s.feed = ?)
+              AND (? IS NULL OR f.forecast_method = ?)
             GROUP BY s.snapshot_date, s.underlying
             ORDER BY s.snapshot_date
             """,
-            (max(1, horizon - 7), horizon + 14),
+            (max(1, horizon - 7), horizon + 14, feed, feed,
+             forecast_method, forecast_method),
         ).fetchall()
 
     if not rows:
@@ -181,8 +216,10 @@ def load_pairs(horizon: int, db_path=DEFAULT_DB_PATH):
     return out
 
 
-def report_horizon(horizon: int, db_path=DEFAULT_DB_PATH) -> None:
-    triples = load_pairs(horizon, db_path=db_path)
+def report_horizon(horizon: int, db_path=DEFAULT_DB_PATH, *,
+                   feed=None, forecast_method=None) -> None:
+    triples = load_pairs(horizon, db_path=db_path,
+                         feed=feed, forecast_method=forecast_method)
     raw_n = len(triples)
     eff_n = raw_n / horizon / EFFECTIVE_SYMBOL_CLUSTERS if raw_n else 0.0
 
@@ -251,8 +288,23 @@ def main() -> int:
               "(wired into the daily cycle) and come back.")
         return 1
 
-    for h in ([args.horizon] if args.horizon else HORIZONS):
-        report_horizon(h, db_path=args.db)
+    series = available_series(args.db)
+    if not series:
+        print("\nNo joinable snapshot/forecast pairs yet.")
+        return 1
+
+    # One report per measurement process. Pooling an INDICATIVE mid-session
+    # series with a purchased 17:15 EOD series would answer a question about
+    # neither of them.
+    print(f"\nmeasurement processes present: {len(series)}")
+    for feed, method, n in series:
+        print(f"  feed={feed or '?'} method={method or '?'}  ({n} joined rows)")
+
+    bar = "=" * 62
+    for feed, method, _n in series:
+        print(f"\n{bar}\nfeed={feed}  forecast_method={method}\n{bar}")
+        for h in ([args.horizon] if args.horizon else HORIZONS):
+            report_horizon(h, db_path=args.db, feed=feed, forecast_method=method)
 
     print("\nNote: the 7d horizon resolves soonest but measures the noisiest "
           "realized-vol\nestimate. Treat it as an early warning, not the verdict.")
