@@ -196,12 +196,16 @@ def _generate_single_signal(
         bb_signal == 'NEUTRAL'
     )
     
-    # Adjust confidence based on technical alignment
+    # Adjust confidence based on technical alignment. The TA block lost the
+    # ablation, so this boost stays off unless a later report puts TA back.
+    from logic.feature_policy import live_blocks
+
     combined_confidence = base_confidence
-    if signals_agree and bb_signal != 'NEUTRAL':
+    ta_is_live = "ta" in live_blocks()
+    if ta_is_live and signals_agree and bb_signal != 'NEUTRAL':
         # Boost confidence when forecast and BB agree
         combined_confidence = min(1.0, base_confidence * 1.15)
-    elif not signals_agree and bb_signal != 'NEUTRAL':
+    elif ta_is_live and not signals_agree and bb_signal != 'NEUTRAL':
         # Reduce confidence when they conflict
         combined_confidence = base_confidence * 0.85
     

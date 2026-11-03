@@ -371,6 +371,44 @@ def update_beliefs_with_data(features, targets, prior_beliefs, prior_uncertainty
 
     return updated_beliefs, updated_uncertainty
 
+
+def next_bar_split(features, targets):
+    """Pair features at bar t with the return that is realized at bar t+1.
+
+    ``X_train = X[:-1]`` and ``y_train = y[1:]`` so the last feature row is
+    the test point and its target is not in the training labels. ``y[0]`` is
+    the return that happened before the first feature row's next bar, and it
+    is not a training label either.
+    """
+    X = np.atleast_2d(np.asarray(features, dtype=float))
+    y = np.atleast_1d(np.asarray(targets, dtype=float)).reshape(-1)
+    if X.shape[0] != y.shape[0]:
+        raise ValueError(
+            f"features and targets must have the same length, got {X.shape[0]} and {y.shape[0]}"
+        )
+    if X.shape[0] < 3:
+        raise ValueError(f"need at least 3 rows to hold out the last bar, got {X.shape[0]}")
+    return X[:-1], y[1:], X[-1:]
+
+
+def bayesian_next_return(features, targets, data_noise_level=0.01):
+    """One-step Bayesian forecast of the next bar's return.
+
+    Returns ``(mean, std, posterior_mean, posterior_cov, X_train)``.
+    The mean is ``X_test @ posterior``, with the posterior fit only on
+    ``next_bar_split``. It is not the in-sample fitted value of the last row.
+    """
+    X_train, y_train, X_test = next_bar_split(features, targets)
+    prior_beliefs = np.zeros(X_train.shape[1])
+    prior_uncertainty = np.eye(X_train.shape[1]) * 0.1
+    posterior_mean, posterior_cov = update_beliefs_with_data(
+        X_train, y_train, prior_beliefs, prior_uncertainty, data_noise_level
+    )
+    mean = float(np.asarray(X_test @ posterior_mean).reshape(-1)[0])
+    var = float(np.asarray(X_test @ posterior_cov @ X_test.T).reshape(-1)[0] + data_noise_level)
+    return mean, float(np.sqrt(max(var, 0.0))), posterior_mean, posterior_cov, X_train
+
+
 def g1(x, theta):
     # If x > 0 => theta; else => theta + 0.35
     return np.where(x > 0, theta, theta + 0.35)
@@ -710,7 +748,19 @@ def unified_bayesian_gp_forecast(
         df[f'Return_lag{lag}'] = df['Return'].shift(lag)
     
     df = df.dropna()
-    
+
+    from logic.feature_blocks import add_research_features, columns_for, snapshot_row
+    from logic.feature_policy import FEATURES_VERSION, MODEL_VERSION, blocks_label, live_blocks, use_gp
+
+    df = add_research_features(df)
+    active_blocks = live_blocks()
+    bayesian_features = columns_for(active_blocks)
+    model_rows = df.dropna(subset=bayesian_features + ["Return"])
+    if model_rows.empty or len(model_rows) < 10:
+        print(f"⚠️ Not enough usable data after cleaning for {ticker}")
+        return None
+    df = model_rows
+
     if df.empty or len(df) < 10:
         print(f"⚠️ Not enough usable data after cleaning for {ticker}")
         return None
@@ -719,28 +769,23 @@ def unified_bayesian_gp_forecast(
     # 🧠 METHOD 1: BAYESIAN LINEAR REGRESSION (Enhanced with BB z-scores)
     # ==============================
     print(f"\n🔵 Running Bayesian Linear Regression for {ticker}...")
-    
-    # Bayesian features: lagged returns + volatility + RSI + Bollinger Band metrics
-    bayesian_features = [f'Return_lag{lag}' for lag in range(1, 6)] + ['Volatility', 'RSI', 'BB_Z_Score', 'BB_Width']
-    X_bayesian = df[bayesian_features].values
-    y_bayesian = df['Return'].values
-    
-    # Bayesian inference
-    prior_beliefs = np.zeros(X_bayesian.shape[1])
-    prior_uncertainty = np.eye(X_bayesian.shape[1]) * 0.1
+
+    # Train on features at t to predict the return realized on t+1.
+    # The last row is the test point; its target has not happened yet.
     data_noise_level = 0.01
-    
-    posterior_mean, posterior_cov = update_beliefs_with_data(
-        X_bayesian, y_bayesian, prior_beliefs, prior_uncertainty, data_noise_level
-    )
-    
-    # Bayesian predictions
-    y_pred_bayesian = X_bayesian @ posterior_mean
-    y_std_bayesian = np.sqrt(np.sum(X_bayesian @ posterior_cov * X_bayesian, axis=1) + data_noise_level)
-    
-    # Latest Bayesian prediction
-    bayesian_forecast = y_pred_bayesian[-1]
-    bayesian_std = y_std_bayesian[-1]
+    X_bayesian = df[bayesian_features].values
+    y_bayesian = df["Return"].values
+    (
+        bayesian_forecast,
+        bayesian_std,
+        posterior_mean,
+        posterior_cov,
+        X_train,
+    ) = bayesian_next_return(X_bayesian, y_bayesian, data_noise_level)
+    train_fit = X_train @ posterior_mean
+    train_std = np.sqrt(np.sum(X_train @ posterior_cov * X_train, axis=1) + data_noise_level)
+    y_pred_bayesian = np.concatenate([train_fit, [bayesian_forecast]])
+    y_std_bayesian = np.concatenate([train_std, [bayesian_std]])
     bayesian_ci_lower = bayesian_forecast - 2 * bayesian_std
     bayesian_ci_upper = bayesian_forecast + 2 * bayesian_std
     
@@ -754,22 +799,24 @@ def unified_bayesian_gp_forecast(
     X_gp = df[gp_features].values
     y_gp = df['Return'].values
     
-    # GP training/testing split
-    X_gp_train, y_gp_train = X_gp[:-1], y_gp[:-1]
-    X_gp_test = X_gp[-1:].reshape(1, -1)
+    # Same next-bar holdout as Bayesian. y[:-1] would train on today's
+    # already-realized return and then label that fit as tomorrow.
+    X_gp_train, y_gp_train, X_gp_test = next_bar_split(X_gp, y_gp)
+    gp_enabled = use_gp()
     
-    # GP prediction using custom function
-    gp_pred_mean, gp_pred_var = gp_predict(
-        X_gp_train, y_gp_train, X_gp_test,
-        noise_var=1e-4,
-        kernel_func=rbf_kernel,
-        length_scale=1.0,
-        variance=1.0
-    )
-    
-    # GP results
-    gp_forecast = gp_pred_mean[0]
-    gp_std = np.sqrt(gp_pred_var[0])
+    if gp_enabled or build_plot:
+        gp_pred_mean, gp_pred_var = gp_predict(
+            X_gp_train, y_gp_train, X_gp_test,
+            noise_var=1e-4,
+            kernel_func=rbf_kernel,
+            length_scale=1.0,
+            variance=1.0
+        )
+        gp_forecast = float(gp_pred_mean[0])
+        gp_std = float(np.sqrt(gp_pred_var[0]))
+    else:
+        gp_forecast = float(bayesian_forecast)
+        gp_std = float(bayesian_std)
     gp_ci_lower = gp_forecast - 2 * gp_std
     gp_ci_upper = gp_forecast + 2 * gp_std
     
@@ -792,9 +839,11 @@ def unified_bayesian_gp_forecast(
     # 🎯 ENSEMBLE COMBINATION (Enhanced with BB signal)
     # ==============================
     
-    # Weight models by their uncertainty (inverse variance weighting)
+    # Weight models by their uncertainty (inverse variance weighting).
+    # A failed H6 comparison sets the GP weight to zero; the forecast is then
+    # the held-out Bayesian number alone.
     bayesian_weight = 1 / (bayesian_std**2 + 1e-6)
-    gp_weight = 1 / (gp_std**2 + 1e-6)
+    gp_weight = 0.0 if not gp_enabled else 1 / (gp_std**2 + 1e-6)
     total_weight = bayesian_weight + gp_weight
     
     # Ensemble prediction
@@ -823,19 +872,19 @@ def unified_bayesian_gp_forecast(
         if bayesian_ci_lower > 0: signals.append("bayesian_bull")
         elif bayesian_ci_upper < 0: signals.append("bayesian_bear")
         
-        if gp_ci_lower > 0: signals.append("gp_bull")
-        elif gp_ci_upper < 0: signals.append("gp_bear")
+        if gp_enabled and gp_ci_lower > 0: signals.append("gp_bull")
+        elif gp_enabled and gp_ci_upper < 0: signals.append("gp_bear")
         
         if ensemble_ci_lower > 0: signals.append("ensemble_bull")
         elif ensemble_ci_upper < 0: signals.append("ensemble_bear")
         
-        # RSI signal
-        if rsi_signal == "buy": signals.append("rsi_bull")
-        elif rsi_signal == "sell": signals.append("rsi_bear")
-        
-        # Bollinger Band signal
-        if bb_signal == "buy": signals.append("bb_bull")
-        elif bb_signal == "sell": signals.append("bb_bear")
+        # RSI and Bollinger votes are the TA block. A failed ablation removes
+        # them from the action. The raw values stay on the record either way.
+        if "ta" in active_blocks:
+            if rsi_signal == "buy": signals.append("rsi_bull")
+            elif rsi_signal == "sell": signals.append("rsi_bear")
+            if bb_signal == "buy": signals.append("bb_bull")
+            elif bb_signal == "sell": signals.append("bb_bear")
         
         # Count bullish vs bearish
         bull_count = len([s for s in signals if "bull" in s])
@@ -1042,5 +1091,11 @@ def unified_bayesian_gp_forecast(
         'model_weights': {
             'bayesian': bayesian_weight / total_weight,
             'gp': gp_weight / total_weight
-        }
+        },
+        'information_cutoff': pd.Timestamp(df.index[-1]).isoformat(),
+        'features_version': FEATURES_VERSION,
+        'model_version': MODEL_VERSION,
+        'live_blocks': list(active_blocks),
+        'live_blocks_label': blocks_label(active_blocks),
+        'feature_snapshot': snapshot_row(df),
     }

@@ -372,6 +372,18 @@ def log_news_events(events: Sequence[NewsEvent]) -> None:
 # Scoring -- graded exactly like every other component, no exceptions.
 # ---------------------------------------------------------------------------
 
+def outcome_is_mature(published_at: datetime, now: datetime, *, hours: int = 24) -> bool:
+    """A headline can be scored only after its outcome window has closed.
+
+    The article time has to be strictly before the return being graded, and
+    that return is not known until ``hours`` have passed. Scoring earlier
+    would grade a forecast with a return that was not finished.
+    """
+    published = published_at if published_at.tzinfo else published_at.replace(tzinfo=timezone.utc)
+    current = now if now.tzinfo else now.replace(tzinfo=timezone.utc)
+    return current - published >= timedelta(hours=hours)
+
+
 def score_news_events(
     *, db_path: Union[str, "PathLike[str]"] = DEFAULT_DB_PATH, max_rows: int = 250  # type: ignore[name-defined]
 ) -> int:
@@ -402,7 +414,7 @@ def score_news_events(
         ts = datetime.fromisoformat(str(row["published_at"]).replace("Z", "+00:00"))
         if ts.tzinfo is None:
             ts = ts.replace(tzinfo=timezone.utc)
-        if now_utc - ts < timedelta(hours=24):
+        if not outcome_is_mature(ts, now_utc):
             continue
 
         # _compute_realized_return_from_row derives both prices from its own

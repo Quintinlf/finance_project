@@ -1,0 +1,355 @@
+{
+  "comparisons": [
+    "baseline",
+    "buy_and_hold",
+    "momentum_5",
+    "ma_crossover",
+    "mean_reversion"
+  ],
+  "status_rule": {
+    "survives": "incremental mean > 0 and bootstrap interval entirely above 0; promote",
+    "promising": "incremental mean > 0 but interval crosses 0; keep, do not delete",
+    "fails": "incremental mean <= 0; remove from the live path if it is already there",
+    "not_tested": "fewer than the minimum number of days"
+  },
+  "bootstrap": "day-block, so symbols on the same day are resampled together",
+  "bootstrap_draws": 400,
+  "arms": {
+    "baseline": {
+      "status": "reference",
+      "n_observations": 3304,
+      "n_days": 413,
+      "incremental_mean": 0.0,
+      "incremental_ci": [
+        0.0,
+        0.0
+      ],
+      "own_mean_net": -0.0012677991202536406,
+      "own_ci": [
+        -0.001926060746315063,
+        -0.0005920741404193094
+      ],
+      "vs_buy_hold": {
+        "mean": -0.002014793895927857,
+        "ci_low": -0.003363819015548213,
+        "ci_high": -0.0006748723602920463
+      },
+      "vs_simple": {
+        "momentum_5": {
+          "mean": 0.000598003527473218,
+          "ci_low": -0.0004991123977984989,
+          "ci_high": 0.0018056525885582495
+        },
+        "ma_crossover": {
+          "mean": 0.0010189248345393342,
+          "ci_low": -8.321652021510375e-05,
+          "ci_high": 0.002023309027338768
+        },
+        "mean_reversion": {
+          "mean": 0.0003376958363038624,
+          "ci_low": -0.0007463459576818287,
+          "ci_high": 0.0016033633314920318
+        }
+      },
+      "note": "Reference arm. Incremental return versus itself is zero."
+    },
+    "baseline_ta": {
+      "status": "fails",
+      "n_observations": 3200,
+      "n_days": 400,
+      "incremental_mean": -0.00020741199214308918,
+      "incremental_ci": [
+        -0.0008102844668471582,
+        0.00037325585532852005
+      ],
+      "own_mean_net": -0.0015065962321351189,
+      "own_ci": [
+        -0.002165102936121589,
+        -0.0009455890294412974
+      ],
+      "vs_buy_hold": {
+        "mean": -0.0021997696004353844,
+        "ci_low": -0.0032380856558900063,
+        "ci_high": -0.0010836404809501708
+      },
+      "vs_simple": {
+        "momentum_5": {
+          "mean": 0.00047022267097788665,
+          "ci_low": -0.0007155414555733026,
+          "ci_high": 0.0018001018633442643
+        },
+        "ma_crossover": {
+          "mean": 0.0007971354222594015,
+          "ci_low": -0.0002744297049366976,
+          "ci_high": 0.002011806873809271
+        },
+        "mean_reversion": {
+          "mean": -2.2349483354067097e-05,
+          "ci_low": -0.001266493847788071,
+          "ci_high": 0.0011961998773045745
+        }
+      },
+      "note": "Incremental net return versus baseline is not positive."
+    },
+    "baseline_candles": {
+      "status": "survives",
+      "n_observations": 3304,
+      "n_days": 413,
+      "incremental_mean": 0.0007631543752035992,
+      "incremental_ci": [
+        0.00017928012982666204,
+        0.001370000679545101
+      ],
+      "own_mean_net": -0.0005046447450500412,
+      "own_ci": [
+        -0.0011211705624203099,
+        0.00012087672369257784
+      ],
+      "vs_buy_hold": {
+        "mean": -0.0012516395207242573,
+        "ci_low": -0.002427700826557655,
+        "ci_high": 3.925467424079461e-05
+      },
+      "vs_simple": {
+        "momentum_5": {
+          "mean": 0.0013611579026768176,
+          "ci_low": 0.0002384317394371439,
+          "ci_high": 0.00265679925860522
+        },
+        "ma_crossover": {
+          "mean": 0.0017820792097429335,
+          "ci_low": 0.0005557730919403417,
+          "ci_high": 0.0028777008041386146
+        },
+        "mean_reversion": {
+          "mean": 0.0011008502115074617,
+          "ci_low": -1.44161989294054e-05,
+          "ci_high": 0.002270540834953301
+        }
+      },
+      "note": "Promoted. Incremental net return versus baseline cleared zero."
+    },
+    "baseline_volume": {
+      "status": "fails",
+      "n_observations": 3200,
+      "n_days": 400,
+      "incremental_mean": -0.00020565674677431347,
+      "incremental_ci": [
+        -0.000657883829816083,
+        0.00024540060912071746
+      ],
+      "own_mean_net": -0.0015048409867663432,
+      "own_ci": [
+        -0.0021648065185677977,
+        -0.0008389534195987017
+      ],
+      "vs_buy_hold": {
+        "mean": -0.002198014355066609,
+        "ci_low": -0.0034621600820822188,
+        "ci_high": -0.000997342283815048
+      },
+      "vs_simple": {
+        "momentum_5": {
+          "mean": 0.0004719779163466624,
+          "ci_low": -0.0007108849667090058,
+          "ci_high": 0.0016982999739133418
+        },
+        "ma_crossover": {
+          "mean": 0.000798890667628177,
+          "ci_low": -0.00021358859861889573,
+          "ci_high": 0.0019788272778960714
+        },
+        "mean_reversion": {
+          "mean": -2.0594237985291606e-05,
+          "ci_low": -0.001247162318306876,
+          "ci_high": 0.0011727190208729243
+        }
+      },
+      "note": "Incremental net return versus baseline is not positive."
+    },
+    "baseline_news": {
+      "status": "not_tested",
+      "n_observations": 0,
+      "n_days": 0,
+      "incremental_mean": null,
+      "incremental_ci": null,
+      "own_mean_net": null,
+      "own_ci": null,
+      "vs_buy_hold": {
+        "mean": null,
+        "ci_low": null,
+        "ci_high": null
+      },
+      "vs_simple": {
+        "momentum_5": {
+          "mean": null,
+          "ci_low": null,
+          "ci_high": null
+        },
+        "ma_crossover": {
+          "mean": null,
+          "ci_low": null,
+          "ci_high": null
+        },
+        "mean_reversion": {
+          "mean": null,
+          "ci_low": null,
+          "ci_high": null
+        }
+      },
+      "note": "News is scored only on days with a stored headline. This window does not have enough of them."
+    },
+    "baseline_regime": {
+      "status": "promising",
+      "n_observations": 2840,
+      "n_days": 355,
+      "incremental_mean": 0.0002631181002069453,
+      "incremental_ci": [
+        -0.00020069586051367307,
+        0.0007989333298302649
+      ],
+      "own_mean_net": -0.0009080855014436959,
+      "own_ci": [
+        -0.0015347396426563691,
+        -0.00019197454925542405
+      ],
+      "vs_buy_hold": {
+        "mean": -0.001866773528596382,
+        "ci_low": -0.00298041712387635,
+        "ci_high": -0.0005286944014652417
+      },
+      "vs_simple": {
+        "momentum_5": {
+          "mean": 0.0010073456902733543,
+          "ci_low": -0.0003216771505807179,
+          "ci_high": 0.0024651653433218636
+        },
+        "ma_crossover": {
+          "mean": 0.001012986903581114,
+          "ci_low": -8.473594934613792e-05,
+          "ci_high": 0.0021657329197284233
+        },
+        "mean_reversion": {
+          "mean": 0.0004944818479828329,
+          "ci_low": -0.0007405443615286704,
+          "ci_high": 0.0017473840049308644
+        }
+      },
+      "note": "Positive estimate, uncertainty interval still crosses zero. Keep and collect more data."
+    },
+    "baseline_lunar": {
+      "status": "promising",
+      "n_observations": 3304,
+      "n_days": 413,
+      "incremental_mean": 0.0003790390687051527,
+      "incremental_ci": [
+        -6.182676377734684e-05,
+        0.000795913169579989
+      ],
+      "own_mean_net": -0.0008887600515484879,
+      "own_ci": [
+        -0.0015142015529958177,
+        -0.00018787181873620025
+      ],
+      "vs_buy_hold": {
+        "mean": -0.0016357548272227043,
+        "ci_low": -0.0029870085282669876,
+        "ci_high": -0.0003524643793423897
+      },
+      "vs_simple": {
+        "momentum_5": {
+          "mean": 0.000977042596178371,
+          "ci_low": -0.00011359045469308692,
+          "ci_high": 0.002337415446587431
+        },
+        "ma_crossover": {
+          "mean": 0.0013979639032444867,
+          "ci_low": 0.00022591250500396265,
+          "ci_high": 0.00248106774922306
+        },
+        "mean_reversion": {
+          "mean": 0.0007167349050090153,
+          "ci_low": -0.0005130401597509481,
+          "ci_high": 0.002003197019560563
+        }
+      },
+      "note": "Positive estimate, uncertainty interval still crosses zero. Keep and collect more data."
+    },
+    "all": {
+      "status": "fails",
+      "n_observations": 2840,
+      "n_days": 355,
+      "incremental_mean": -0.00048397655110971814,
+      "incremental_ci": [
+        -0.0011964194108149474,
+        0.0002146118668152247
+      ],
+      "own_mean_net": -0.0016551801527603595,
+      "own_ci": [
+        -0.002389811312408066,
+        -0.0009958353194507684
+      ],
+      "vs_buy_hold": {
+        "mean": -0.0026138681799130455,
+        "ci_low": -0.003810913578095673,
+        "ci_high": -0.0014544690448202752
+      },
+      "vs_simple": {
+        "momentum_5": {
+          "mean": 0.0002602510389566908,
+          "ci_low": -0.001045814799453263,
+          "ci_high": 0.0016870084897515343
+        },
+        "ma_crossover": {
+          "mean": 0.00026589225226445053,
+          "ci_low": -0.0007220650074336336,
+          "ci_high": 0.0013851713087060442
+        },
+        "mean_reversion": {
+          "mean": -0.0002526128033338303,
+          "ci_low": -0.0014969120253979975,
+          "ci_high": 0.0010095581756900238
+        }
+      },
+      "note": "Incremental net return versus baseline is not positive. All is every price and calendar block. News stays a separate arm because a day with no headline is not a zero."
+    }
+  },
+  "h6_gp_vs_bayesian": {
+    "status": "fails",
+    "n_observations": 3304,
+    "n_days": 413,
+    "incremental_mean": -0.00044787791607011224,
+    "incremental_ci": [
+      -0.0013852675077157205,
+      0.00036049673418348546
+    ],
+    "own_mean_net": -0.0017156770363237527,
+    "own_ci": [
+      -0.002375799217953672,
+      -0.0010671553391876244
+    ],
+    "vs_buy_hold": {
+      "mean": -0.002462671811997969,
+      "ci_low": -0.003828602798286582,
+      "ci_high": -0.001364780798049035
+    },
+    "vs_simple": {
+      "momentum_5": {
+        "mean": 0.00015012561140310604,
+        "ci_low": -0.0008133350403438072,
+        "ci_high": 0.001218442473655355
+      },
+      "ma_crossover": {
+        "mean": 0.0005710469184692221,
+        "ci_low": -0.0004844497061965642,
+        "ci_high": 0.0014832498863608214
+      },
+      "mean_reversion": {
+        "mean": -0.00011018207976624959,
+        "ci_low": -0.0012809342799774575,
+        "ci_high": 0.001027989893942736
+      }
+    },
+    "note": "GP versus Bayesian on lagged returns only. Incremental net return versus baseline is not positive."
+  }
+}

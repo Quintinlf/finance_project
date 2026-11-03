@@ -119,6 +119,10 @@ class ExecutionConfig:
     debug_force_strongest_signal: bool = False
     # When True, a buy/sell with no passing edge verdict is refused.
     enforce_edge_gate: bool = False
+    # Paper accounts may buy a fraction of a share so a name that costs more
+    # than the position cap is not silently untradeable. Live mode stays whole
+    # shares until a walk-forward arm has survived.
+    fractional_shares: bool = False
 
     # Benchmark freeze controls (Phase 0)
     benchmark_bundle_name: Optional[str] = None
@@ -191,7 +195,7 @@ class OrderPlan:
     Fields:
         symbol: ticker symbol
         side: 'buy' or 'sell'
-        quantity: number of shares to trade
+        quantity: number of shares to trade (fractional when the config allows it)
         entry_type: 'market' or 'limit'
         limit_price: limit price if entry_type='limit'
         tp_price: take profit price (optional, for bracket orders)
@@ -201,7 +205,7 @@ class OrderPlan:
     """
     symbol: str
     side: Literal['buy', 'sell']
-    quantity: int
+    quantity: float
     entry_type: Literal['market', 'limit']
     limit_price: Optional[float] = None
     tp_price: Optional[float] = None
@@ -241,7 +245,7 @@ class DecisionLogEntry:
     # the calibration curve must train on raw claims -- training on the
     # calibrated value feeds the curve its own output and collapses it.
     raw_prob_profit: Optional[float] = None
-    planned_quantity: Optional[int] = None
+    planned_quantity: Optional[float] = None
     planned_entry_price: Optional[float] = None
     planned_tp_price: Optional[float] = None
     planned_sl_price: Optional[float] = None

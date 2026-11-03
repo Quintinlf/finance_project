@@ -432,7 +432,7 @@ def run_backtest(
             del positions[symbol]
 
         # --- Signals on data through this bar's close ---
-        price_data = {s: history[s].loc[:_as_ts(history[s], bar_date)] for s in symbols}
+        price_data = {s: history_through(history[s], bar_date) for s in symbols}
         with _quiet_signal_logging():
             signals = _generate_quiet(symbols, exec_config, price_data)
             signals = filter_signals_by_thresholds(
@@ -729,6 +729,14 @@ def _close_position(
 # ========================================================================
 # Helpers
 # ========================================================================
+
+
+def history_through(frame, bar_date: date):
+    """Bars the signal path may see when deciding on ``bar_date``.
+
+    The next session's open is the fill. It is not an input.
+    """
+    return frame.loc[: _as_ts(frame, bar_date)]
 
 
 def _as_ts(frame, bar_date: date):
