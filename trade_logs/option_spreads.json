@@ -1,5 +1,5 @@
 {
-  "measured_at_utc": "2026-11-03T20:23:04.399616+00:00",
+  "measured_at_utc": "2026-11-04T20:39:20.076855+00:00",
   "regular_market_hours": true,
   "usable": true,
   "filters": {
@@ -7,134 +7,134 @@
     "min_dte": 7,
     "max_dte": 60
   },
-  "median_break_even_vol_points": 8.427693306723064,
+  "median_break_even_vol_points": 11.66894821687746,
   "verdict": "PASS",
   "per_symbol": {
     "WEAT": {
       "contracts": 16,
-      "median_iv": 0.2279,
-      "median_spread_pct_of_mid": 31.946437111429933,
-      "median_dollar_spread": 0.3000000000000001,
-      "break_even_vol_points": 7.280593017694881
+      "median_iv": 0.2693,
+      "median_spread_pct_of_mid": 50.93093093093092,
+      "median_dollar_spread": 0.295,
+      "break_even_vol_points": 13.715699699699696
     },
     "CORN": {
-      "contracts": 9,
-      "median_iv": 0.1664,
-      "median_spread_pct_of_mid": 48.135593220338976,
-      "median_dollar_spread": 0.19999999999999996,
-      "break_even_vol_points": 8.009762711864404
+      "contracts": 10,
+      "median_iv": 0.1785,
+      "median_spread_pct_of_mid": 69.59119496855345,
+      "median_dollar_spread": 0.195,
+      "break_even_vol_points": 12.42202830188679
     },
     "SOYB": {
-      "contracts": 4,
-      "median_iv": 0.2372,
-      "median_spread_pct_of_mid": 105.0190114068441,
-      "median_dollar_spread": 1.91,
-      "break_even_vol_points": 24.91050950570342
+      "contracts": 5,
+      "median_iv": 0.2729,
+      "median_spread_pct_of_mid": 134.9206349206349,
+      "median_dollar_spread": 3.39,
+      "break_even_vol_points": 36.81984126984126
     },
     "DBA": {
       "contracts": 17,
-      "median_iv": 0.2046,
-      "median_spread_pct_of_mid": 43.23374340949034,
-      "median_dollar_spread": 0.31,
-      "break_even_vol_points": 8.845623901581723
+      "median_iv": 0.2246,
+      "median_spread_pct_of_mid": 90.90909090909092,
+      "median_dollar_spread": 1.1599999999999997,
+      "break_even_vol_points": 20.418181818181818
     },
     "UNG": {
       "contracts": 60,
-      "median_iv": 0.6512,
-      "median_spread_pct_of_mid": 18.4506273867976,
-      "median_dollar_spread": 0.12,
-      "break_even_vol_points": 12.015048554282597
+      "median_iv": 0.6358,
+      "median_spread_pct_of_mid": 17.16871363930187,
+      "median_dollar_spread": 0.095,
+      "break_even_vol_points": 10.915868131868129
     },
     "BNO": {
-      "contracts": 256,
-      "median_iv": 0.66275,
-      "median_spread_pct_of_mid": 10.817958755548897,
-      "median_dollar_spread": 0.5099999999999998,
-      "break_even_vol_points": 7.169602165240032
+      "contracts": 242,
+      "median_iv": 0.6183,
+      "median_spread_pct_of_mid": 13.442651382280292,
+      "median_dollar_spread": 0.5,
+      "break_even_vol_points": 8.311591349663905
     },
     "USO": {
-      "contracts": 584,
-      "median_iv": 0.58055,
-      "median_spread_pct_of_mid": 4.82268718062311,
-      "median_dollar_spread": 0.38999999999999924,
-      "break_even_vol_points": 2.799811042710747
+      "contracts": 516,
+      "median_iv": 0.5499,
+      "median_spread_pct_of_mid": 6.368440484259361,
+      "median_dollar_spread": 0.41999999999999993,
+      "break_even_vol_points": 3.5020054222942227
     },
     "UGA": {
-      "contracts": 100,
-      "median_iv": 0.51905,
-      "median_spread_pct_of_mid": 32.11370075266543,
-      "median_dollar_spread": 2.5699999999999994,
-      "break_even_vol_points": 16.668616375670993
+      "contracts": 75,
+      "median_iv": 0.5039,
+      "median_spread_pct_of_mid": 29.367382472431817,
+      "median_dollar_spread": 2.4699999999999998,
+      "break_even_vol_points": 14.798224027858394
     },
     "XLE": {
-      "contracts": 359,
-      "median_iv": 0.3191,
-      "median_spread_pct_of_mid": 9.259259259259267,
-      "median_dollar_spread": 0.18999999999999995,
-      "break_even_vol_points": 2.954629629629632
+      "contracts": 341,
+      "median_iv": 0.3114,
+      "median_spread_pct_of_mid": 10.909090909090898,
+      "median_dollar_spread": 0.17999999999999994,
+      "break_even_vol_points": 3.397090909090906
     },
     "SLV": {
-      "contracts": 222,
-      "median_iv": 0.43495,
-      "median_spread_pct_of_mid": 4.046423712693082,
-      "median_dollar_spread": 0.07000000000000006,
-      "break_even_vol_points": 1.759991993835856
+      "contracts": 298,
+      "median_iv": 0.4089,
+      "median_spread_pct_of_mid": 3.851192683228285,
+      "median_dollar_spread": 0.06949999999999967,
+      "break_even_vol_points": 1.5747526881720455
     },
     "IAU": {
-      "contracts": 218,
-      "median_iv": 0.24020000000000002,
-      "median_spread_pct_of_mid": 24.882798413270827,
-      "median_dollar_spread": 0.3500000000000001,
-      "break_even_vol_points": 5.9768481788676535
+      "contracts": 257,
+      "median_iv": 0.2256,
+      "median_spread_pct_of_mid": 25.101214574898776,
+      "median_dollar_spread": 0.3600000000000001,
+      "break_even_vol_points": 5.662834008097165
     },
     "GLD": {
-      "contracts": 1251,
-      "median_iv": 0.2429,
-      "median_spread_pct_of_mid": 5.263157894736847,
-      "median_dollar_spread": 0.2400000000000002,
-      "break_even_vol_points": 1.27842105263158
+      "contracts": 1391,
+      "median_iv": 0.2258,
+      "median_spread_pct_of_mid": 5.899513776337115,
+      "median_dollar_spread": 0.2599999999999998,
+      "break_even_vol_points": 1.3321102106969207
     },
     "PPLT": {
-      "contracts": 15,
-      "median_iv": 0.3862,
-      "median_spread_pct_of_mid": 50.847457627118644,
-      "median_dollar_spread": 0.19999999999999984,
-      "break_even_vol_points": 19.63728813559322
+      "contracts": 12,
+      "median_iv": 0.35375,
+      "median_spread_pct_of_mid": 29.513513513513512,
+      "median_dollar_spread": 0.21500000000000002,
+      "break_even_vol_points": 10.440405405405405
     },
     "PALL": {
-      "contracts": 12,
-      "median_iv": 0.36970000000000003,
-      "median_spread_pct_of_mid": 30.36744609778318,
-      "median_dollar_spread": 0.15000000000000002,
-      "break_even_vol_points": 11.226844822350444
+      "contracts": 16,
+      "median_iv": 0.41305000000000003,
+      "median_spread_pct_of_mid": 32.853932584269664,
+      "median_dollar_spread": 0.22499999999999998,
+      "break_even_vol_points": 13.570316853932585
     },
     "CPER": {
-      "contracts": 29,
-      "median_iv": 0.261,
-      "median_spread_pct_of_mid": 29.397590361445776,
-      "median_dollar_spread": 0.34999999999999964,
-      "break_even_vol_points": 7.672771084337347
+      "contracts": 26,
+      "median_iv": 0.2636,
+      "median_spread_pct_of_mid": 38.888888888888886,
+      "median_dollar_spread": 0.6100000000000001,
+      "break_even_vol_points": 10.25111111111111
     },
     "DBB": {
-      "contracts": 10,
-      "median_iv": 0.26685,
-      "median_spread_pct_of_mid": 115.43224436843967,
-      "median_dollar_spread": 1.33,
-      "break_even_vol_points": 30.803094409718124
+      "contracts": 6,
+      "median_iv": 0.312,
+      "median_spread_pct_of_mid": 128.60730593607306,
+      "median_dollar_spread": 1.9849999999999999,
+      "break_even_vol_points": 40.1254794520548
     },
     "DBC": {
-      "contracts": 21,
-      "median_iv": 0.273,
-      "median_spread_pct_of_mid": 37.735849056603776,
-      "median_dollar_spread": 0.49999999999999994,
-      "break_even_vol_points": 10.301886792452832
+      "contracts": 20,
+      "median_iv": 0.30835,
+      "median_spread_pct_of_mid": 59.986225895316814,
+      "median_dollar_spread": 0.8449999999999999,
+      "break_even_vol_points": 18.496752754820942
     },
     "GSG": {
-      "contracts": 22,
-      "median_iv": 0.3368,
-      "median_spread_pct_of_mid": 107.65078874110733,
-      "median_dollar_spread": 1.8195000000000001,
-      "break_even_vol_points": 36.25678564800495
+      "contracts": 18,
+      "median_iv": 0.37655000000000005,
+      "median_spread_pct_of_mid": 84.4021334656413,
+      "median_dollar_spread": 1.79,
+      "break_even_vol_points": 31.78162335648723
     }
   }
 }
