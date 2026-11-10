@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-09T23:15:43+00:00",
+  "generated_at": "2026-11-10T20:41:42+00:00",
   "equity_curve": [
     {
       "time": "2026-08-13",
@@ -381,6 +381,12 @@
     },
     {
       "time": "2026-11-09",
+      "value": 492.33,
+      "exposure": 0.0,
+      "daily_return": 0.0
+    },
+    {
+      "time": "2026-11-10",
       "value": 492.33,
       "exposure": 0.0,
       "daily_return": 0.0
@@ -1410,6 +1416,175 @@
     "win_rate": 34.8
   },
   "decisions": [
+    {
+      "timestamp": "2026-11-10T20:40:57.478143",
+      "symbol": "GSG",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5172201722017221,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-11-10T20:40:57.474854",
+      "symbol": "DBC",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5172201722017221,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-11-10T20:40:57.471003",
+      "symbol": "DBB",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5172201722017221,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-11-10T20:40:57.467687",
+      "symbol": "CPER",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5172201722017221,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-11-10T20:40:57.464209",
+      "symbol": "PALL",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5115695567326456,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-11-10T20:40:57.460713",
+      "symbol": "PPLT",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5172201722017221,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-11-10T20:40:57.457263",
+      "symbol": "SLV",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5172201722017221,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-11-10T20:40:57.453698",
+      "symbol": "UNG",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5172201722017221,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-11-10T20:40:57.450149",
+      "symbol": "DBA",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5172201722017221,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-11-10T20:40:57.446801",
+      "symbol": "CANE",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5172201722017221,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-11-10T20:40:57.443156",
+      "symbol": "SOYB",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5172201722017221,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-11-10T20:40:57.439451",
+      "symbol": "CORN",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5172201722017221,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
+    {
+      "timestamp": "2026-11-10T20:40:57.433979",
+      "symbol": "WEAT",
+      "signal_type": "hold",
+      "confidence": 0.5,
+      "prob_profit": 0.5172201722017221,
+      "action": "hold",
+      "reason": "Signal=HOLD \u2192 no action",
+      "executed": 0,
+      "planned_quantity": null,
+      "planned_entry_price": null,
+      "error_message": null
+    },
     {
       "timestamp": "2026-11-09T23:15:33.771387",
       "symbol": "GSG",
@@ -3840,179 +4015,10 @@
       "planned_quantity": null,
       "planned_entry_price": null,
       "error_message": null
-    },
-    {
-      "timestamp": "2026-10-21T18:20:17.408393",
-      "symbol": "SLV",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.5124894751613813,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-21T18:20:17.404793",
-      "symbol": "XLE",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.5124894751613813,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-21T18:20:17.401469",
-      "symbol": "BNO",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.48966515088879703,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-21T18:20:17.398201",
-      "symbol": "UNG",
-      "signal_type": "hold",
-      "confidence": 0.425,
-      "prob_profit": 0.5317762085822926,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-21T18:20:17.394738",
-      "symbol": "DBA",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.48966515088879703,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-21T18:20:17.391235",
-      "symbol": "CANE",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.5317762085822926,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-21T18:20:17.387642",
-      "symbol": "SOYB",
-      "signal_type": "hold",
-      "confidence": 0.8624999999999999,
-      "prob_profit": 0.5124894751613813,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-21T18:20:17.384355",
-      "symbol": "CORN",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.5317762085822926,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-21T18:20:17.376467",
-      "symbol": "WEAT",
-      "signal_type": "hold",
-      "confidence": 0.8624999999999999,
-      "prob_profit": 0.5317762085822926,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-20T18:14:18.831250",
-      "symbol": "GSG",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.5322997416020672,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-20T18:14:18.826398",
-      "symbol": "DBC",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.5322997416020672,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-20T18:14:18.821593",
-      "symbol": "DBB",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.5123664980326025,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
-    },
-    {
-      "timestamp": "2026-10-20T18:14:18.816774",
-      "symbol": "CPER",
-      "signal_type": "hold",
-      "confidence": 0.5,
-      "prob_profit": 0.5191458026509576,
-      "action": "hold",
-      "reason": "Signal=HOLD \u2192 no action",
-      "executed": 0,
-      "planned_quantity": null,
-      "planned_entry_price": null,
-      "error_message": null
     }
   ],
   "latest_run": {
-    "date": "20261109",
+    "date": "20261110",
     "account": {
       "equity": 492.33,
       "equity_source": "broker_live",
@@ -4057,6 +4063,15 @@
         "reason": "explicit HOLD decision retained for logging"
       },
       {
+        "symbol": "DBA",
+        "signal": "HOLD",
+        "original": "HOLD",
+        "confidence": 0.5,
+        "prob_profit": 0.5172,
+        "decision": "HOLD",
+        "reason": "explicit HOLD decision retained for logging"
+      },
+      {
         "symbol": "UNG",
         "signal": "HOLD",
         "original": "HOLD",
@@ -4088,7 +4103,7 @@
         "signal": "HOLD",
         "original": "HOLD",
         "confidence": 0.5,
-        "prob_profit": 0.5172,
+        "prob_profit": 0.5116,
         "decision": "HOLD",
         "reason": "explicit HOLD decision retained for logging"
       },
@@ -4520,7 +4535,7 @@
   },
   "calibration": {
     "fitted": true,
-    "fitted_at": "2026-11-09T23:15:07+00:00",
+    "fitted_at": "2026-11-10T20:40:23+00:00",
     "n": 24809,
     "curve": [
       [
@@ -4645,15 +4660,55 @@
       ]
     ],
     "scored_n": 24818,
-    "logged_n": 24830,
+    "logged_n": 24843,
     "min_sample": 30,
     "target_sample": 300,
     "min_sample_met": true,
     "predictions_per_run_day": 24.0,
-    "target_ready_date": "2026-11-09"
+    "target_ready_date": "2026-11-10"
   },
   "news": {
     "events": [
+      {
+        "published_at": "2026-11-10T17:21:52+00:00",
+        "headline": "EIA Says In Its Short Term Energy Outlook That It Assumes Most Middle East Production Ex-Iran Will Return To Pre-Conflict Averages By Middle Of 2027; As Depleted Global Oil Inventories Build Throughout 2027, Forecast That Spot Brent Will Gradually Fall To Average Of $77/B In Q4 2027",
+        "source": "benzinga",
+        "symbol": "UNG",
+        "match_type": "explicit",
+        "matched_themes": "geopolitical_supply_shock",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-11-10T17:21:52+00:00",
+        "headline": "EIA Says In Its Short Term Energy Outlook That It Assumes Most Middle East Production Ex-Iran Will Return To Pre-Conflict Averages By Middle Of 2027; As Depleted Global Oil Inventories Build Throughout 2027, Forecast That Spot Brent Will Gradually Fall To Average Of $77/B In Q4 2027",
+        "source": "benzinga",
+        "symbol": "WEAT",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-11-10T17:21:52+00:00",
+        "headline": "EIA Says In Its Short Term Energy Outlook That It Assumes Most Middle East Production Ex-Iran Will Return To Pre-Conflict Averages By Middle Of 2027; As Depleted Global Oil Inventories Build Throughout 2027, Forecast That Spot Brent Will Gradually Fall To Average Of $77/B In Q4 2027",
+        "source": "benzinga",
+        "symbol": "CORN",
+        "match_type": "theme",
+        "matched_themes": "geopolitical_supply_shock",
+        "polarity": "neutral",
+        "polarity_score": 0.0
+      },
+      {
+        "published_at": "2026-11-10T09:56:36+00:00",
+        "headline": "Fed's Waller Said Fed Staff Analyses Suggest Further Producer Price Increases Ahead, With Potential For A More Persistent Energy Price Shock",
+        "source": "benzinga",
+        "symbol": "UNG",
+        "match_type": "explicit",
+        "matched_themes": "",
+        "polarity": "bearish",
+        "polarity_score": -1.0
+      },
       {
         "published_at": "2026-11-06T18:03:52+00:00",
         "headline": "U.S. Baker Hughes Oil Rig Count +1 To 463; U.S. Baker Hughes NatGas Rig Count +1 To 131; U.S. Baker Hughes Total Rig Count 605 Vs 603 Prior",
@@ -4911,46 +4966,6 @@
         "symbol": "AAPL",
         "match_type": "explicit",
         "matched_themes": "",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-11-03T15:28:00+00:00",
-        "headline": "US Stocks Mixed; Apple Shares Slide After Q4 Results",
-        "source": "benzinga",
-        "symbol": "AAPL",
-        "match_type": "explicit",
-        "matched_themes": "",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-11-03T15:07:57+00:00",
-        "headline": "CNMC Initiates Sanction Proceedings Against Apple, Amazon; Companies Failed To Comply With Cease-And-Desist Order Imposed On Them In Sanctioning Resolution Of July 2023; Imposed Fines On Both Companies For Including Anti-Competitive Clauses In Contracts Governing The Terms And Conditions Of Amazon\u2019s Role As An Apple Distributor",
-        "source": "benzinga",
-        "symbol": "AAPL",
-        "match_type": "explicit",
-        "matched_themes": "geopolitical_supply_shock",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-11-03T15:07:57+00:00",
-        "headline": "CNMC Initiates Sanction Proceedings Against Apple, Amazon; Companies Failed To Comply With Cease-And-Desist Order Imposed On Them In Sanctioning Resolution Of July 2023; Imposed Fines On Both Companies For Including Anti-Competitive Clauses In Contracts Governing The Terms And Conditions Of Amazon\u2019s Role As An Apple Distributor",
-        "source": "benzinga",
-        "symbol": "WEAT",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock",
-        "polarity": "neutral",
-        "polarity_score": 0.0
-      },
-      {
-        "published_at": "2026-11-03T15:07:57+00:00",
-        "headline": "CNMC Initiates Sanction Proceedings Against Apple, Amazon; Companies Failed To Comply With Cease-And-Desist Order Imposed On Them In Sanctioning Resolution Of July 2023; Imposed Fines On Both Companies For Including Anti-Competitive Clauses In Contracts Governing The Terms And Conditions Of Amazon\u2019s Role As An Apple Distributor",
-        "source": "benzinga",
-        "symbol": "CORN",
-        "match_type": "theme",
-        "matched_themes": "geopolitical_supply_shock",
         "polarity": "neutral",
         "polarity_score": 0.0
       }
