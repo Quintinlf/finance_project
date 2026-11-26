@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-25T22:54:10+00:00",
+  "generated_at": "2026-11-26T22:44:44+00:00",
   "equity_curve": [
     {
       "time": "2026-08-13",
@@ -4078,137 +4078,14 @@
     }
   ],
   "latest_run": {
-    "date": "20261125",
-    "account": {
-      "equity": 492.33,
-      "equity_source": "broker_live",
-      "cash": 492.33,
-      "exposure": 0.0
-    },
-    "signals": [
-      {
-        "symbol": "WEAT",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.5,
-        "prob_profit": 0.5112,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
-      },
-      {
-        "symbol": "CORN",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.5,
-        "prob_profit": 0.5112,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
-      },
-      {
-        "symbol": "SOYB",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.5,
-        "prob_profit": 0.5112,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
-      },
-      {
-        "symbol": "CANE",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.5,
-        "prob_profit": 0.5112,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
-      },
-      {
-        "symbol": "DBA",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.5,
-        "prob_profit": 0.5112,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
-      },
-      {
-        "symbol": "UNG",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.5,
-        "prob_profit": 0.5112,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
-      },
-      {
-        "symbol": "SLV",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.5,
-        "prob_profit": 0.5112,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
-      },
-      {
-        "symbol": "PPLT",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.5,
-        "prob_profit": 0.5112,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
-      },
-      {
-        "symbol": "PALL",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.5,
-        "prob_profit": 0.5112,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
-      },
-      {
-        "symbol": "CPER",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.5,
-        "prob_profit": 0.5112,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
-      },
-      {
-        "symbol": "DBB",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.5,
-        "prob_profit": 0.5112,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
-      },
-      {
-        "symbol": "DBC",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.5,
-        "prob_profit": 0.5112,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
-      },
-      {
-        "symbol": "GSG",
-        "signal": "HOLD",
-        "original": "HOLD",
-        "confidence": 0.5,
-        "prob_profit": 0.5112,
-        "decision": "HOLD",
-        "reason": "explicit HOLD decision retained for logging"
-      }
-    ],
+    "date": "20261126",
+    "account": {},
+    "signals": [],
     "positions": [],
     "blockers": [],
     "eos_available": true,
-    "orders_submitted": 0,
-    "orders_attempted": 0
+    "orders_submitted": null,
+    "orders_attempted": null
   },
   "backtests": [
     {
@@ -4709,7 +4586,7 @@
     "target_sample": 300,
     "min_sample_met": true,
     "predictions_per_run_day": 23.9,
-    "target_ready_date": "2026-11-25"
+    "target_ready_date": "2026-11-26"
   },
   "news": {
     "events": [
